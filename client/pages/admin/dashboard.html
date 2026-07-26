@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard · GEEOOH Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/admin.css" />
+  <style>
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .quick-action-card {
+      background: var(--admin-card);
+      border: 1px solid var(--admin-border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: var(--admin-text);
+    }
+    
+    .quick-action-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--admin-accent);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .quick-action-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 12px;
+      background: rgba(255, 107, 0, 0.1);
+    }
+    
+    .quick-action-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+    
+    .quick-action-card p {
+      color: var(--admin-text-secondary);
+      font-size: 0.85rem;
+    }
+    
+    .recent-activity {
+      background: var(--admin-card);
+      border: 1px solid var(--admin-border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--admin-border);
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    
+    .activity-dot.project { background: var(--admin-accent); }
+    .activity-dot.blog { background: var(--admin-purple); }
+    .activity-dot.message { background: var(--admin-cyan); }
+    
+    .activity-content {
+      flex: 1;
+    }
+    
+    .activity-title {
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+    
+    .activity-time {
+      color: var(--admin-text-secondary);
+      font-size: 0.8rem;
+    }
+    
+    .chart-container {
+      background: var(--admin-card);
+      border: 1px solid var(--admin-border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 200px;
+    }
+    
+    .chart-bar {
+      flex: 1;
+      background: linear-gradient(to top, var(--admin-accent), var(--admin-purple));
+      border-radius: 8px 8px 0 0;
+      transition: height 0.5s ease;
+      position: relative;
+      min-height: 4px;
+    }
+    
+    .chart-bar:hover {
+      filter: brightness(1.2);
+    }
+    
+    .chart-bar-label {
+      position: absolute;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: var(--admin-text-secondary);
+      white-space: nowrap;
+    }
+    
+    .chart-bar-value {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .chart-bar:hover .chart-bar-value {
+      opacity: 1;
+    }
+    
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .toast {
+      padding: 16px 20px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+      animation: slideIn 0.3s ease;
+      min-width: 300px;
+    }
+    
+    .toast.success { background: rgba(16, 185, 129, 0.9); }
+    .toast.error { background: rgba(239, 68, 68, 0.9); }
+    .toast.info { background: rgba(59, 130, 246, 0.9); }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="admin-body">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">GEEOOH</div>
+      <div class="sidebar-subtitle">Admin Dashboard</div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Main</div>
+        <a href="#" class="nav-item active" data-page="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item" data-page="analytics">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Analytics
+        </a>
+      </div>
+      
+      <div class="nav-section">
+        <div class="nav-section-title">Content</div>
+        <a href="#" class="nav-item" data-page="projects">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          Projects
+        </a>
+        <a href="./blog.html" class="nav-item" data-page="blog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Blog
+        </a>
+        <a href="#" class="nav-item" data-page="skills">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Skills
+        </a>
+        <a href="#" class="nav-item" data-page="experience">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+          Experience
+        </a>
+      </div>
+      
+      <div class="nav-section">
+        <div class="nav-section-title">Communication</div>
+        <a href="#" class="nav-item" data-page="messages">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Messages
+          <span class="nav-badge" id="messageBadge" style="display:none">0</span>
+        </a>
+        <a href="#" class="nav-item" data-page="testimonials">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
+          Testimonials
+        </a>
+      </div>
+      
+      <div class="nav-section">
+        <div class="nav-section-title">Settings</div>
+        <a href="#" class="nav-item" data-page="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Settings
+        </a>
+      </div>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">G</div>
+        <div class="user-details">
+          <div class="user-name" id="userName">Ganiyu Usman</div>
+          <div class="user-role" id="userRole">Admin</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="api.logout()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    
+    <div class="top-bar">
+      <div class="page-title">
+        <h1>Dashboard</h1>
+        <p>Welcome back, Ganiyu! Here's what's happening.</p>
+      </div>
+      <div class="top-bar-actions">
+        <input type="search" class="search-input" placeholder="Search anything..." />
+        <button class="notification-btn" id="notificationBtn">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="notification-dot" id="notificationDot" style="display:none"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon orange">🚀</div>
+          <span class="stat-trend up">+12%</span>
+        </div>
+        <div class="stat-value" id="totalProjects">0</div>
+        <div class="stat-label">Total Projects</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon purple">📝</div>
+          <span class="stat-trend up">+8%</span>
+        </div>
+        <div class="stat-value" id="totalBlogs">0</div>
+        <div class="stat-label">Blog Posts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon cyan">💬</div>
+          <span class="stat-trend down">-3%</span>
+        </div>
+        <div class="stat-value" id="totalMessages">0</div>
+        <div class="stat-label">Messages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon green">👁️</div>
+          <span class="stat-trend up">+24%</span>
+        </div>
+        <div class="stat-value" id="totalViews">0</div>
+        <div class="stat-label">Page Views</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <a href="#" class="quick-action-card" onclick="showModal('projectModal')">
+        <div class="quick-action-icon">➕</div>
+        <h3>New Project</h3>
+        <p>Add a new project</p>
+      </a>
+      <a href="#" class="quick-action-card" onclick="showModal('blogModal')">
+        <div class="quick-action-icon">✍️</div>
+        <h3>New Blog Post</h3>
+        <p>Write a blog post</p>
+      </a>
+      <a href="#" class="quick-action-card" data-page="messages">
+        <div class="quick-action-icon">📧</div>
+        <h3>Check Messages</h3>
+        <p>View new messages</p>
+      </a>
+      <a href="#" class="quick-action-card" data-page="settings">
+        <div class="quick-action-icon">⚙️</div>
+        <h3>Settings</h3>
+        <p>Configure site</p>
+      </a>
+    </div>
+
+    <!-- Messages Chart -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <h2>Messages This Week</h2>
+        <span style="color: var(--admin-text-secondary)">Last 7 days</span>
+      </div>
+      <div class="chart-bars" id="messageChart"></div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="recent-activity">
+      <div class="chart-header">
+        <h2>Recent Activity</h2>
+        <a href="#" style="color: var(--admin-accent); text-decoration: none; font-size: 0.9rem;">View All</a>
+      </div>
+      <div id="activityList">
+        <div class="activity-item">
+          <div class="activity-dot project"></div>
+          <div class="activity-content">
+            <div class="activity-title">Loading activities...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Project Modal -->
+  <div class="modal-overlay" id="projectModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add New Project</h2>
+        <button class="modal-close" onclick="closeModal('projectModal')">×</button>
+      </div>
+      <form id="projectForm">
+        <div class="form-group">
+          <label>Project Title</label>
+          <input type="text" name="title" required placeholder="Enter project title" />
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea name="description" required placeholder="Brief description (max 500 chars)"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select name="category" required>
+            <option value="">Select category</option>
+            <option value="fullstack">Full Stack</option>
+            <option value="frontend">Frontend</option>
+            <option value="backend">Backend</option>
+            <option value="mobile">Mobile</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Technologies (comma separated)</label>
+          <input type="text" name="technologies" placeholder="HTML, CSS, JavaScript, Node.js" />
+        </div>
+        <div class="form-group">
+          <label>Live Demo URL</label>
+          <input type="url" name="liveUrl" placeholder="https://..." />
+        </div>
+        <div class="form-group">
+          <label>GitHub URL</label>
+          <input type="url" name="githubUrl" placeholder="https://github.com/..." />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('projectModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="../../assets/js/api.js"></script>
+  <script>
+    // ===== AUTH CHECK =====
+    if (!api.isAuthenticated()) {
+      window.location.href = './login.html';
+    }
+
+    // ===== INITIALIZE =====
+    const user = api.getCurrentUser();
+    document.getElementById('userName').textContent = user?.name || 'Admin';
+    document.getElementById('userAvatar').textContent = (user?.name?.[0] || 'A').toUpperCase();
+    document.getElementById('userRole').textContent = user?.role || 'Admin';
+
+    // ===== LOAD DASHBOARD DATA =====
+    async function loadDashboard() {
+      try {
+        const statsData = await api.getAdminStats();
+        if (statsData.success) {
+          document.getElementById('totalProjects').textContent = statsData.stats.totalProjects || 0;
+          document.getElementById('totalBlogs').textContent = statsData.stats.totalBlogs || 0;
+          document.getElementById('totalMessages').textContent = statsData.stats.totalMessages || 0;
+          document.getElementById('totalViews').textContent = '1.2K'; // Placeholder
+          
+          // Update message badge
+          const unread = statsData.stats.unreadMessages || 0;
+          const badge = document.getElementById('messageBadge');
+          if (unread > 0) {
+            badge.textContent = unread;
+            badge.style.display = 'inline-block';
+          }
+          
+          // Render activity
+          renderActivity(statsData.stats.recentProjects, statsData.stats.recentMessages);
+        }
+        
+        // Load message chart
+        loadMessageChart();
+        
+        // Connect socket for real-time updates
+        connectSocket();
+      } catch (error) {
+        console.error('Failed to load dashboard:', error);
+        showToast('Failed to load dashboard data', 'error');
+      }
+    }
+
+    function renderActivity(projects, messages) {
+      const activityList = document.getElementById('activityList');
+      activityList.innerHTML = '';
+      
+      if (messages && messages.length > 0) {
+        messages.slice(0, 3).forEach(msg => {
+          activityList.innerHTML += `
+            <div class="activity-item">
+              <div class="activity-dot message"></div>
+              <div class="activity-content">
+                <div class="activity-title">New message from ${msg.sender?.name || 'Visitor'}</div>
+                <div class="activity-time">${new Date(msg.createdAt).toLocaleString()}</div>
+              </div>
+            </div>
+          `;
+        });
+      }
+      
+      if (projects && projects.length > 0) {
+        projects.slice(0, 3).forEach(proj => {
+          activityList.innerHTML += `
+            <div class="activity-item">
+              <div class="activity-dot project"></div>
+              <div class="activity-content">
+                <div class="activity-title">Project updated: ${proj.title}</div>
+                <div class="activity-time">${new Date(proj.createdAt).toLocaleString()}</div>
+              </div>
+            </div>
+          `;
+        });
+      }
+      
+      if (activityList.innerHTML === '') {
+        activityList.innerHTML = '<div class="activity-item"><div class="activity-content"><div class="activity-title">No recent activity</div></div></div>';
+      }
+    }
+
+    function loadMessageChart() {
+      const chart = document.getElementById('messageChart');
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const values = [3, 7, 5, 9, 4, 6, 8]; // Placeholder - replace with API data
+      
+      chart.innerHTML = days.map((day, i) => `
+        <div class="chart-bar" style="height: ${values[i] * 20}px">
+          <div class="chart-bar-value">${values[i]}</div>
+          <div class="chart-bar-label">${day}</div>
+        </div>
+      `).join('');
+    }
+
+    // ===== SOCKET CONNECTION =====
+    function connectSocket() {
+      const socket = io('http://localhost:5000');
+      
+      socket.on('connect', () => {
+        socket.emit('user-join', { role: 'admin' });
+      });
+      
+      socket.on('admin-notification', (data) => {
+        if (data.type === 'new-message') {
+          showToast(`New message from ${data.message.sender?.name || 'Visitor'}`, 'info');
+          const badge = document.getElementById('messageBadge');
+          const current = parseInt(badge.textContent) || 0;
+          badge.textContent = current + 1;
+          badge.style.display = 'inline-block';
+          document.getElementById('notificationDot').style.display = 'block';
+        }
+      });
+      
+      socket.on('online-users-update', (data) => {
+        // Update online count if needed
+      });
+    }
+
+    // ===== MODAL FUNCTIONS =====
+    function showModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+        }
+      });
+    });
+
+    // ===== PROJECT FORM =====
+    document.getElementById('projectForm')?.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        title: this.title.value,
+        description: this.description.value,
+        category: this.category.value,
+        technologies: this.technologies.value.split(',').map(t => t.trim()).filter(t => t),
+        links: {
+          live: this.liveUrl.value,
+          github: this.githubUrl.value
+        }
+      };
+      
+      try {
+        const result = await api.createProject(formData);
+        if (result.success) {
+          showToast('Project created successfully!', 'success');
+          closeModal('projectModal');
+          this.reset();
+          loadDashboard();
+        }
+      } catch (error) {
+        showToast(error.message || 'Failed to create project', 'error');
+      }
+    });
+
+    // ===== NAVIGATION =====
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Update active state
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        
+        const page = this.dataset.page;
+        if (page === 'projects') {
+          window.location.href = './projects.html';
+        } else if (page === 'blogs') {
+          window.location.href = './blog.html';
+        } else if (page === 'messages') {
+          window.location.href = './messages.html';
+        } else if (page === 'settings') {
+          window.location.href = './settings.html';
+        }
+      });
+    });
+
+    // Quick action cards
+    document.querySelectorAll('.quick-action-card[data-page]').forEach(card => {
+      card.addEventListener('click', function(e) {
+        e.preventDefault();
+        const page = this.dataset.page;
+        if (page === 'messages') window.location.href = './messages.html';
+        if (page === 'settings') window.location.href = './settings.html';
+      });
+    });
+
+    // ===== TOAST =====
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // ===== LOAD =====
+    loadDashboard();
+    
+    // Refresh data every 30 seconds
+    setInterval(loadDashboard, 30000);
+  </script>
+</body>
+</html>

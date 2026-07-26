@@ -1,0 +1,104 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "Beedaht Treats",
+      "category": "javascript node mongodb express html css",
+      "image": "./IMAGE/Screenshot 2026-03-01 141130.png",
+      "tags": ["HTML", "CSS", "JavaScript", "MongoDB", "Node.js"],
+      "features": [
+        "Full-stack e-commerce built with Node.js, MongoDB, and Firebase",
+        "Admin dashboard with full access to manage products, orders, and users",
+        "Integrated payment system using paystack for seamless transactions",
+        "Frontend built with HTML, CSS, and JavaScript for responsive design",
+        "Real-time inventory management updates after each purchase",
+        "User authentication and order tracking system"
+      ],
+      "liveLink": "https://beedahttreats.netlify.app/#products",
+      "githubLink": "https://github.com/Geeooh25/Frontend-E-commerce",
+      "stars": 15,
+      "forks": 0
+    },
+    {
+      "id": 2,
+      "title": "Multi-Currency Bank",
+      "category": "javascript html css",
+      "image": "./IMAGE/Screenshot 2026-03-01 215803.png",
+      "tags": ["HTML", "CSS", "JavaScript"],
+      "features": [
+        "Interactive frontend demo built with HTML, CSS, and JavaScript",
+        "Simulates currency switching between Naira and Dollar accounts",
+        "Clean, responsive UI that works on mobile and desktop",
+        "Demonstrates understanding of currency conversion logic",
+        "Showcases frontend development skills and attention to detail"
+      ],
+      "liveLink": "https://frontend-bank.netlify.app/",
+      "githubLink": "https://github.com/geeooh25/frontend-bank",
+      "stars": 8,
+      "forks": 1
+    },
+    {
+      "id": 3,
+      "title": "Social Media App",
+      "category": "javascript html css",
+      "image": "./IMAGE/Screenshot 2026-03-31 012545.png",
+      "tags": ["JavaScript", "HTML", "CSS"],
+      "features": [
+        "Social media management tool for scheduling and boosting posts",
+        "Built with HTML, CSS, and JavaScript for a responsive user interface",
+        "Allows users to increase engagement on social platforms",
+        "Dashboard to track boost campaigns"
+      ],
+      "liveLink": "https://milesexchange.netlify.app/",
+      "githubLink": "https://github.com/Geeooh25/social-media-marketplace",
+      "stars": 5,
+      "forks": 1
+    },
+    {
+      "id": 4,
+      "title": "Hotel Management System",
+      "category": "javascript node postgresql express ejs",
+      "image": "./IMAGE/Screenshot 2026-04-11 183700.png",
+      "tags": ["HTML", "CSS", "JavaScript", "Node.js", "PostgreSQL", "Express.js", "EJS", "Sequelize", "bcrypt", "passport.js", "nodemailer"],
+      "features": [
+        "Room booking with date selection",
+        "Stripe payment integration (test mode)",
+        "User accounts + Google OAuth login",
+        "Service ordering (Spa, Dining, Business, Parking)",
+        "Shopping cart for services",
+        "Email confirmations via Resend",
+        "Admin dashboard with booking management",
+        "Contact form + newsletter subscription",
+        "Responsive design for all devices"
+      ],
+      "liveLink": "https://fullstack-hotel-management.onrender.com/",
+      "githubLink": "https://github.com/Geeooh25/fullstack-hotel-management",
+      "stars": 5,
+      "forks": 0
+    },
+  
+  {
+  "id": 5,
+  "title": "Dry Clean Pro",
+  "category": "fullstack nodejs express sqlite javascript",
+  "image": "./IMAGE/drycleaning.png",
+  "tags": ["Node.js", "Express", "SQLite", "JWT", "HTML/CSS/JS"],
+  "features": [
+    "Full-stack management system for dry cleaning businesses",
+    "Secure admin authentication using JWT tokens",
+    "Complete order management: create, track, and update status",
+    "Customer database with full CRUD operations",
+    "Service catalog manager with pricing and categories",
+    "Payment status tracking and daily sales reports",
+    "Generate and print professional customer receipts",
+    "Export customer order history to CSV files",
+    "Fully responsive design with light/dark mode toggle"
+  ],
+  "liveLink": "https://dry-cleaning-management-service.onrender.com",
+  "githubLink": "https://github.com/Geeooh25/dry-cleaning-management-service",
+  "stars": 0,
+  "forks": 0
+
+}
+]
+}

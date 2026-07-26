@@ -1,0 +1,135 @@
+/* ===== THEME SYSTEM ===== */
+
+/* Theme transition class */
+.theme-ready * {
+  transition: background-color 0.3s ease,
+              color 0.3s ease,
+              border-color 0.3s ease,
+              box-shadow 0.3s ease !important;
+}
+
+/* Dark theme specific overrides */
+body.dark-theme .header {
+  background: rgba(11, 15, 25, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+body.dark-theme .gradient-sphere {
+  opacity: 0.15;
+}
+
+body.dark-theme .profile-ring {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  box-shadow: 0 0 30px rgba(255, 107, 0, 0.3);
+}
+
+body.dark-theme .card-3d {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .glass-3d {
+  background: rgba(17, 24, 39, 0.6);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-theme .neu-3d {
+  background: var(--bg-secondary);
+  box-shadow: 
+    8px 8px 16px rgba(0, 0, 0, 0.4),
+    -8px -8px 16px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme .btn-outline {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-theme .btn-outline:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+}
+
+/* Light theme specific */
+body.light-theme .header {
+  background: rgba(248, 250, 252, 0.8);
+}
+
+/* Auto theme detection (default) */
+@media (prefers-color-scheme: dark) {
+  body:not(.light-theme):not(.dark-theme) {
+    --bg-primary: #0B0F19;
+    --bg-secondary: #111827;
+    --bg-tertiary: #1a2332;
+    --bg-card: rgba(17, 24, 39, 0.95);
+    --bg-glass: rgba(17, 24, 39, 0.7);
+    --text-primary: #F9FAFB;
+    --text-secondary: #9CA3AF;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Theme toggle animation */
+.theme-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  animation: theme-switch 0.5s ease-out forwards;
+}
+
+@keyframes theme-switch {
+  0% {
+    clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
+    background: var(--bg-primary);
+  }
+  100% {
+    clip-path: circle(150% at var(--x, 50%) var(--y, 50%));
+    background: var(--bg-primary);
+  }
+}
+
+/* Theme-specific gradients */
+body.dark-theme .gradient-text-animated {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42, #7C3AED, #06B6D4);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 5s ease infinite;
+}
+
+body.light-theme .gradient-text-animated {
+  background: linear-gradient(135deg, #FF6B00, #7C3AED, #06B6D4);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 5s ease infinite;
+}
+
+/* Theme-specific shadows */
+body.dark-theme .glow-orange {
+  box-shadow: 0 0 30px rgba(255, 107, 0, 0.4);
+}
+
+body.dark-theme .glow-purple {
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+}
+
+body.dark-theme .glow-cyan {
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+}
+
+body.light-theme .glow-orange {
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.2);
+}
+
+body.light-theme .glow-purple {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+}
+
+body.light-theme .glow-cyan {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+}

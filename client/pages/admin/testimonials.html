@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Testimonials · GEEOOH Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/admin.css" />
+</head>
+<body class="admin-body">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">GEEOOH</div>
+      <div class="sidebar-subtitle">Admin Dashboard</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section"><div class="nav-section-title">Main</div>
+        <a href="./dashboard.html" class="nav-item">Dashboard</a>
+      </div>
+      <div class="nav-section"><div class="nav-section-title">Content</div>
+        <a href="./projects.html" class="nav-item">Projects</a>
+        <a href="./blog.html" class="nav-item">Blog</a>
+        <a href="./messages.html" class="nav-item">Messages</a>
+      </div>
+      <div class="nav-section"><div class="nav-section-title">Manage</div>
+        <a href="#" class="nav-item active">Testimonials</a>
+        <a href="./settings.html" class="nav-item">Settings</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">G</div>
+        <div class="user-details"><div class="user-name">Admin</div><div class="user-role">Admin</div></div>
+      </div>
+      <button class="logout-btn" onclick="api.logout()">Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    <div class="top-bar">
+      <div class="page-title"><h1>Testimonials</h1><p>Manage client feedback</p></div>
+      <div class="top-bar-actions"><button class="btn btn-primary" onclick="openCreateModal()">+ New Testimonial</button></div>
+    </div>
+
+    <div class="admin-table-container">
+      <table class="admin-table">
+        <thead><tr><th>Client</th><th>Company</th><th>Quote</th><th>Featured</th><th>Actions</th></tr></thead>
+        <tbody id="testimonialTableBody">
+          <tr><td colspan="5"><div class="empty-state"><div class="spinner"></div><p>Loading...</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="testimonialModal">
+    <div class="modal" style="max-width:700px;">
+      <div class="modal-header"><h2 id="modalTitle">Add Testimonial</h2><button class="modal-close" onclick="closeModal('testimonialModal')">×</button></div>
+      <form id="testimonialForm">
+        <input type="hidden" id="testimonialId" />
+        
+        <div class="form-group"><label>Client Name *</label><input type="text" id="tmName" required placeholder="Full name" /></div>
+        <div class="form-group"><label>Role</label><input type="text" id="tmRole" placeholder="CEO, Founder, etc." /></div>
+        <div class="form-group"><label>Company</label><input type="text" id="tmCompany" placeholder="Company name" /></div>
+        <div class="form-group"><label>Industry</label><input type="text" id="tmIndustry" placeholder="E-commerce, Healthcare, etc." /></div>
+        <div class="form-group"><label>Full Quote *</label><textarea id="tmQuote" required rows="3" placeholder="Full testimonial text..."></textarea></div>
+        <div class="form-group"><label>Short Quote</label><input type="text" id="tmShortQuote" placeholder="One-line summary" /></div>
+        <div class="form-group"><label>Project Name</label><input type="text" id="tmProjectName" placeholder="Associated project" /></div>
+        
+        <div class="form-group"><label>Impact Metrics (comma separated: label:value)</label>
+          <input type="text" id="tmMetrics" placeholder="Sales Increase:40%, Load Time:1.2s" />
+        </div>
+        
+        <div class="form-group">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="tmFeatured" /> Feature this testimonial
+          </label>
+        </div>
+        <div class="form-group">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="tmApproved" checked /> Approved
+          </label>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('testimonialModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="../../assets/js/api.js"></script>
+  <script>
+    if (!api.isAuthenticated()) window.location.href = './login.html';
+
+    async function loadTestimonials() {
+      try {
+        const data = await api.fetchAPI('/admin/testimonials');
+        if (data.success) renderTestimonials(data.testimonials);
+      } catch(e) { showToast('Failed to load', 'error'); }
+    }
+
+    function renderTestimonials(list) {
+      const tbody = document.getElementById('testimonialTableBody');
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><h3>No testimonials</h3><p>Add your first one</p></div></td></tr>';
+        return;
+      }
+      tbody.innerHTML = list.map(t => `
+        <tr>
+          <td><strong>${t.name}</strong><br><small style="color:var(--admin-text-secondary);">${t.role || ''}</small></td>
+          <td>${t.company || '-'}</td>
+          <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.quote.substring(0, 60)}...</td>
+          <td>${t.featured ? '⭐ Featured' : '-'}</td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn edit" onclick="openEditModal('${t._id}')">✏️</button>
+              <button class="action-btn delete" onclick="confirmDelete('${t._id}')">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openCreateModal() {
+      document.getElementById('modalTitle').textContent = 'Add Testimonial';
+      document.getElementById('testimonialForm').reset();
+      document.getElementById('testimonialId').value = '';
+      document.getElementById('tmApproved').checked = true;
+      showModal('testimonialModal');
+    }
+
+    async function openEditModal(id) {
+      const data = await api.fetchAPI('/admin/testimonials');
+      if (data.success) {
+        const t = data.testimonials.find(t => t._id === id);
+        if (!t) return;
+        document.getElementById('modalTitle').textContent = 'Edit Testimonial';
+        document.getElementById('testimonialId').value = t._id;
+        document.getElementById('tmName').value = t.name || '';
+        document.getElementById('tmRole').value = t.role || '';
+        document.getElementById('tmCompany').value = t.company || '';
+        document.getElementById('tmIndustry').value = t.industry || '';
+        document.getElementById('tmQuote').value = t.quote || '';
+        document.getElementById('tmShortQuote').value = t.shortQuote || '';
+        document.getElementById('tmProjectName').value = t.projectName || '';
+        document.getElementById('tmMetrics').value = (t.impact?.metrics || []).map(m => m.label + ':' + m.value).join(', ');
+        document.getElementById('tmFeatured').checked = t.featured || false;
+        document.getElementById('tmApproved').checked = t.approved !== false;
+        showModal('testimonialModal');
+      }
+    }
+
+    document.getElementById('testimonialForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const metricsStr = document.getElementById('tmMetrics').value;
+      const metrics = metricsStr ? metricsStr.split(',').map(m => {
+        const [label, value] = m.split(':').map(s => s.trim());
+        return { label, value };
+      }).filter(m => m.label && m.value) : [];
+
+      const data = {
+        name: document.getElementById('tmName').value,
+        role: document.getElementById('tmRole').value,
+        company: document.getElementById('tmCompany').value,
+        industry: document.getElementById('tmIndustry').value,
+        quote: document.getElementById('tmQuote').value,
+        shortQuote: document.getElementById('tmShortQuote').value,
+        projectName: document.getElementById('tmProjectName').value,
+        impact: { metrics },
+        featured: document.getElementById('tmFeatured').checked,
+        approved: document.getElementById('tmApproved').checked
+      };
+
+      const id = document.getElementById('testimonialId').value;
+      try {
+        const result = id 
+          ? await api.fetchAPI('/admin/testimonials/' + id, { method: 'PUT', body: JSON.stringify(data) })
+          : await api.fetchAPI('/admin/testimonials', { method: 'POST', body: JSON.stringify(data) });
+        if (result.success) { showToast(id ? 'Updated!' : 'Created!', 'success'); closeModal('testimonialModal'); loadTestimonials(); }
+      } catch(err) { showToast('Failed to save', 'error'); }
+    });
+
+    function confirmDelete(id) {
+      if (confirm('Delete this testimonial?')) {
+        api.fetchAPI('/admin/testimonials/' + id, { method: 'DELETE' }).then(() => { showToast('Deleted', 'success'); loadTestimonials(); });
+      }
+    }
+
+    function showModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function showToast(m, t) { const c = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = 'toast ' + t; toast.textContent = m; c.appendChild(toast); setTimeout(() => toast.remove(), 3000); }
+
+    loadTestimonials();
+  </script>
+</body>
+</html>

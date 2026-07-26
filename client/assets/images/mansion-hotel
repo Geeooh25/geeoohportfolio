@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking System - Flowcharts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        /* Navigation */
+        .nav {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .nav ul {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            list-style: none;
+        }
+
+        .nav li a {
+            display: block;
+            padding: 8px 20px;
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .nav li a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Flowchart Card */
+        .flowchart-card {
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 30px;
+            color: white;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .card-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .card-body {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        /* Flowchart Styles */
+        .flowchart {
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            background: #fafafa;
+            padding: 30px;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Legend */
+        .legend {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .legend h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-box {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .legend-box.start {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .legend-box.process {
+            background: #2196F3;
+            color: white;
+        }
+
+        .legend-box.decision {
+            background: #FF9800;
+            color: white;
+        }
+
+        .legend-box.end {
+            background: #f44336;
+            color: white;
+        }
+
+        .legend-box.database {
+            background: #9C27B0;
+            color: white;
+        }
+
+        .legend-box.external {
+            background: #00BCD4;
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .flowchart {
+                font-size: 10px;
+                padding: 15px;
+            }
+            .card-body {
+                padding: 15px;
+            }
+            .nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏨 Mansion Hotel Booking System</h1>
+            <p>Complete System Flowcharts | Architecture | Data Flow</p>
+            <div class="badge">Version 1.0 | Node.js + PostgreSQL + Stripe + SendGrid</div>
+        </div>
+
+        <div class="nav">
+            <ul>
+                <li><a href="#flow1">📖 Guest Booking</a></li>
+                <li><a href="#flow2">🔍 Availability Algorithm</a></li>
+                <li><a href="#flow3">👨‍💼 Admin Dashboard</a></li>
+                <li><a href="#flow4">✅ Check-in/out</a></li>
+                <li><a href="#flow5">💳 Stripe Payment</a></li>
+                <li><a href="#flow6">🔄 Data Flow</a></li>
+                <li><a href="#flow7">⚠️ Error Handling</a></li>
+            </ul>
+        </div>
+
+        <!-- Flowchart 1: Guest Booking Journey -->
+        <div id="flow1" class="flowchart-card">
+            <div class="card-header">
+                <h2>📖 Flowchart 1: Guest Booking Journey</h2>
+                <p>Complete user flow from landing page to booking confirmation</p>
+            </div>
+            <div class="card-body">
+                <div class="flowchart">
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                         GUEST BOOKING JOURNEY FLOWCHART                                 │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+                                    ┌─────────────┐
+                                    │   START     │
+                                    │ User visits │
+                                    │  website    │
+                                    └──────┬──────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │   Load Homepage        │
+                              │   /index.html          │
+                              │   Hero section +       │
+                              │   search box           │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ User selects:          │
+                              │ • Check-in date        │
+                              │ • Check-out date       │
+                              │ • Adults/Children      │
+                              │ Click "Check Availability"│
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │  POST /api/availability│
+                              │  Send dates + guests   │
+                              │  to server             │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Availability Service   │
+                              │ checks:                │
+                              │ • Room capacity        │
+                              │ • Date overlap         │
+                              │ • Maintenance status   │
+                              └────────────┬───────────┘
+                                           │
+                        ┌──────────────────┼──────────────────┐
+                        │                  │                  │
+                        ▼                  ▼                  ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ No rooms        │  │ Some rooms      │  │ All rooms       │
+              │ available       │  │ available       │  │ available       │
+              └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+                       │                    │                    │
+                       ▼                    ▼                    ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Show "No        │  │ Show filtered   │  │ Show all rooms  │
+              │ Availability"   │  │ room list       │  │ with prices     │
+              │ message         │  │ with prices     │  │                 │
+              └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+                       │                    │                    │
+                       └────────────────────┼────────────────────┘
+                                            │
+                                            ▼
+                              ┌────────────────────────┐
+                              │ User selects a room    │
+                              │ Clicks "Book Now"      │
+                              │ → /room-detail.html?id=X│
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Load Room Detail       │
+                              │ GET /api/rooms/:id     │
+                              │ Show:                  │
+                              │ • Room photos          │
+                              │ • Amenities            │
+                              │ • Selected dates       │
+                              │ • Total price          │
+                              │ "Book This Room" button│
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ User clicks "Book"     │
+                              │ → /booking.html        │
+                              │ with room + dates in   │
+                              │ URL parameters         │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Booking Form Page      │
+                              │ User enters:           │
+                              │ • First/Last name      │
+                              │ • Email                │
+                              │ • Phone                │
+                              │ • Special requests     │
+                              │ Click "Proceed to      │
+                              │ Payment"                │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ POST /api/bookings     │
+                              │ Create booking record  │
+                              │ Status: PENDING        │
+                              │ Generate booking ref   │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Payment Service        │
+                              │ Create Stripe          │
+                              │ Payment Intent         │
+                              │ Get checkout URL       │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Redirect to Stripe     │
+                              │ Checkout Page          │
+                              │ User enters card       │
+                              │ details securely       │
+                              └────────────┬───────────┘
+                                           │
+                        ┌──────────────────┼──────────────────┐
+                        │                  │                  │
+                        ▼                  ▼                  ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Payment         │  │ Payment         │  │ Payment         │
+              │ Successful      │  │ Declined        │  │ Cancelled       │
+              └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+                       │                    │                    │
+                       ▼                    ▼                    ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Stripe redirects│  │ Redirect back   │  │ Redirect back   │
+              │ to success URL  │  │ to booking page │  │ to homepage     │
+              │ with session_id │  │ with error      │  │                 │
+              └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+                       │                    │                    │
+                       ▼                    │                    │
+              ┌─────────────────┐            │                    │
+              │ Stripe Webhook  │            │                    │
+              │ confirms payment│            │                    │
+              └────────┬────────┘            │                    │
+                       │                     │                    │
+                       ▼                     │                    │
+              ┌─────────────────┐            │                    │
+              │ Update Booking  │            │                    │
+              │ Status: CONFIRMED│            │                    │
+              │ Payment: PAID   │            │                    │
+              └────────┬────────┘            │                    │
+                       │                     │                    │
+                       ▼                     ▼                    ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Send Confirmation│  │ Show error      │  │ Show cancelled  │
+              │ Email via        │  │ message,        │  │ message         │
+              │ SendGrid         │  │ retry payment   │  │                 │
+              └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+                       │                    │                    │
+                       └────────────────────┼────────────────────┘
+                                            │
+                                            ▼
+                              ┌────────────────────────┐
+                              │ Show Booking           │
+                              │ Confirmation Page      │
+                              │ • Booking reference    │
+                              │ • Room details         │
+                              │ • Dates                │
+                              │ • Total paid           │
+                              │ • Email sent notice    │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                                    ┌─────────────┐
+                                    │    END      │
+                                    │ Booking     │
+                                    │ Complete    │
+                                    └─────────────┘
+                </div>
+            </div>
+        </div>
+
+        <!-- Flowchart 2: Availability Check Algorithm -->
+        <div id="flow2" class="flowchart-card">
+            <div class="card-header">
+                <h2>🔍 Flowchart 2: Availability Check Algorithm</h2>
+                <p>Core logic for checking if a room is available for selected dates</p>
+            </div>
+            <div class="card-body">
+                <div class="flowchart">
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                      AVAILABILITY CHECK ALGORITHM FLOWCHART                             │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+                                    ┌─────────────┐
+                                    │   START     │
+                                    │ Input:      │
+                                    │ room_id,    │
+                                    │ check_in,   │
+                                    │ check_out   │
+                                    └──────┬──────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Validate Input         │
+                              │ • check_in < check_out │
+                              │ • check_in >= today    │
+                              │ • Max stay ≤ 30 days   │
+                              └────────────┬───────────┘
+                                           │
+                        ┌──────────────────┼──────────────────┐
+                        │                  │                  │
+                        ▼                  ▼                  ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Invalid         │  │ Valid           │  │ Valid           │
+              └────────┬────────┘  └────────┬────────┘  └─────────────────┘
+                       │                    │
+                       ▼                    ▼
+              ┌─────────────────┐  ┌────────────────────────┐
+              │ Return error    │  │ Fetch Room Details     │
+              │ "Invalid dates" │  │ • capacity             │
+              └─────────────────┘  │ • status               │
+                                   │ • room_type_id         │
+                                   └────────────┬───────────┘
+                                                │
+                                                ▼
+                                   ┌────────────────────────┐
+                                   │ Check Room Status      │
+                                   │ • Is room active?      │
+                                   │ • Is room maintenance? │
+                                   └────────────┬───────────┘
+                                                │
+                        ┌───────────────────────┼───────────────────────┐
+                        │                       │                       │
+                        ▼                       ▼                       ▼
+              ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+              │ Room inactive   │     │ Room in         │     │ Room available  │
+              │ or maintenance  │     │ maintenance     │     │ for dates       │
+              └────────┬────────┘     └────────┬────────┘     └────────┬────────┘
+                       │                       │                       │
+                       ▼                       ▼                       │
+              ┌─────────────────┐     ┌─────────────────┐               │
+              │ Return false    │     │ Return false    │               │
+              │ "Room unavailable"│   │ "Under maintenance"│             │
+              └─────────────────┘     └─────────────────┘               │
+                                                                        │
+                                                                        ▼
+                                   ┌────────────────────────────────────────┐
+                                   │ Query Database for Overlapping        │
+                                   │ Bookings                              │
+                                   │                                        │
+                                   │ SELECT * FROM bookings                │
+                                   │ WHERE room_id = :room_id              │
+                                   │ AND status NOT IN ('cancelled')       │
+                                   │ AND check_in < :check_out             │
+                                   │ AND check_out > :check_in             │
+                                   └────────────────────┬───────────────────┘
+                                                        │
+                                                        ▼
+                                   ┌────────────────────────────────────────┐
+                                   │ Count overlapping bookings            │
+                                   └────────────────────┬───────────────────┘
+                                                        │
+                        ┌───────────────────────────────┼───────────────────────────────┐
+                        │                               │                               │
+                        ▼                               ▼                               ▼
+              ┌─────────────────┐               ┌─────────────────┐               ┌─────────────────┐
+              │ Overlaps > 0    │               │ Overlaps = 0    │               │ Overlaps = 0    │
+              │ Room is booked  │               │ Room is free    │               │ Room is free    │
+              │ for these dates │               │                 │               │                 │
+              └────────┬────────┘               └────────┬────────┘               └─────────────────┘
+                       │                                 │
+                       ▼                                 ▼
+              ┌─────────────────┐               ┌────────────────────────────────────────┐
+              │ Return false    │               │ Check Guest Capacity                  │
+              │ "Room already   │               │                                        │
+              │ booked"         │               │ guests_requested ≤ room.capacity      │
+              └─────────────────┘               └────────────────────┬───────────────────┘
+                                                                    │
+                                                 ┌──────────────────┼──────────────────┐
+                                                 │                  │                  │
+                                                 ▼                  ▼                  ▼
+                                       ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+                                       │ Capacity        │  │ Capacity        │  │ Capacity        │
+                                       │ Exceeded        │  │ Met             │  │ Under           │
+                                       └────────┬────────┘  └────────┬────────┘  └─────────────────┘
+                                                │                    │
+                                                ▼                    ▼
+                                       ┌─────────────────┐  ┌────────────────────────────────────────┐
+                                       │ Return false    │  │ Calculate Price                        │
+                                       │ "Room cannot    │  │                                        │
+                                       │ accommodate X   │  │ • Base price from room type           │
+                                       │ guests"         │  │ • Seasonal adjustment                 │
+                                       └─────────────────┘  │ • Weekend adjustment                   │
+                                                            │ • Long stay discount                   │
+                                                            │ • Early bird discount                  │
+                                                            └────────────────────┬───────────────────┘
+                                                                                 │
+                                                                                 ▼
+                                                            ┌────────────────────────────────────────┐
+                                                            │ Return Availability Result              │
+                                                            │ {                                       │
+                                                            │   available: true,                      │
+                                                            │   nightly_rate: 199,                    │
+                                                            │   total_nights: 3,                      │
+                                                            │   total_price: 597,                     │
+                                                            │   room_details: {...}                   │
+                                                            │ }                                       │
+                                                            └────────────────────────────────────────┘
+                </div>
+            </div>
+        </div>
+
+        <!-- Flowchart 3: Admin Dashboard Operations -->
+        <div id="flow3" class="flowchart-card">
+            <div class="card-header">
+                <h2>👨‍💼 Flowchart 3: Admin Dashboard Operations</h2>
+                <p>Staff management workflow for hotel operations</p>
+            </div>
+            <div class="card-body">
+                <div class="flowchart">
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                        ADMIN DASHBOARD OPERATIONS FLOWCHART                             │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+                                    ┌─────────────┐
+                                    │   START     │
+                                    │ Admin visits│
+                                    │ /admin/login│
+                                    └──────┬──────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Enter email & password │
+                              │ Click "Login"          │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ POST /api/admin/login  │
+                              │ Verify credentials     │
+                              │ Create session         │
+                              └────────────┬───────────┘
+                                           │
+                        ┌──────────────────┼──────────────────┐
+                        │                  │                  │
+                        ▼                  ▼                  ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Invalid         │  │ Valid           │  │ Valid           │
+              │ credentials     │  │ Role: Reception │  │ Role: Admin     │
+              └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+                       │                    │                    │
+                       ▼                    ▼                    ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Show error      │  │ Redirect to     │  │ Redirect to     │
+              │ "Invalid login" │  │ /admin/dashboard│  │ /admin/dashboard│
+              └─────────────────┘  │ (limited view)  │  │ (full access)   │
+                                   └────────┬────────┘  └────────┬────────┘
+                                            │                    │
+                                            └────────┬───────────┘
+                                                     │
+                                                     ▼
+                                   ┌────────────────────────────────────────┐
+                                   │         ADMIN DASHBOARD                │
+                                   │  GET /api/admin/dashboard              │
+                                   │  Load:                                 │
+                                   │  • Today's check-ins (5)               │
+                                   │  • Today's check-outs (3)              │
+                                   │  • Occupancy rate (78%)                │
+                                   │  • Revenue this month ($45,230)        │
+                                   │  • Recent bookings (10)                │
+                                   └────────────────────┬───────────────────┘
+                                                        │
+        ┌───────────────────────────────────────────────┼───────────────────────────────────────────────┐
+        │                                               │                                               │
+        ▼                                               ▼                                               ▼
+┌───────────────┐                               ┌───────────────┐                               ┌───────────────┐
+│  Manage Rooms │                               │ Manage        │                               │ Manage        │
+│  Click "Rooms"│                               │ Bookings      │                               │ Guests        │
+│  in sidebar   │                               │ Click         │                               │ Click "Guests"│
+└───────┬───────┘                               │ "Bookings"    │                               └───────┬───────┘
+        │                                       └───────┬───────┘                                       │
+        ▼                                               ▼                                               ▼
+┌───────────────┐                               ┌───────────────┐                               ┌───────────────┐
+│ GET /api/admin│                               │ GET /api/admin│                               │ GET /api/admin│
+│ /rooms        │                               │ /bookings     │                               │ /guests       │
+│ Display:      │                               │ Display:      │                               │ Display:      │
+│ • Room list   │                               │ • All bookings│                               │ • Guest list  │
+│ • Status      │                               │ • Filters     │                               │ • Search      │
+│ • Edit/Delete │                               │ • Status      │                               │ • History     │
+└───────┬───────┘                               │   update      │                               └───────┬───────┘
+        │                                       └───────┬───────┘                                       │
+        ▼                                               ▼                                               ▼
+┌───────────────┐                               ┌───────────────┐                               ┌───────────────┐
+│ Actions:      │                               │ Actions:      │                               │ Actions:      │
+│ • Add room    │                               │ • View details│                               │ • View profile│
+│ • Edit room   │                               │ • Confirm     │                               │ • Add note    │
+│ • Delete room │                               │ • Check-in    │                               │ • Blacklist   │
+│ • Set price   │                               │ • Check-out   │                               │ • View history│
+│ • Upload image│                               │ • Cancel      │                               └───────────────┘
+│   (convert to │                               │ • Send email  │
+│    AVIF)      │                               └───────────────┘
+└───────────────┘
+
+        ┌───────────────────────────────────────────────┼───────────────────────────────────────────────┐
+        │                                               │                                               │
+        ▼                                               ▼                                               ▼
+┌───────────────┐                               ┌───────────────┐                               ┌───────────────┐
+│  Calendar     │                               │ Housekeeping  │                               │  Reports      │
+│  View         │                               │ Management    │                               │  & Analytics  │
+│  Click        │                               │ Click         │                               │  Click        │
+│  "Calendar"   │                               │ "Housekeeping"│                               │  "Reports"    │
+└───────┬───────┘                               └───────┬───────┘                               └───────┬───────┘
+        │                                               │                                               │
+        ▼                                               ▼                                               ▼
+┌───────────────┐                               ┌───────────────┐                               ┌───────────────┐
+│ GET /api/admin│                               │ GET /api/admin│                               │ GET /api/admin│
+│ /calendar     │                               │ /housekeeping │                               │ /reports      │
+│ Display:      │                               │ Display:      │                               │ Generate:     │
+│ • Month view  │                               │ • Rooms by    │                               │ • Occupancy   │
+│ • Day view    │                               │   status      │                               │   report      │
+│ • Bookings    │                               │ • Clean/dirty │                               │ • Revenue     │
+│ • Drag & drop │                               │ • Assign staff│                               │   report      │
+│   to move     │                               │ • Mark        │                               │ • Guest stats │
+│   bookings    │                               │   completed   │                               │ • Forecasting │
+└───────────────┘                               └───────────────┘                               └───────────────┘
+                </div>
+            </div>
+        </div>
+
+        <!-- Flowchart 4: Check-in/Check-out Process -->
+        <div id="flow4" class="flowchart-card">
+            <div class="card-header">
+                <h2>✅ Flowchart 4: Check-in / Check-out Process</h2>
+                <p>Front desk operations for guest arrival and departure</p>
+            </div>
+            <div class="card-body">
+                <div class="flowchart">
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                         CHECK-IN / CHECK-OUT PROCESS FLOWCHART                          │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+                                    ┌─────────────┐
+                                    │   START     │
+                                    │ Guest       │
+                                    │ arrives at  │
+                                    │ hotel       │
+                                    └──────┬──────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Receptionist searches  │
+                              │ booking by:            │
+                              │ • Name                 │
+                              │ • Booking reference    │
+                              │ • Email                │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ GET /api/admin/bookings│
+                              │ /search?q=...          │
+                              │ Display booking        │
+                              │ details                │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Verify booking status  │
+                              └────────────┬───────────┘
+                                           │
+                        ┌──────────────────┼──────────────────┐
+                        │                  │                  │
+                        ▼                  ▼                  ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Status:         │  │ Status:         │  │ Status:         │
+              │ CONFIRMED       │  │ CHECKED_IN      │  │ CANCELLED       │
+              │                 │  │                 │  │ or COMPLETED    │
+              └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+                       │                    │                    │
+                       ▼                    ▼                    ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Proceed to      │  │ Show error:     │  │ Show error:     │
+              │ check-in        │  │ "Guest already  │  │ "Booking not    │
+              │                 │  │ checked in"     │  │ valid"          │
+              └────────┬────────┘  └─────────────────┘  └─────────────────┘
+                       │
+                       ▼
+              ┌─────────────────────────────────────────────────────────────┐
+              │                    CHECK-IN PROCESS                         │
+              │  ┌─────────────────────────────────────────────────────┐   │
+              │  │ 1. Verify ID (passport/driver's license)           │   │
+              │  │ 2. Scan/upload ID document                         │   │
+              │  │ 3. Confirm booking details                         │   │
+              │  │ 4. Collect remaining balance if any                 │   │
+              │  │ 5. Assign room (if not pre-assigned)               │   │
+              │  │ 6. Create room key/card                            │   │
+              │  │ 7. Explain hotel amenities and policies            │   │
+              │  └─────────────────────────────────────────────────────┘   │
+              └────────────────────────────┬────────────────────────────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ PUT /api/admin/bookings│
+                              │ /:id/check-in          │
+                              │ Update:                │
+                              │ • status = CHECKED_IN  │
+                              │ • checked_in_at = now  │
+                              │ • room_id (if changed) │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Update Room Status     │
+                              │ Room.status = OCCUPIED │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Create Housekeeping    │
+                              │ Task:                  │
+                              │ • Room to be cleaned   │
+                              │   after checkout       │
+                              │ • Status: PENDING      │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Send Check-in          │
+                              │ Confirmation Email     │
+                              │ (optional - to guest)  │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ GUEST STAY IN PROGRESS │
+                              │ • Daily housekeeping   │
+                              │ • Room service orders  │
+                              │ • Additional charges   │
+                              │ • Extension requests   │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ GUEST DEPARTS          │
+                              │ Request check-out      │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+              ┌─────────────────────────────────────────────────────────────┐
+              │                    CHECK-OUT PROCESS                        │
+              │  ┌─────────────────────────────────────────────────────┐   │
+              │  │ 1. Review folio (all charges)                      │   │
+              │  │ 2. Add any extra charges (mini bar, damages)       │   │
+              │  │ 3. Calculate final amount                          │   │
+              │  │ 4. Process payment for remaining balance           │   │
+              │  │ 5. Email receipt to guest                          │   │
+              │  │ 6. Return room keys                                │   │
+              │  │ 7. Ask for feedback/review                         │   │
+              │  └─────────────────────────────────────────────────────┘   │
+              └────────────────────────────┬────────────────────────────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ PUT /api/admin/bookings│
+                              │ /:id/check-out         │
+                              │ Update:                │
+                              │ • status = CHECKED_OUT │
+                              │ • checked_out_at = now │
+                              │ • final_amount         │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Update Room Status     │
+                              │ Room.status = CLEANING │
+                              │ (housekeeping assigned)│
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Record Payment         │
+                              │ • Create payment record│
+                              │ • If partial, mark     │
+                              │   remaining as paid    │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Send Receipt Email     │
+                              │ via SendGrid           │
+                              │ • Itemized charges     │
+                              │ • Payment confirmation │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Update Guest History   │
+                              │ • total_stays +1       │
+                              │ • total_spent + amount │
+                              │ • Add to history       │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                                    ┌─────────────┐
+                                    │    END      │
+                                    │ Check-out   │
+                                    │ Complete    │
+                                    └─────────────┘
+                </div>
+            </div>
+        </div>
+
+        <!-- Flowchart 5: Stripe Payment Processing -->
+        <div id="flow5" class="flowchart-card">
+            <div class="card-header">
+                <h2>💳 Flowchart 5: Stripe Payment Processing</h2>
+                <p>Complete payment flow with Stripe integration and webhooks</p>
+            </div>
+            <div class="card-body">
+                <div class="flowchart">
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                        STRIPE PAYMENT PROCESSING FLOWCHART                              │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+                                    ┌─────────────┐
+                                    │   START     │
+                                    │ Booking     │
+                                    │ created     │
+                                    │ PENDING     │
+                                    └──────┬──────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Payment Service        │
+                              │ createPaymentIntent()  │
+                              │ Parameters:            │
+                              │ • amount (in cents)    │
+                              │ • currency (USD)       │
+                              │ • metadata:            │
+                              │   - booking_id         │
+                              │   - guest_email        │
+                              │   - room_type          │
+                              └────────────┬───────────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Stripe API Call        │
+                              │ stripe.paymentIntents  │
+                              │ .create({...})         │
+                              └────────────┬───────────┘
+                                           │
+                        ┌──────────────────┼──────────────────┐
+                        │                  │                  │
+                        ▼                  ▼                  ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Success         │  │ Error           │  │ Error           │
+              │ Returns         │  │ Invalid amount  │  │ API connection  │
+              │ client_secret   │  │                 │  │ failed          │
+              └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+                       │                    │                    │
+                       ▼                    ▼                    ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Store payment   │  │ Return error    │  │ Retry with      │
+              │ intent ID in    │  │ to client       │  │ exponential     │
+              │ database        │  │                 │  │ backoff         │
+              │ status: pending │  └─────────────────┘  └─────────────────┘
+              └────────┬────────┘
+                       │
+                       ▼
+              ┌─────────────────────────────────────────────────────────────┐
+              │ Redirect to Stripe Checkout Page                           │
+              │ URL: https://checkout.stripe.com/pay/...                   │
+              │                                                             │
+              │ Stripe handles:                                             │
+              │ • Credit card form (PCI compliant)                         │
+              │ • 3D Secure authentication if needed                       │
+              │ • Saved payment methods                                    │
+              │ • Apple Pay / Google Pay                                   │
+              └────────────────────────────┬────────────────────────────────┘
+                                           │
+                                           ▼
+                        ┌──────────────────────────────────────┐
+                        │         USER INTERACTION             │
+                        │  ┌────────────────────────────────┐  │
+                        │  │ User enters card details       │  │
+                        │  │ Clicks "Pay"                   │  │
+                        │  └────────────────────────────────┘  │
+                        └──────────────────┬───────────────────┘
+                                           │
+        ┌──────────────────────────────────┼──────────────────────────────────┐
+        │                                  │                                  │
+        ▼                                  ▼                                  ▼
+┌───────────────┐                  ┌───────────────┐                  ┌───────────────┐
+│ Payment       │                  │ Payment       │                  │ Payment       │
+│ Successful    │                  │ Declined      │                  │ Cancelled     │
+│ (succeeded)   │                  │ (insufficient │                  │ (user closed  │
+│               │                  │  funds)       │                  │  page)        │
+└───────┬───────┘                  └───────┬───────┘                  └───────┬───────┘
+        │                                  │                                  │
+        ▼                                  ▼                                  ▼
+┌───────────────┐                  ┌───────────────┐                  ┌───────────────┐
+│ Stripe sends  │                  │ Stripe sends  │                  │ Stripe sends  │
+│ webhook to    │                  │ webhook to    │                  │ webhook to    │
+│ your server   │                  │ your server   │                  │ your server   │
+│ payment_intent│                  │ payment_intent│                  │ payment_intent│
+│ .succeeded    │                  │ .failed       │                  │ .canceled     │
+└───────┬───────┘                  └───────┬───────┘                  └───────┬───────┘
+        │                                  │                                  │
+        ▼                                  ▼                                  ▼
+┌───────────────┐                  ┌───────────────┐                  ┌───────────────┐
+│ Webhook       │                  │ Webhook       │                  │ Webhook       │
+│ Handler:      │                  │ Handler:      │                  │ Handler:      │
+│ /webhooks/    │                  │ /webhooks/    │                  │ /webhooks/    │
+│ stripe        │                  │ stripe        │                  │ stripe        │
+└───────┬───────┘                  └───────┬───────┘                  └───────┬───────┘
+        │                                  │                                  │
+        ▼                                  ▼                                  ▼
+┌───────────────┐                  ┌───────────────┐                  ┌───────────────┐
+│ Verify        │                  │ Verify        │                  │ Verify        │
+│ webhook       │                  │ webhook       │                  │ webhook       │
+│ signature     │                  │ signature     │                  │ signature     │
+└───────┬───────┘                  └───────┬───────┘                  └───────┬───────┘
+        │                                  │                                  │
+        ▼                                  ▼                                  ▼
+┌───────────────┐                  ┌───────────────┐                  ┌───────────────┐
+│ Get booking_id│                  │ Get booking_id│                  │ Get booking_id│
+│ from metadata │                  │ from metadata │                  │ from metadata │
+└───────┬───────┘                  └───────┬───────┘                  └───────┬───────┘
+        │                                  │                                  │
+        ▼                                  ▼                                  ▼
+┌───────────────┐                  ┌───────────────┐                  ┌───────────────┐
+│ Update Booking│                  │ Update Booking│                  │ Update Booking│
+│ status:       │                  │ status:       │                  │ status:       │
+│ CONFIRMED     │                  │ PENDING       │                  │ CANCELLED     │
+│ payment_status│                  │ (retry later) │                  │               │
+│ : PAID        │                  │               │                  │               │
+└───────┬───────┘                  └───────────────┘                  └───────┬───────┘
+        │                                                                      │
+        ▼                                                                      │
+┌───────────────┐                                                              │
+│ Update Room   │                                                              │
+│ Status:       │                                                              │
+│ Room.status = │                                                              │
+│ BOOKED for    │                                                              │
+│ those dates   │                                                              │
+└───────┬───────┘                                                              │
+        │                                                                      │
+        ▼                                                                      │
+┌───────────────┐                                                              │
+│ Create Payment│                                                              │
+│ Record:       │                                                              │
+│ • amount      │                                                              │
+│ • stripe_id   │                                                              │
+│ • status: paid│                                                              │
+└───────┬───────┘                                                              │
+        │                                                                      │
+        ▼                                                                      │
+┌───────────────┐                                                              │
+│ Send Email    │                                                              │
+│ via SendGrid: │                                                              │
+│ • Booking     │                                                              │
+│   confirmation│                                                              │
+│ • Receipt     │                                                              │
+└───────┬───────┘                                                              │
+        │                                                                      │
+        ▼                                                                      │
+┌───────────────┐                                                              │
+│ Notify Admin  │                                                              │
+│ via:          │                                                              │
+│ • Dashboard   │                                                              │
+│   notification│                                                              │
+│ • Email alert │                                                              │
+└───────┬───────┘                                                              │
+        │                                                                      │
+        └──────────────────────────────────────────────────────────────────────┘
+                                                                               │
+                                                                               ▼
+                                                                    ┌─────────────┐
+                                                                    │    END      │
+                                                                    │ Payment     │
+                                                                    │ Processed   │
+                                                                    └─────────────┘
+                </div>
+            </div>
+        </div>
+
+        <!-- Flowchart 6: Data Flow Between Components -->
+        <div id="flow6" class="flowchart-card">
+            <div class="card-header">
+                <h2>🔄 Flowchart 6: Data Flow Between Components</h2>
+                <p>How data moves through the system architecture</p>
+            </div>
+            <div class="card-body">
+                <div class="flowchart">
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                         DATA FLOW BETWEEN COMPONENTS                                     │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                    FRONTEND (Browser)                                    │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
+│  │  HTML Pages                    JavaScript Files                                 │   │
+│  │  ┌─────────────┐              ┌─────────────┐                                  │   │
+│  │  │ index.html  │─────────────▶│  main.js    │                                  │   │
+│  │  ├─────────────┤              ├─────────────┤                                  │   │
+│  │  │ rooms.html  │─────────────▶│  rooms.js   │                                  │   │
+│  │  ├─────────────┤              ├─────────────┤                                  │   │
+│  │  │booking.html │─────────────▶│ booking.js  │                                  │   │
+│  │  ├─────────────┤              ├─────────────┤                                  │   │
+│  │  │ admin/*.html│─────────────▶│ admin/*.js  │                                  │   │
+│  │  └─────────────┘              └─────────────┘                                  │   │
+│  └─────────────────────────────────────────────────────────────────────────────────┘   │
+│                                          │                                              │
+│                                          │ fetch() / XMLHttpRequest                     │
+│                                          │ JSON Data                                    │
+│                                          ▼                                              │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+                                           │
+                                           ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                    BACKEND (Node.js)                                     │
+│                                                                                          │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
+│  │                              ROUTES (app.js)                                     │   │
+│  │  ┌─────────────────────────────────────────────────────────────────────────┐   │   │
+│  │  │  GET  /api/rooms         → RoomController.getAll()                      │   │   │
+│  │  │  POST /api/availability  → AvailabilityController.check()               │   │   │
+│  │  │  POST /api/bookings      → BookingController.create()                   │   │   │
+│  │  │  GET  /api/admin/*       → AdminController.* (with auth middleware)     │   │   │
+│  │  └─────────────────────────────────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────────────────────────────────┘   │
+│                                          │                                              │
+│                                          ▼                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
+│  │                            CONTROLLERS                                          │   │
+│  │  ┌─────────────────────────────────────────────────────────────────────────┐   │   │
+│  │  │ BookingController.create()                                              │   │   │
+│  │  │   ├─ Validate input                                                     │   │   │
+│  │  │   ├─ Call AvailabilityService.check()                                   │   │   │
+│  │  │   ├─ Call PricingService.calculate()                                    │   │   │
+│  │  │   ├─ Create booking record in DB                                        │   │   │
+│  │  │   ├─ Call PaymentService.createIntent()                                 │   │   │
+│  │  │   └─ Return checkout URL to frontend                                    │   │   │
+│  │  └─────────────────────────────────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────────────────────────────────┘   │
+│                                          │                                              │
+│                                          ▼                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
+│  │                             SERVICES                                            │   │
+│  │  ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐               │   │
+│  │  │AvailabilityService│ │  PricingService  │ │  PaymentService  │               │   │
+│  │  │ .check()         │ │ .calculate()     │ │ .createIntent()  │               │   │
+│  │  │   │              │ │   │              │ │   │              │               │   │
+│  │  │   ▼              │ │   ▼              │ │   ▼              │               │   │
+│  │  │ Query DB for     │ │ Apply:           │ │ Call Stripe API  │               │   │
+│  │  │ overlapping      │ │ • Base price     │ │ Return           │               │   │
+│  │  │ bookings         │ │ • Season adj     │ │ client_secret    │               │   │
+│  │  │ Return bool      │ │ • Weekend adj    │ │                  │               │   │
+│  │  └──────────────────┘ └──────────────────┘ └──────────────────┘               │   │
+│  │                                                                                 │   │
+│  │  ┌──────────────────┐ ┌──────────────────┐                                     │   │
+│  │  │  EmailService    │ │  ImageService    │                                     │   │
+│  │  │ .send()          │ │ .convertToAvif() │                                     │   │
+│  │  │   │              │ │   │              │                                     │   │
+│  │  │   ▼              │ │   ▼              │                                     │   │
+│  │  │ Call SendGrid    │ │ Use Sharp to     │                                     │   │
+│  │  │ API              │ │ convert images   │                                     │   │
+│  │  └──────────────────┘ └──────────────────┘                                     │   │
+│  └─────────────────────────────────────────────────────────────────────────────────┘   │
+│                                          │                                              │
+│                                          ▼                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
+│  │                              MODELS (Sequelize)                                 │   │
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐     │   │
+│  │  │  Room   │ │ Booking │ │  Guest  │ │ Payment │ │  User   │ │Housekeep│     │   │
+│  │  │ .findAll│ │ .create │ │ .findOne│ │ .create │ │ .findBy │ │ .update │     │   │
+│  │  │ .update │ │ .update │ │ .update │ │ .update │ │ .create │ │ .delete │     │   │
+│  │  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘     │   │
+│  └─────────────────────────────────────────────────────────────────────────────────┘   │
+│                                          │                                              │
+│                                          ▼                                              │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+                                           │
+                                           ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                              POSTGRESQL DATABASE                                        │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐   │
+│  │  Tables:                                                                        │   │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐            │   │
+│  │  │  rooms   │ │ bookings │ │  guests  │ │ payments │ │  users   │            │   │
+│  │  ├──────────┤ ├──────────┤ ├──────────┤ ├──────────┤ ├──────────┤            │   │
+│  │  │ id       │ │ id       │ │ id       │ │ id       │ │ id       │            │   │
+│  │  │ number   │ │ ref      │ │ name     │ │ amount   │ │ email    │            │   │
+│  │  │ type_id  │ │ guest_id │ │ email    │ │ status   │ │ role     │            │   │
+│  │  │ status   │ │ room_id  │ │ phone    │ │ booking_id│ │ password │            │   │
+│  │  │ price    │ │ check_in │ │ ...      │ │ stripe_id│ │ ...      │            │   │
+│  │  │ ...      │ │ check_out│ └──────────┘ └──────────┘ └──────────┘            │   │
+│  │  └──────────┘ │ status   │                                                     │   │
+│  │               │ ...      │                                                     │   │
+│  │               └──────────┘                                                     │   │
+│  └─────────────────────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+                                           │
+                        ┌──────────────────┼──────────────────┐
+                        │                  │                  │
+                        ▼                  ▼                  ▼
+┌───────────────────────────────┐ ┌───────────────────────────────┐ ┌───────────────────────────────┐
+│         STRIPE API            │ │        SENDGRID API           │ │        CLOUD STORAGE          │
+│  ┌─────────────────────────┐  │ │  ┌─────────────────────────┐  │ │  ┌─────────────────────────┐  │
+│  │ Payment Intents         │  │ │  │ Email Templates         │  │ │  │ Room Images (AVIF)      │  │
+│  │ Checkout Sessions       │  │ │  │ • Booking confirmation  │  │ │  │ • Uploaded by admin     │  │
+│  │ Webhooks                │  │ │  │ • Check-in reminder     │  │ │  │ • Converted to AVIF     │  │
+│  │ Refunds                 │  │ │  │ • Check-out receipt     │  │ │  │ • Served via CDN        │  │
+│  └─────────────────────────┘  │ │  └─────────────────────────┘  │ │  └─────────────────────────┘  │
+└───────────────────────────────┘ └───────────────────────────────┘ └───────────────────────────────┘
+                </div>
+            </div>
+        </div>
+
+        <!-- Flowchart 7: Error Handling Flow -->
+        <div id="flow7" class="flowchart-card">
+            <div class="card-header">
+                <h2>⚠️ Flowchart 7: Error Handling Flow</h2>
+                <p>How errors are caught, logged, and displayed to users</p>
+            </div>
+            <div class="card-body">
+                <div class="flowchart">
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                           ERROR HANDLING FLOWCHART                                       │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+                                    ┌─────────────┐
+                                    │   START     │
+                                    │ Request     │
+                                    │ received    │
+                                    └──────┬──────┘
+                                           │
+                                           ▼
+                              ┌────────────────────────┐
+                              │ Try/Catch Block        │
+                              │ in Controller          │
+                              └────────────┬───────────┘
+                                           │
+                        ┌──────────────────┼──────────────────┐
+                        │                  │                  │
+                        ▼                  ▼                  ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ No Error        │  │ Validation      │  │ Database        │
+              │ Process         │  │ Error           │  │ Error           │
+              │ normally        │  │                 │  │                 │
+              └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+                       │                    │                    │
+                       ▼                    ▼                    ▼
+              ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+              │ Return success  │  │ Catch           │  │ Catch           │
+              │ response        │  │ ValidationError │  │ DatabaseError   │
+              │ 200 OK          │  │                 │  │                 │
+              └─────────────────┘  └────────┬────────┘  └────────┬────────┘
+                                           │                    │
+                                           └────────┬───────────┘
+                                                    │
+                                                    ▼
+                                   ┌────────────────────────────────────────┐
+                                   │ Error Handler Middleware              │
+                                   │                                        │
+                                   │ function errorHandler(err, req, res,  │
+                                   │ next) {                               │
+                                   │   console.error(err.stack);           │
+                                   │   logger.error(err);                  │
+                                   │                                        │
+                                   │   const status = err.status || 500;   │
+                                   │   const message = err.message ||      │
+                                   │     'Internal Server Error';          │
+                                   │                                        │
+                                   │   res.status(status).json({           │
+                                   │     success: false,                   │
+                                   │     error: message,                   │
+                                   │     code: err.code                    │
+                                   │   });                                 │
+                                   │ }                                      │
+                                   └────────────────────┬───────────────────┘
+                                                        │
+        ┌───────────────────────────────────────────────┼───────────────────────────────────────────────┐
+        │                                               │                                               │
+        ▼                                               ▼                                               ▼
+┌───────────────┐                               ┌───────────────┐                               ┌───────────────┐
+│ 400 Bad       │                               │ 404 Not Found │                               │ 500 Internal  │
+│ Request       │                               │               │                               │ Server Error  │
+├───────────────┤                               ├───────────────┤                               ├───────────────┤
+│ • Invalid     │                               │ • Room not    │                               │ • Database    │
+│   dates       │                               │   found       │                               │   connection  │
+│ • Missing     │                               │ • Booking not │                               │   failed      │
+│   fields      │                               │   found       │                               │ • Stripe API  │
+│ • Wrong data  │                               │ • Guest not   │                               │   error       │
+│   type        │                               │   found       │                               │ • SendGrid    │
+│ • Capacity    │                               │ • Page not    │                               │   error       │
+│   exceeded    │                               │   found       │                               │ • Unknown     │
+└───────────────┘                               └───────────────┘                               │   exception   │
+                                                                                                └───────────────┘
+
+        ┌───────────────────────────────────────────────────────────────────────────────────────┐
+        │                                    FRONTEND HANDLING                                  │
+        │  ┌─────────────────────────────────────────────────────────────────────────────────┐ │
+        │  │ async function apiCall() {                                                      │ │
+        │  │   try {                                                                          │ │
+        │  │     const response = await fetch('/api/...');                                    │ │
+        │  │     if (!response.ok) {                                                          │ │
+        │  │       const error = await response.json();                                       │ │
+        │  │       showToast(error.error, 'error');                                           │ │
+        │  │       return;                                                                    │ │
+        │  │     }                                                                             │ │
+        │  │     const data = await response.json();                                          │ │
+        │  │     // Process data                                                              │ │
+        │  │   } catch (error) {                                                              │ │
+        │  │     showToast('Network error. Please check your connection.', 'error');          │ │
+        │  │     console.error(error);                                                         │ │
+        │  │   }                                                                               │ │
+        │  │ }                                                                                 │ │
+        │  └─────────────────────────────────────────────────────────────────────────────────┘ │
+        └───────────────────────────────────────────────────────────────────────────────────────┘
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <h3>📖 Flowchart Legend</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-box start">S</div>
+                    <span>Start / End Node</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box process">P</div>
+                    <span>Process / Action</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box decision">D</div>
+                    <span>Decision / Branch</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box database">DB</div>
+                    <span>Database Operation</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box external">API</div>
+                    <span>External Service (Stripe/SendGrid)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box">→</div>
+                    <span>Flow Direction</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Mansion Hotel Booking System | Complete System Flowcharts | Version 1.0</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Built with Node.js + Express + PostgreSQL + Stripe + SendGrid</p>
+        </div>
+    </div>
+</body>
+</html>

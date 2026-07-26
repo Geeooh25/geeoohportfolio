@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Messages · GEEOOH Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/admin.css" />
+  <style>
+    .messages-layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 24px;
+      height: calc(100vh - 200px);
+    }
+    
+    .conversation-list {
+      background: var(--admin-card);
+      border: 1px solid var(--admin-border);
+      border-radius: 16px;
+      overflow-y: auto;
+    }
+    
+    .conversation-item {
+      padding: 16px;
+      border-bottom: 1px solid var(--admin-border);
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      gap: 12px;
+    }
+    
+    .conversation-item:hover {
+      background: rgba(255,255,255,0.02);
+    }
+    
+    .conversation-item.active {
+      background: rgba(255,107,0,0.05);
+      border-left: 3px solid var(--admin-accent);
+    }
+    
+    .conversation-item.unread {
+      background: rgba(255,107,0,0.03);
+    }
+    
+    .conv-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--admin-accent), var(--admin-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    
+    .conv-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .conv-name {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    
+    .conv-preview {
+      color: var(--admin-text-secondary);
+      font-size: 0.85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .conv-time {
+      font-size: 0.75rem;
+      color: var(--admin-text-secondary);
+      flex-shrink: 0;
+    }
+    
+    .conv-badge {
+      background: var(--admin-accent);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    
+    .message-panel {
+      background: var(--admin-card);
+      border: 1px solid var(--admin-border);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .message-panel-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+    
+    .message-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .message-bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      line-height: 1.5;
+    }
+    
+    .message-bubble.incoming {
+      background: var(--admin-bg);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    
+    .message-bubble.outgoing {
+      background: linear-gradient(135deg, var(--admin-accent), #FF8C42);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    
+    .message-bubble .msg-time {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+    
+    .message-panel-footer {
+      padding: 16px;
+      border-top: 1px solid var(--admin-border);
+      display: flex;
+      gap: 8px;
+    }
+    
+    .message-panel-footer input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--admin-bg);
+      border: 1px solid var(--admin-border);
+      border-radius: 12px;
+      color: var(--admin-text);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .message-panel-footer input:focus {
+      outline: none;
+      border-color: var(--admin-accent);
+    }
+    
+    .empty-conversation {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--admin-text-secondary);
+    }
+    
+    .empty-conversation svg {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+    
+    @media (max-width: 768px) {
+      .messages-layout {
+        grid-template-columns: 1fr;
+      }
+      
+      .conversation-list {
+        max-height: 300px;
+      }
+    }
+  </style>
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">GEEOOH</div>
+      <div class="sidebar-subtitle">Admin Dashboard</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Main</div>
+        <a href="./dashboard.html" class="nav-item">Dashboard</a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Content</div>
+        <a href="./projects.html" class="nav-item">Projects</a>
+        <a href="./blog.html" class="nav-item">Blog</a>
+        <a href="#" class="nav-item active">Messages</a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Settings</div>
+        <a href="./settings.html" class="nav-item">Settings</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">G</div>
+        <div class="user-details">
+          <div class="user-name">Admin</div>
+          <div class="user-role">Admin</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="api.logout()">Logout</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    
+    <div class="top-bar">
+      <div class="page-title">
+        <h1>Messages</h1>
+        <p>Chat with your website visitors</p>
+      </div>
+      <div class="top-bar-actions">
+        <span style="color: var(--admin-text-secondary)" id="messageStats">Loading...</span>
+      </div>
+    </div>
+
+    <div class="messages-layout">
+      <div class="conversation-list" id="conversationList">
+        <div style="padding: 20px; text-align: center; color: var(--admin-text-secondary);">
+          <div class="spinner"></div>
+          <p style="margin-top: 12px;">Loading conversations...</p>
+        </div>
+      </div>
+      
+      <div class="message-panel">
+        <div class="message-panel-header" id="messagePanelHeader">
+          <h3>Select a conversation</h3>
+        </div>
+        <div class="message-panel-body" id="messagePanelBody">
+          <div class="empty-conversation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <p>Select a conversation to view messages</p>
+          </div>
+        </div>
+        <div class="message-panel-footer" id="messagePanelFooter" style="display:none">
+          <input type="text" id="replyInput" placeholder="Type your reply..." />
+          <button class="btn btn-primary" onclick="sendReply()">Send</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="../../assets/js/api.js"></script>
+  <script>
+    if (!api.isAuthenticated()) window.location.href = './login.html';
+    
+    let conversations = [];
+    let activeConversation = null;
+    let socket;
+
+    // Connect socket
+    function connectSocket() {
+      socket = io('http://localhost:5000');
+      socket.on('connect', () => {
+        socket.emit('user-join', { role: 'admin' });
+      });
+      
+      socket.on('new-message', (message) => {
+        if (activeConversation && message.conversationId === activeConversation._id) {
+          addMessageToPanel(message, 'incoming');
+        }
+        loadConversations();
+        showToast('New message received!', 'info');
+      });
+    }
+
+    async function loadConversations() {
+      try {
+        const data = await api.getMessages();
+        if (data.success) {
+          conversations = data.conversations || [];
+          renderConversations();
+          
+          const unread = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+          document.getElementById('messageStats').textContent = 
+            `${conversations.length} conversations · ${unread} unread`;
+        }
+      } catch (error) {
+        showToast('Failed to load messages', 'error');
+      }
+    }
+
+    function renderConversations() {
+      const list = document.getElementById('conversationList');
+      
+      if (conversations.length === 0) {
+        list.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--admin-text-secondary);">No messages yet</div>';
+        return;
+      }
+
+      list.innerHTML = conversations.map(conv => {
+        const msg = conv.lastMessage;
+        return `
+          <div class="conversation-item ${activeConversation?._id === conv._id ? 'active' : ''} ${conv.unreadCount > 0 ? 'unread' : ''}"
+               onclick="openConversation('${conv._id}')">
+            <div class="conv-avatar">${(msg?.sender?.name || 'V')[0].toUpperCase()}</div>
+            <div class="conv-info">
+              <div class="conv-name">
+                ${msg?.sender?.name || 'Unknown'}
+                ${conv.unreadCount > 0 ? `<span class="conv-badge">${conv.unreadCount}</span>` : ''}
+              </div>
+              <div class="conv-preview">${msg?.content?.substring(0, 50) || 'No messages'}</div>
+            </div>
+            <div class="conv-time">${msg?.createdAt ? new Date(msg.createdAt).toLocaleDateString() : ''}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openConversation(convId) {
+      activeConversation = conversations.find(c => c._id === convId);
+      if (!activeConversation) return;
+      
+      renderConversations();
+      
+      document.getElementById('messagePanelHeader').innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="conv-avatar" style="width: 36px; height: 36px; font-size: 0.9rem;">
+            ${(activeConversation.lastMessage?.sender?.name || 'V')[0].toUpperCase()}
+          </div>
+          <div>
+            <h3 style="font-size: 1rem;">${activeConversation.lastMessage?.sender?.name || 'Unknown'}</h3>
+            <span style="font-size: 0.8rem; color: var(--admin-text-secondary);">${activeConversation.lastMessage?.sender?.email || ''}</span>
+          </div>
+        </div>
+      `;
+      
+      // Load messages for this conversation
+      try {
+        const data = await api.getMessages({ conversationId: convId });
+        if (data.success) {
+          renderMessages(data.messages);
+        }
+      } catch (error) {
+        showToast('Failed to load messages', 'error');
+      }
+      
+      document.getElementById('messagePanelFooter').style.display = 'flex';
+      
+      // Mark as read
+      try {
+        await api.fetchAPI(`/messages/conversation/${convId}/read-all`, { method: 'PUT' });
+        loadConversations();
+      } catch (e) {}
+    }
+
+    function renderMessages(messages) {
+      const body = document.getElementById('messagePanelBody');
+      
+      body.innerHTML = messages.map(msg => `
+        <div class="message-bubble ${msg.source === 'website' && msg.sender?.email !== 'admin' ? 'incoming' : 'outgoing'}">
+          <div>${msg.content}</div>
+          <div class="msg-time">${new Date(msg.createdAt).toLocaleString()}</div>
+          ${msg.replyContent ? `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.2);"><small>Reply:</small> ${msg.replyContent}</div>` : ''}
+        </div>
+      `).join('');
+      
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function addMessageToPanel(message, type) {
+      const body = document.getElementById('messagePanelBody');
+      const bubble = document.createElement('div');
+      bubble.className = `message-bubble ${type}`;
+      bubble.innerHTML = `
+        <div>${message.content}</div>
+        <div class="msg-time">${new Date().toLocaleString()}</div>
+      `;
+      body.appendChild(bubble);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    async function sendReply() {
+      const input = document.getElementById('replyInput');
+      const content = input.value.trim();
+      if (!content || !activeConversation) return;
+      
+      try {
+        await api.replyToMessage(activeConversation.lastMessage._id, content);
+        addMessageToPanel({ content }, 'outgoing');
+        input.value = '';
+        showToast('Reply sent!', 'success');
+      } catch (error) {
+        showToast('Failed to send reply', 'error');
+      }
+    }
+
+    document.getElementById('replyInput')?.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') sendReply();
+    });
+
+    function showToast(message, type) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    connectSocket();
+    loadConversations();
+    setInterval(loadConversations, 15000);
+  </script>
+</body>
+</html>

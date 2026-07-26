@@ -1,0 +1,28 @@
+{
+  "name": "geeooh-portfolio-platform",
+  "version": "1.0.0",
+  "description": "Premium Full Stack Developer Portfolio by Ganiyu Usman",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "cd server && node server.js",
+    "server-dev": "cd server && npx nodemon server.js",
+    "client": "npx live-server client --port=3000 --no-browser",
+    "install-server": "cd server && npm install",
+    "install-all": "npm install && npm run install-server",
+    "dev": "concurrently \"npm run server-dev\" \"npm run client\""
+  },
+  "keywords": [
+    "portfolio",
+    "fullstack",
+    "developer",
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "Ganiyu Usman",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "live-server": "^1.2.2"
+  }
+}

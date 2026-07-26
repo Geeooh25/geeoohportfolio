@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog · GEEOOH Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/admin.css" />
+  <style>
+    .blog-editor { display: flex; flex-direction: column; gap: 1rem; }
+    .blog-editor textarea { min-height: 300px; font-family: 'Courier New', monospace; font-size: 0.9rem; line-height: 1.6; }
+    .blog-editor .html-preview { background: var(--admin-bg); border: 1px solid var(--admin-border); border-radius: 12px; padding: 1.5rem; min-height: 200px; line-height: 1.8; color: var(--admin-text); }
+    .preview-toggle { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .preview-toggle button { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--admin-border); background: transparent; color: var(--admin-text-secondary); cursor: pointer; font-size: 0.85rem; font-family: inherit; }
+    .preview-toggle button.active { background: var(--admin-accent); border-color: var(--admin-accent); color: white; }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">GEEOOH</div>
+      <div class="sidebar-subtitle">Admin Dashboard</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section"><div class="nav-section-title">Main</div>
+        <a href="./dashboard.html" class="nav-item">Dashboard</a>
+      </div>
+      <div class="nav-section"><div class="nav-section-title">Content</div>
+        <a href="./projects.html" class="nav-item">Projects</a>
+        <a href="#" class="nav-item active">Blog</a>
+        <a href="./messages.html" class="nav-item">Messages</a>
+      </div>
+      <div class="nav-section"><div class="nav-section-title">Settings</div>
+        <a href="./settings.html" class="nav-item">Settings</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">G</div>
+        <div class="user-details"><div class="user-name">Admin</div><div class="user-role">Admin</div></div>
+      </div>
+      <button class="logout-btn" onclick="api.logout()">Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    <div class="top-bar">
+      <div class="page-title"><h1>Blog Posts</h1><p>Manage your articles</p></div>
+      <div class="top-bar-actions"><button class="btn btn-primary" onclick="openCreateModal()">+ New Post</button></div>
+    </div>
+    <div class="admin-table-container">
+      <table class="admin-table">
+        <thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Views</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="blogTableBody"><tr><td colspan="6"><div class="empty-state"><div class="spinner"></div><p>Loading posts...</p></div></td></tr></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="blogModal">
+    <div class="modal" style="max-width:800px;">
+      <div class="modal-header"><h2 id="modalTitle">Create Blog Post</h2><button class="modal-close" onclick="closeModal('blogModal')">×</button></div>
+      <form id="blogForm">
+        <input type="hidden" id="blogId" />
+        <div class="form-group"><label>Title *</label><input type="text" id="blogTitle" required placeholder="Enter blog title" maxlength="200" /></div>
+        <div class="form-group"><label>Subtitle</label><input type="text" id="blogSubtitle" placeholder="Optional subtitle" maxlength="300" /></div>
+        <div class="form-group"><label>Excerpt (short description)</label><textarea id="blogExcerpt" placeholder="Brief summary shown in cards" maxlength="300" rows="2"></textarea></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group"><label>Category *</label>
+            <select id="blogCategory" required>
+              <option value="">Select...</option><option value="Frontend">Frontend</option><option value="Backend">Backend</option><option value="Database">Database</option><option value="DevOps">DevOps</option><option value="JavaScript">JavaScript</option><option value="Tutorial">Tutorial</option><option value="Career">Career</option><option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Status</label>
+            <select id="blogStatus"><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>Tags (comma separated)</label><input type="text" id="blogTags" placeholder="nodejs, express, tutorial" /></div>
+        
+        <!-- Media Section -->
+        <div class="form-group">
+          <label>Media (Images & Videos)</label>
+          <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+            <button type="button" class="btn btn-secondary" onclick="addImageField()">🖼️ Add Image</button>
+            <button type="button" class="btn btn-secondary" onclick="addVideoField()">🎬 Add Video</button>
+          </div>
+          <div id="mediaContainer" style="display:flex;flex-direction:column;gap:1rem;"></div>
+        </div>
+        
+        <div class="form-group">
+          <label>Content * (HTML allowed)</label>
+          <div class="preview-toggle"><button type="button" class="active" onclick="switchTab('edit')">Edit</button><button type="button" onclick="switchTab('preview')">Preview</button></div>
+          <textarea id="blogContent" required placeholder="<h2>Introduction</h2><p>Write your content here...</p>" rows="15"></textarea>
+          <div class="html-preview" id="blogPreview" style="display:none;"></div>
+        </div>
+        <div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="blogFeatured" /> Feature this post</label></div>
+        <div class="form-actions"><button type="button" class="btn btn-secondary" onclick="closeModal('blogModal')">Cancel</button><button type="submit" class="btn btn-primary" id="saveBlogBtn">Create Post</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="../../assets/js/api.js"></script>
+  <script>
+    if (!api.isAuthenticated()) window.location.href = './login.html';
+
+    var blogs = [];
+    var currentTab = 'edit';
+    var mediaItems = [];
+    var mediaCounter = 0;
+
+    // ===== MEDIA MANAGEMENT =====
+    function addImageField() {
+      var id = mediaCounter++;
+      mediaItems.push({ id: id, type: 'image', url: '', caption: '', isHero: mediaItems.length === 0, fit: 'cover', videoPlatform: 'none', videoId: '', order: mediaItems.length });
+      renderMediaItems();
+    }
+
+    function addVideoField() {
+      var id = mediaCounter++;
+      mediaItems.push({ id: id, type: 'video', url: '', caption: '', isHero: false, fit: 'cover', videoPlatform: 'youtube', videoId: '', order: mediaItems.length });
+      renderMediaItems();
+    }
+
+    function removeMediaItem(id) {
+      mediaItems = mediaItems.filter(function(item) { return item.id !== id; });
+      if (mediaItems.length > 0 && !mediaItems.some(function(item) { return item.isHero; })) { mediaItems[0].isHero = true; }
+      renderMediaItems();
+    }
+
+    function setHeroImage(id) {
+      mediaItems.forEach(function(item) { item.isHero = (item.id === id); });
+      renderMediaItems();
+    }
+
+    function handleMediaFile(id, file) {
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('Image too large. Max 2MB.', 'error'); return; }
+  
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    // Resize image before storing
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var maxWidth = 800; // Max width for blog images
+      var scale = maxWidth / img.width;
+      if (scale < 1) {
+        canvas.width = maxWidth;
+        canvas.height = img.height * scale;
+      } else {
+        canvas.width = img.width;
+        canvas.height = img.height;
+      }
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      var compressedUrl = canvas.toDataURL('image/jpeg', 0.7); // JPEG at 70% quality
+      
+      var item = mediaItems.find(function(i) { return i.id === id; });
+      if (item) { item.url = compressedUrl; renderMediaItems(); }
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+    function updateMediaField(id, field, value) {
+      var item = mediaItems.find(function(i) { return i.id === id; });
+      if (item) { item[field] = value; }
+    }
+
+    function renderMediaItems() {
+      var container = document.getElementById('mediaContainer');
+      if (!container) return;
+      var html = '';
+      mediaItems.forEach(function(item) {
+        html += '<div style="background:var(--admin-bg);border:1px solid var(--admin-border);border-radius:12px;padding:1rem;">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">';
+        html += '<span style="font-weight:600;font-size:0.9rem;">' + (item.type === 'image' ? '🖼️ Image' : '🎬 Video') + ' #' + (item.order + 1) + (item.isHero ? ' ⭐ (Hero)' : '') + '</span>';
+        html += '<div style="display:flex;gap:0.5rem;">';
+        if (item.type === 'image') { html += '<button type="button" class="btn btn-secondary" style="padding:4px 10px;font-size:0.75rem;" onclick="setHeroImage(' + item.id + ')">Set as Hero</button>'; }
+        html += '<button type="button" class="btn btn-danger" style="padding:4px 10px;font-size:0.75rem;" onclick="removeMediaItem(' + item.id + ')">Remove</button>';
+        html += '</div></div>';
+        if (item.type === 'image') {
+          html += '<input type="file" accept="image/*" onchange="handleMediaFile(' + item.id + ', this.files[0])" style="margin-bottom:0.5rem;" />';
+          if (item.url) { html += '<img src="' + item.url + '" style="max-width:100%;max-height:200px;border-radius:8px;display:block;margin-bottom:0.5rem;" />'; }
+        } else {
+          html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">';
+          html += '<select onchange="updateMediaField(' + item.id + ',\'videoPlatform\',this.value)" style="padding:8px;border-radius:8px;background:var(--admin-bg);border:1px solid var(--admin-border);color:var(--admin-text);">';
+          html += '<option value="youtube"' + (item.videoPlatform === 'youtube' ? ' selected' : '') + '>YouTube</option>';
+          html += '<option value="vimeo"' + (item.videoPlatform === 'vimeo' ? ' selected' : '') + '>Vimeo</option>';
+          html += '<option value="direct"' + (item.videoPlatform === 'direct' ? ' selected' : '') + '>Direct URL</option>';
+          html += '</select>';
+          html += '<input type="text" placeholder="Video ID or URL" value="' + (item.videoId || '') + '" onchange="updateMediaField(' + item.id + ',\'videoId\',this.value)" style="padding:8px;border-radius:8px;background:var(--admin-bg);border:1px solid var(--admin-border);color:var(--admin-text);" />';
+          html += '</div>';
+          if (item.videoId) { html += '<div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;font-size:0.85rem;color:var(--admin-text-secondary);">🎬 Video: ' + item.videoPlatform + '/' + item.videoId + '</div>'; }
+        }
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">';
+        html += '<input type="text" placeholder="Caption (optional)" value="' + (item.caption || '') + '" onchange="updateMediaField(' + item.id + ',\'caption\',this.value)" style="padding:8px;border-radius:8px;background:var(--admin-bg);border:1px solid var(--admin-border);color:var(--admin-text);" />';
+        html += '<select onchange="updateMediaField(' + item.id + ',\'fit\',this.value)" style="padding:8px;border-radius:8px;background:var(--admin-bg);border:1px solid var(--admin-border);color:var(--admin-text);">';
+        html += '<option value="cover"' + (item.fit === 'cover' ? ' selected' : '') + '>Cover (crop)</option>';
+        html += '<option value="contain"' + (item.fit === 'contain' ? ' selected' : '') + '>Contain (full)</option>';
+        html += '<option value="fill"' + (item.fit === 'fill' ? ' selected' : '') + '>Fill (stretch)</option>';
+        html += '</select></div></div>';
+      });
+      container.innerHTML = html;
+    }
+
+    // ===== LOAD BLOGS =====
+    async function loadBlogs() {
+      try {
+        var data = await api.fetchAPI('/blogs');
+        if (data.success) { blogs = data.blogs; renderBlogs(data.blogs); }
+      } catch(e) { showToast('Failed to load posts', 'error'); }
+    }
+
+    function renderBlogs(blogList) {
+      var tbody = document.getElementById('blogTableBody');
+      if (!blogList || blogList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><h3>No posts yet</h3><p>Create your first blog post</p><button class="btn btn-primary" onclick="openCreateModal()">Create Post</button></div></td></tr>';
+        return;
+      }
+      tbody.innerHTML = blogList.map(function(blog) {
+        var heroMedia = (blog.media && blog.media.length > 0) ? blog.media.find(function(m) { return m.isHero && m.type === 'image'; }) || blog.media[0] : null;
+        var thumbUrl = (heroMedia && heroMedia.url) ? heroMedia.url : '';
+        var thumbHtml = thumbUrl ? '<img src="' + thumbUrl + '" style="width:40px;height:40px;border-radius:8px;object-fit:cover;" />' : '';
+        return '<tr><td><div style="display:flex;align-items:center;gap:12px;">' + thumbHtml + '<div><strong>' + blog.title + '</strong><div style="color:var(--admin-text-secondary);font-size:0.8rem;">' + (blog.excerpt ? blog.excerpt.substring(0, 60) + '...' : 'No excerpt') + '</div></div></td><td><span class="status-badge">' + (blog.category || 'General') + '</span></td><td><span class="status-badge ' + (blog.status === 'published' ? 'published' : 'draft') + '">' + (blog.status || 'draft') + '</span></td><td>' + (blog.views || 0) + '</td><td>' + new Date(blog.createdAt).toLocaleDateString() + '</td><td><div class="action-btns"><button class="action-btn edit" onclick="openEditModal(\'' + blog._id + '\')" title="Edit">✏️</button><button class="action-btn delete" onclick="confirmDelete(\'' + blog._id + '\')" title="Delete">🗑️</button></div></td></tr>';
+      }).join('');
+    }
+
+    // ===== MODAL =====
+    function openCreateModal() {
+      document.getElementById('modalTitle').textContent = 'Create Blog Post';
+      document.getElementById('saveBlogBtn').textContent = 'Create Post';
+      document.getElementById('blogForm').reset();
+      document.getElementById('blogId').value = '';
+      document.getElementById('blogStatus').value = 'published';
+      mediaItems = [];
+      mediaCounter = 0;
+      renderMediaItems();
+      showModal('blogModal');
+    }
+
+    async function openEditModal(id) {
+      try {
+        var data = await api.fetchAPI('/blogs/' + id);
+        if (data.success) {
+          var blog = data.blog;
+          document.getElementById('modalTitle').textContent = 'Edit Blog Post';
+          document.getElementById('saveBlogBtn').textContent = 'Update Post';
+          document.getElementById('blogId').value = blog._id;
+          document.getElementById('blogTitle').value = blog.title || '';
+          document.getElementById('blogSubtitle').value = blog.subtitle || '';
+          document.getElementById('blogExcerpt').value = blog.excerpt || '';
+          document.getElementById('blogCategory').value = blog.category || '';
+          document.getElementById('blogStatus').value = blog.status || 'draft';
+          document.getElementById('blogTags').value = (blog.tags || []).join(', ');
+          document.getElementById('blogContent').value = blog.content || '';
+          document.getElementById('blogFeatured').checked = blog.featured || false;
+          // Load media
+          mediaItems = (blog.media || []).map(function(m, i) { return { id: i, type: m.type, url: m.url || '', caption: m.caption || '', isHero: m.isHero || false, fit: m.fit || 'cover', videoPlatform: m.videoPlatform || 'none', videoId: m.videoId || '', order: m.order || i }; });
+          mediaCounter = mediaItems.length;
+          renderMediaItems();
+          showModal('blogModal');
+        }
+      } catch(e) { showToast('Failed to load post', 'error'); }
+    }
+
+    // ===== SAVE =====
+    document.getElementById('blogForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var blogData = {
+        title: document.getElementById('blogTitle').value,
+        subtitle: document.getElementById('blogSubtitle').value,
+        excerpt: document.getElementById('blogExcerpt').value,
+        category: document.getElementById('blogCategory').value,
+        status: document.getElementById('blogStatus').value,
+        tags: document.getElementById('blogTags').value.split(',').map(function(t) { return t.trim(); }).filter(function(t) { return t; }),
+        content: document.getElementById('blogContent').value,
+        featured: document.getElementById('blogFeatured').checked,
+        media: mediaItems.map(function(item) { return { url: item.url, type: item.type, caption: item.caption, isHero: item.isHero, fit: item.fit, videoPlatform: item.videoPlatform, videoId: item.videoId, order: item.order }; })
+      };
+      var id = document.getElementById('blogId').value;
+      try {
+        var result;
+        if (id) { result = await api.updateBlog(id, blogData); }
+        else { result = await api.createBlog(blogData); }
+        if (result.success) { showToast(id ? 'Post updated!' : 'Post created!', 'success'); closeModal('blogModal'); loadBlogs(); }
+      } catch(e) { showToast(e.message || 'Failed to save', 'error'); }
+    });
+
+    function confirmDelete(id) {
+      if (confirm('Delete this post?')) { api.deleteBlog(id).then(function() { showToast('Post deleted', 'success'); loadBlogs(); }).catch(function() { showToast('Failed to delete', 'error'); }); }
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.preview-toggle button').forEach(function(btn, i) { btn.classList.toggle('active', (i === 0 && tab === 'edit') || (i === 1 && tab === 'preview')); });
+      var textarea = document.getElementById('blogContent');
+      var preview = document.getElementById('blogPreview');
+      if (tab === 'preview') { textarea.style.display = 'none'; textarea.required = false; preview.style.display = 'block'; preview.innerHTML = textarea.value || '<p style="color:#6B7280;">Nothing to preview</p>'; }
+      else { textarea.style.display = 'block'; textarea.required = true; preview.style.display = 'none'; }
+    }
+
+    function showModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function showToast(m, t) { var c = document.getElementById('toastContainer'); var toast = document.createElement('div'); toast.className = 'toast ' + t; toast.textContent = m; c.appendChild(toast); setTimeout(function() { toast.remove(); }, 3000); }
+
+    loadBlogs();
+  </script>
+</body>
+</html>
