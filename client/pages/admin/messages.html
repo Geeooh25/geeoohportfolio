@@ -1,427 +1,263 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Messages · GEEOOH Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" href="../../assets/css/admin.css" />
-  <style>
-    .messages-layout {
-      display: grid;
-      grid-template-columns: 350px 1fr;
-      gap: 24px;
-      height: calc(100vh - 200px);
-    }
-    
-    .conversation-list {
-      background: var(--admin-card);
-      border: 1px solid var(--admin-border);
-      border-radius: 16px;
-      overflow-y: auto;
-    }
-    
-    .conversation-item {
-      padding: 16px;
-      border-bottom: 1px solid var(--admin-border);
-      cursor: pointer;
-      transition: background 0.2s;
-      display: flex;
-      gap: 12px;
-    }
-    
-    .conversation-item:hover {
-      background: rgba(255,255,255,0.02);
-    }
-    
-    .conversation-item.active {
-      background: rgba(255,107,0,0.05);
-      border-left: 3px solid var(--admin-accent);
-    }
-    
-    .conversation-item.unread {
-      background: rgba(255,107,0,0.03);
-    }
-    
-    .conv-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--admin-accent), var(--admin-purple));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-    
-    .conv-info {
-      flex: 1;
-      min-width: 0;
-    }
-    
-    .conv-name {
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    
-    .conv-preview {
-      color: var(--admin-text-secondary);
-      font-size: 0.85rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .conv-time {
-      font-size: 0.75rem;
-      color: var(--admin-text-secondary);
-      flex-shrink: 0;
-    }
-    
-    .conv-badge {
-      background: var(--admin-accent);
-      color: white;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      margin-left: 8px;
-    }
-    
-    .message-panel {
-      background: var(--admin-card);
-      border: 1px solid var(--admin-border);
-      border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .message-panel-header {
-      padding: 20px;
-      border-bottom: 1px solid var(--admin-border);
-    }
-    
-    .message-panel-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    
-    .message-bubble {
-      max-width: 70%;
-      padding: 12px 16px;
-      border-radius: 16px;
-      line-height: 1.5;
-    }
-    
-    .message-bubble.incoming {
-      background: var(--admin-bg);
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-    }
-    
-    .message-bubble.outgoing {
-      background: linear-gradient(135deg, var(--admin-accent), #FF8C42);
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-    }
-    
-    .message-bubble .msg-time {
-      font-size: 0.7rem;
-      opacity: 0.7;
-      margin-top: 4px;
-    }
-    
-    .message-panel-footer {
-      padding: 16px;
-      border-top: 1px solid var(--admin-border);
-      display: flex;
-      gap: 8px;
-    }
-    
-    .message-panel-footer input {
-      flex: 1;
-      padding: 12px 16px;
-      background: var(--admin-bg);
-      border: 1px solid var(--admin-border);
-      border-radius: 12px;
-      color: var(--admin-text);
-      font-family: 'Inter', sans-serif;
-    }
-    
-    .message-panel-footer input:focus {
-      outline: none;
-      border-color: var(--admin-accent);
-    }
-    
-    .empty-conversation {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      color: var(--admin-text-secondary);
-    }
-    
-    .empty-conversation svg {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 16px;
-      opacity: 0.3;
-    }
-    
-    @media (max-width: 768px) {
-      .messages-layout {
-        grid-template-columns: 1fr;
-      }
-      
-      .conversation-list {
-        max-height: 300px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="../../assets/css/chat.css" />
 </head>
 <body class="admin-body">
+
+  <div class="admin-ambient" aria-hidden="true"></div>
+  <button class="menu-overlay-admin" id="menuOverlay" aria-hidden="true"></button>
+
   <aside class="admin-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo">GEEOOH</div>
-      <div class="sidebar-subtitle">Admin Dashboard</div>
+      <a href="./dashboard.html" class="sidebar-logo-link">
+        <span class="logo-icon">G</span>
+        <div class="logo-text-group">
+          <span class="logo-text">GEEOOH</span>
+          <span class="logo-subtext">Admin</span>
+        </div>
+      </a>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
-        <div class="nav-section-title">Main</div>
-        <a href="./dashboard.html" class="nav-item">Dashboard</a>
+        <div class="nav-section-title">Overview</div>
+        <a href="./dashboard.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">dashboard</span>
+          <span>Dashboard</span>
+        </a>
       </div>
       <div class="nav-section">
         <div class="nav-section-title">Content</div>
-        <a href="./projects.html" class="nav-item">Projects</a>
-        <a href="./blog.html" class="nav-item">Blog</a>
-        <a href="#" class="nav-item active">Messages</a>
+        <a href="./projects.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">deployed_code</span>
+          <span>Projects</span>
+        </a>
+        <a href="./blog.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">edit_note</span>
+          <span>Blog</span>
+        </a>
+        <a href="./skills.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">trophy</span>
+          <span>Skills</span>
+        </a>
+        <a href="./experience.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">work_history</span>
+          <span>Experience</span>
+        </a>
       </div>
       <div class="nav-section">
-        <div class="nav-section-title">Settings</div>
-        <a href="./settings.html" class="nav-item">Settings</a>
+        <div class="nav-section-title">Engagement</div>
+        <a href="./messages.html" class="nav-item active">
+          <span class="material-symbols-outlined nav-icon">chat</span>
+          <span>Messages</span>
+          <span class="nav-badge" id="messageBadge" style="display:none">0</span>
+        </a>
+        <a href="./testimonials.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">reviews</span>
+          <span>Testimonials</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Configuration</div>
+        <a href="./settings.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">settings</span>
+          <span>Settings</span>
+        </a>
       </div>
     </nav>
     <div class="sidebar-footer">
       <div class="user-info">
-        <div class="user-avatar">G</div>
+        <div class="user-avatar" id="userAvatar">G</div>
         <div class="user-details">
-          <div class="user-name">Admin</div>
-          <div class="user-role">Admin</div>
+          <div class="user-name" id="userName">Ganiyu Usman</div>
+          <div class="user-role" id="userRole">Admin</div>
         </div>
       </div>
-      <button class="logout-btn" onclick="api.logout()">Logout</button>
+      <button class="logout-btn" id="logoutBtn" title="Logout">
+        <span class="material-symbols-outlined">logout</span>
+      </button>
     </div>
   </aside>
 
-  <main class="admin-main">
-    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+  <main class="admin-main chat-layout">
     
-    <div class="top-bar">
-      <div class="page-title">
-        <h1>Messages</h1>
-        <p>Chat with your website visitors</p>
-      </div>
-      <div class="top-bar-actions">
-        <span style="color: var(--admin-text-secondary)" id="messageStats">Loading...</span>
+    <div class="mobile-header">
+      <button class="menu-toggle" id="menuToggle">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <span class="mobile-logo">GEEOOH</span>
+      <div class="mobile-header-actions">
+        <span class="online-count" id="onlineCount" style="display:none;">
+          <span class="online-dot"></span>
+          <span id="onlineCountText">0</span>
+        </span>
+        <button class="theme-toggle-admin" id="themeToggleMobile">
+          <span class="material-symbols-outlined light-icon">light_mode</span>
+          <span class="material-symbols-outlined dark-icon">dark_mode</span>
+        </button>
       </div>
     </div>
 
-    <div class="messages-layout">
-      <div class="conversation-list" id="conversationList">
-        <div style="padding: 20px; text-align: center; color: var(--admin-text-secondary);">
-          <div class="spinner"></div>
-          <p style="margin-top: 12px;">Loading conversations...</p>
-        </div>
-      </div>
+    <div class="chat-container">
       
-      <div class="message-panel">
-        <div class="message-panel-header" id="messagePanelHeader">
-          <h3>Select a conversation</h3>
-        </div>
-        <div class="message-panel-body" id="messagePanelBody">
-          <div class="empty-conversation">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-            <p>Select a conversation to view messages</p>
+      <aside class="chat-sidebar" id="chatSidebar">
+        <div class="chat-sidebar-header">
+          <div class="chat-sidebar-title-row">
+            <h2>Messages</h2>
+            <span class="online-count" id="onlineCountDesk" style="display:none;">
+              <span class="online-dot"></span>
+              <span id="onlineCountDeskText">0</span> online
+            </span>
+          </div>
+          <div class="chat-sidebar-actions">
+            <div class="search-wrapper" style="flex:1;">
+              <span class="material-symbols-outlined search-icon">search</span>
+              <input type="search" class="search-input" placeholder="Search conversations..." id="chatSearch" style="width:100%;" />
+            </div>
+            <button class="chat-filter-btn" id="chatFilterBtn" title="Filter">
+              <span class="material-symbols-outlined">filter_list</span>
+            </button>
+          </div>
+          <div class="chat-filter-tabs" id="chatFilterTabs">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="unread">Unread</button>
+            <button class="filter-tab" data-filter="active">Active</button>
+            <button class="filter-tab" data-filter="resolved">Resolved</button>
           </div>
         </div>
-        <div class="message-panel-footer" id="messagePanelFooter" style="display:none">
-          <input type="text" id="replyInput" placeholder="Type your reply..." />
-          <button class="btn btn-primary" onclick="sendReply()">Send</button>
+        <div class="chat-contacts" id="chatContacts">
+          <div class="activity-empty">No conversations yet</div>
+        </div>
+        <div class="chat-sidebar-footer">
+          <span class="sidebar-footer-text" id="conversationCount">0 conversations</span>
+        </div>
+      </aside>
+
+      <div class="chat-main" id="chatMain">
+        <div class="chat-empty-state" id="chatEmpty">
+          <div class="chat-empty-inner">
+            <div class="chat-empty-icon">
+              <span class="material-symbols-outlined">forum</span>
+            </div>
+            <h3>Select a conversation</h3>
+            <p>Choose a contact from the left to start chatting. New messages appear here in real-time.</p>
+          </div>
+        </div>
+
+        <div class="chat-active" id="chatActive" style="display:none;">
+          <div class="chat-active-header">
+            <button class="chat-back-btn" id="chatBackBtn">
+              <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <div class="chat-active-user">
+              <div class="chat-active-avatar" id="chatActiveAvatar">?</div>
+              <div class="chat-active-info">
+                <div class="chat-active-name-row">
+                  <span class="chat-active-name" id="chatActiveName">Unknown</span>
+                  <span class="chat-active-status" id="chatActiveStatus"></span>
+                </div>
+                <span class="chat-active-details" id="chatActiveDetails"></span>
+              </div>
+            </div>
+            <div class="chat-active-actions">
+              <button class="chat-action-btn" id="searchMessagesBtn" title="Search in conversation">
+                <span class="material-symbols-outlined">search</span>
+              </button>
+              <button class="chat-action-btn" id="conversationMenuBtn" title="More actions">
+                <span class="material-symbols-outlined">more_vert</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="conversation-menu" id="conversationMenu" style="display:none;">
+            <button class="conversation-menu-item" id="markResolvedBtn">
+              <span class="material-symbols-outlined">check_circle</span>
+              Mark Resolved
+            </button>
+            <button class="conversation-menu-item" id="markUnreadBtn">
+              <span class="material-symbols-outlined">mark_chat_unread</span>
+              Mark Unread
+            </button>
+            <button class="conversation-menu-item danger" id="deleteConversationBtn">
+              <span class="material-symbols-outlined">delete</span>
+              Delete Conversation
+            </button>
+          </div>
+
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-date-divider"><span>Today</span></div>
+          </div>
+
+          <div class="typing-indicator" id="typingIndicator" style="display:none;">
+            <span class="typing-dots">
+              <span></span><span></span><span></span>
+            </span>
+            <span id="typingText">Someone is typing...</span>
+          </div>
+
+          <div class="quick-replies-bar" id="quickRepliesBar">
+            <button class="quick-reply-btn" data-reply="Thanks for reaching out! I'll look into this.">👋 Thanks!</button>
+            <button class="quick-reply-btn" data-reply="Can you share more details about your request?">📋 More Details</button>
+            <button class="quick-reply-btn" data-reply="I'll get back to you shortly.">⏳ Follow Up</button>
+            <button class="quick-reply-btn" data-reply="Your project is looking great! Let me update you soon.">🎉 Great Progress</button>
+          </div>
+
+          <div class="chat-input-bar">
+            <div class="upload-preview-bar" id="uploadPreviewBar" style="display:none;">
+              <div class="upload-preview-list" id="uploadPreviewList"></div>
+              <button class="upload-preview-clear" id="clearUploads">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form id="chatSendForm" class="chat-input-form">
+              <input type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.zip,.txt" multiple style="display:none;" />
+              <button type="button" class="chat-input-action" id="attachBtn" title="Attach file">
+                <span class="material-symbols-outlined">attach_file</span>
+              </button>
+              <div class="chat-input-wrapper">
+                <input type="text" id="chatMessageInput" placeholder="Type your reply..." autocomplete="off" />
+                <button type="button" class="chat-input-action" id="emojiBtn" title="Emoji">
+                  <span class="material-symbols-outlined">mood</span>
+                </button>
+                <button type="button" class="chat-input-action" id="voiceBtn" title="Record voice note">
+                  <span class="material-symbols-outlined">mic</span>
+                </button>
+              </div>
+              <button type="submit" class="chat-send-btn" id="chatSendBtn">
+                <span class="material-symbols-outlined">send</span>
+              </button>
+            </form>
+            <div class="voice-recording-bar" id="voiceRecordingBar" style="display:none;">
+              <button class="voice-cancel-btn" id="voiceCancelBtn">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+              <div class="voice-recording-indicator">
+                <span class="voice-recording-dot"></span>
+                <span id="voiceRecordingTime">00:00</span>
+              </div>
+              <button class="voice-send-btn" id="voiceSendBtn">
+                <span class="material-symbols-outlined">send</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
+
   </main>
 
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script src="../../assets/js/api.js"></script>
-  <script>
-    if (!api.isAuthenticated()) window.location.href = './login.html';
-    
-    let conversations = [];
-    let activeConversation = null;
-    let socket;
-
-    // Connect socket
-    function connectSocket() {
-      socket = io('http://localhost:5000');
-      socket.on('connect', () => {
-        socket.emit('user-join', { role: 'admin' });
-      });
-      
-      socket.on('new-message', (message) => {
-        if (activeConversation && message.conversationId === activeConversation._id) {
-          addMessageToPanel(message, 'incoming');
-        }
-        loadConversations();
-        showToast('New message received!', 'info');
-      });
-    }
-
-    async function loadConversations() {
-      try {
-        const data = await api.getMessages();
-        if (data.success) {
-          conversations = data.conversations || [];
-          renderConversations();
-          
-          const unread = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
-          document.getElementById('messageStats').textContent = 
-            `${conversations.length} conversations · ${unread} unread`;
-        }
-      } catch (error) {
-        showToast('Failed to load messages', 'error');
-      }
-    }
-
-    function renderConversations() {
-      const list = document.getElementById('conversationList');
-      
-      if (conversations.length === 0) {
-        list.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--admin-text-secondary);">No messages yet</div>';
-        return;
-      }
-
-      list.innerHTML = conversations.map(conv => {
-        const msg = conv.lastMessage;
-        return `
-          <div class="conversation-item ${activeConversation?._id === conv._id ? 'active' : ''} ${conv.unreadCount > 0 ? 'unread' : ''}"
-               onclick="openConversation('${conv._id}')">
-            <div class="conv-avatar">${(msg?.sender?.name || 'V')[0].toUpperCase()}</div>
-            <div class="conv-info">
-              <div class="conv-name">
-                ${msg?.sender?.name || 'Unknown'}
-                ${conv.unreadCount > 0 ? `<span class="conv-badge">${conv.unreadCount}</span>` : ''}
-              </div>
-              <div class="conv-preview">${msg?.content?.substring(0, 50) || 'No messages'}</div>
-            </div>
-            <div class="conv-time">${msg?.createdAt ? new Date(msg.createdAt).toLocaleDateString() : ''}</div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    async function openConversation(convId) {
-      activeConversation = conversations.find(c => c._id === convId);
-      if (!activeConversation) return;
-      
-      renderConversations();
-      
-      document.getElementById('messagePanelHeader').innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div class="conv-avatar" style="width: 36px; height: 36px; font-size: 0.9rem;">
-            ${(activeConversation.lastMessage?.sender?.name || 'V')[0].toUpperCase()}
-          </div>
-          <div>
-            <h3 style="font-size: 1rem;">${activeConversation.lastMessage?.sender?.name || 'Unknown'}</h3>
-            <span style="font-size: 0.8rem; color: var(--admin-text-secondary);">${activeConversation.lastMessage?.sender?.email || ''}</span>
-          </div>
-        </div>
-      `;
-      
-      // Load messages for this conversation
-      try {
-        const data = await api.getMessages({ conversationId: convId });
-        if (data.success) {
-          renderMessages(data.messages);
-        }
-      } catch (error) {
-        showToast('Failed to load messages', 'error');
-      }
-      
-      document.getElementById('messagePanelFooter').style.display = 'flex';
-      
-      // Mark as read
-      try {
-        await api.fetchAPI(`/messages/conversation/${convId}/read-all`, { method: 'PUT' });
-        loadConversations();
-      } catch (e) {}
-    }
-
-    function renderMessages(messages) {
-      const body = document.getElementById('messagePanelBody');
-      
-      body.innerHTML = messages.map(msg => `
-        <div class="message-bubble ${msg.source === 'website' && msg.sender?.email !== 'admin' ? 'incoming' : 'outgoing'}">
-          <div>${msg.content}</div>
-          <div class="msg-time">${new Date(msg.createdAt).toLocaleString()}</div>
-          ${msg.replyContent ? `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.2);"><small>Reply:</small> ${msg.replyContent}</div>` : ''}
-        </div>
-      `).join('');
-      
-      body.scrollTop = body.scrollHeight;
-    }
-
-    function addMessageToPanel(message, type) {
-      const body = document.getElementById('messagePanelBody');
-      const bubble = document.createElement('div');
-      bubble.className = `message-bubble ${type}`;
-      bubble.innerHTML = `
-        <div>${message.content}</div>
-        <div class="msg-time">${new Date().toLocaleString()}</div>
-      `;
-      body.appendChild(bubble);
-      body.scrollTop = body.scrollHeight;
-    }
-
-    async function sendReply() {
-      const input = document.getElementById('replyInput');
-      const content = input.value.trim();
-      if (!content || !activeConversation) return;
-      
-      try {
-        await api.replyToMessage(activeConversation.lastMessage._id, content);
-        addMessageToPanel({ content }, 'outgoing');
-        input.value = '';
-        showToast('Reply sent!', 'success');
-      } catch (error) {
-        showToast('Failed to send reply', 'error');
-      }
-    }
-
-    document.getElementById('replyInput')?.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') sendReply();
-    });
-
-    function showToast(message, type) {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.textContent = message;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
-
-    connectSocket();
-    loadConversations();
-    setInterval(loadConversations, 15000);
-  </script>
+  <script src="../../assets/js/admin.js"></script>
+  <script src="../../assets/js/admin-messages.js"></script>
 </body>
 </html>

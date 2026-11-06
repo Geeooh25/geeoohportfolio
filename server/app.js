@@ -17,7 +17,7 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://127.0.0.1:5500', 'http://127.0.0.1:59606', 'http://127.0.0.1:*'],
+  origin: ['http://localhost:5000', 'http://127.0.0.1:5000', 'http://localhost:3000', 'http://127.0.0.1:3000', 'http://127.0.0.1:5500', 'http://127.0.0.1:59606'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -135,6 +135,24 @@ app.get('/admin/blog.html', (req, res) => {
 
 app.get('/admin/testimonials.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/pages/admin/testimonials.html'));
+});
+
+// Skills page
+app.get('/admin/skills', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/pages/admin/skills.html'));
+});
+
+app.get('/admin/skills.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/pages/admin/skills.html'));
+});
+
+// Experience page
+app.get('/admin/experience', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/pages/admin/experience.html'));
+});
+
+app.get('/admin/experience.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/pages/admin/experience.html'));
 });
 // ===== ERROR HANDLING =====
 app.use((req, res) => {

@@ -99,7 +99,7 @@ class PortfolioAPI {
     this.user = null;
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
-    window.location.href = '/admin';
+    window.location.href = '/pages/admin/login.html';
   }
 
   isAuthenticated() {

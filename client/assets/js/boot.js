@@ -166,9 +166,30 @@
       }
     }
     
+    // ===== FIXED LISTENERS (only these 2 lines changed) =====
     if (bootHint) bootHint.addEventListener('click', e => { e.stopPropagation(); skipAll(); });
-    document.addEventListener('click', e => { if (e.target !== bootHint && Date.now() - startTime > 2000) skipAll(); });
-    document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') && Date.now() - startTime > 2000) { e.preventDefault(); skipAll(); } });
+
+    document.addEventListener('click', e => {
+      // Only respond while the boot screen is still active
+      if (!document.body.classList.contains('boot-active')) return;
+      // Don't hijack clicks inside input/textarea fields
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (e.target !== bootHint && Date.now() - startTime > 2000) skipAll();
+    });
+
+    document.addEventListener('keydown', e => {
+      // Only respond while the boot screen is still active
+      if (!document.body.classList.contains('boot-active')) return;
+      // Don't hijack keys while the user is typing in a field
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if ((e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') && Date.now() - startTime > 2000) {
+        e.preventDefault();
+        skipAll();
+      }
+    });
+    // ===== END FIXED LISTENERS =====
     
     if (progressFill) progressFill.style.width = '0%';
     if (percentText) percentText.textContent = '0%';

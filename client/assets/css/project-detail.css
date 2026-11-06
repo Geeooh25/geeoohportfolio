@@ -909,3 +909,35 @@
   .pd-toc-cta { margin-left: 0; padding: 12px 16px; }
   .pd-toc-mobile-toggle { display: block; }
 }
+/* ===== CREDENTIALS CARD ===== */
+.pd-creds-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+}
+.pd-creds-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pd-creds-row:last-child { border-bottom: none; }
+.pd-creds-label { font-weight: 600; color: var(--text-primary); }
+.pd-creds-row code {
+  background: var(--bg-tertiary);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: monospace;
+  color: var(--text-secondary);
+}
+.pd-creds-note {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+}

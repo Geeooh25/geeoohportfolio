@@ -2250,9 +2250,11 @@ body.dark-theme .title-line {
 
 .submit-btn {
   width: 100%;
-  padding: 1rem;
-  font-size: 1.1rem;
+  padding:1rem ;
+  font-size:1.1rem ;
+ justify-content: center;
 }
+
 
 .contact-info-side {
   background: var(--bg-card);

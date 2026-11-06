@@ -15,10 +15,10 @@ const messageSchema = new mongoose.Schema({
     required: true
   },
   type: {
-    type: String,
-    enum: ['text', 'file', 'image', 'video', 'audio', 'other'],
-    default: 'text'
-  },
+  type: String,
+  enum: ['text', 'file', 'image', 'video', 'audio', 'other', 'visitor', 'admin'],
+  default: 'text'
+},
   fileUrl: String,
   read: {
     type: Boolean,
@@ -36,6 +36,10 @@ const messageSchema = new mongoose.Schema({
     enum: ['website', 'whatsapp', 'email', 'instagram', 'twitter', 'linkedin', 'other'],
     default: 'website'
   },
+  delivered: {
+  type: Boolean,
+  default: false
+},
   metadata: {
     userAgent: String,
     platform: String,

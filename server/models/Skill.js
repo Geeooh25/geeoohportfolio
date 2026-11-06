@@ -3,18 +3,20 @@ const mongoose = require('mongoose');
 const skillSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   category: {
     type: String,
-    enum: ['frontend', 'backend', 'database', 'fullstack' ,'devops', 'tools', 'other'],
+    enum: ['frontend', 'backend', 'database', 'fullstack', 'devops', 'tools', 'other'],
     required: true
   },
   level: {
     type: Number,
-    min: 1,
+    min: 0,
     max: 100,
-    default: 80
+    default: 80,
+    required: true
   },
   icon: String,
   color: String,

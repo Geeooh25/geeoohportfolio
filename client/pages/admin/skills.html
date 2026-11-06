@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skills · GEEOOH Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <link rel="stylesheet" href="../../assets/css/admin.css" />
+</head>
+<body class="admin-body">
+<button class="menu-overlay-admin" id="menuOverlay" aria-hidden="true"></button>
+  <div class="admin-ambient">
+    <div class="admin-glow admin-glow-1"></div>
+    <div class="admin-glow admin-glow-2"></div>
+    <div class="admin-grid-overlay"></div>
+  </div>
+
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="./dashboard.html" class="sidebar-logo-link">
+        <span class="logo-icon">G</span>
+        <div class="logo-text-group">
+          <span class="logo-text">GEEOOH</span>
+          <span class="logo-subtext">Admin</span>
+        </div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Overview</div>
+        <a href="./dashboard.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Content</div>
+        <a href="./projects.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">deployed_code</span>
+          <span>Projects</span>
+        </a>
+        <a href="./blog.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">edit_note</span>
+          <span>Blog</span>
+        </a>
+        <a href="./skills.html" class="nav-item active">
+          <span class="material-symbols-outlined nav-icon">trophy</span>
+          <span>Skills</span>
+        </a>
+        <a href="./experience.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">work_history</span>
+          <span>Experience</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Engagement</div>
+        <a href="./messages.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">chat</span>
+          <span>Messages</span>
+        </a>
+        <a href="./testimonials.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">reviews</span>
+          <span>Testimonials</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Configuration</div>
+        <a href="./settings.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">settings</span>
+          <span>Settings</span>
+        </a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">G</div>
+        <div class="user-details">
+          <div class="user-name" id="userName">Ganiyu Usman</div>
+          <div class="user-role" id="userRole">Admin</div>
+        </div>
+      </div>
+      <button class="logout-btn" id="logoutBtn" title="Logout">
+        <span class="material-symbols-outlined">logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    
+    <div class="mobile-header">
+      <button class="menu-toggle" id="menuToggle">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <span class="mobile-logo">GEEOOH</span>
+      <button class="theme-toggle-admin" id="themeToggleMobile">
+        <span class="material-symbols-outlined light-icon">light_mode</span>
+        <span class="material-symbols-outlined dark-icon">dark_mode</span>
+      </button>
+    </div>
+
+    <div class="top-bar">
+      <div class="page-greeting">
+        <h1 class="greeting-title">Skills</h1>
+        <p class="greeting-subtitle">Manage your technical skills and expertise levels</p>
+      </div>
+      <div class="top-bar-actions">
+        <button class="theme-toggle-admin" id="themeToggleDesk" title="Toggle theme">
+          <span class="material-symbols-outlined light-icon">light_mode</span>
+          <span class="material-symbols-outlined dark-icon">dark_mode</span>
+        </button>
+        <button class="btn-primary-premium" id="addSkillBtn">
+          <span class="material-symbols-outlined">add</span>
+          Add Skill
+        </button>
+      </div>
+    </div>
+
+    <div class="stats-grid-premium" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 28px;">
+      <div class="stat-card-premium">
+        <div class="stat-icon-wrap orange">
+          <span class="material-symbols-outlined">code</span>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value" id="countFrontend">—</span>
+          <span class="stat-label">Frontend</span>
+        </div>
+      </div>
+      <div class="stat-card-premium">
+        <div class="stat-icon-wrap purple">
+          <span class="material-symbols-outlined">dns</span>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value" id="countBackend">—</span>
+          <span class="stat-label">Backend</span>
+        </div>
+      </div>
+      <div class="stat-card-premium">
+        <div class="stat-icon-wrap cyan">
+          <span class="material-symbols-outlined">storage</span>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value" id="countDatabase">—</span>
+          <span class="stat-label">Database</span>
+        </div>
+      </div>
+      <div class="stat-card-premium">
+        <div class="stat-icon-wrap green">
+          <span class="material-symbols-outlined">build</span>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value" id="countTools">—</span>
+          <span class="stat-label">Tools</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="search-wrapper">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input type="search" class="search-input" placeholder="Search skills..." id="skillSearch" />
+      </div>
+      <div class="toolbar-filters">
+        <select class="filter-select" id="categoryFilter">
+          <option value="all">All Categories</option>
+          <option value="frontend">Frontend</option>
+          <option value="backend">Backend</option>
+          <option value="database">Database</option>
+          <option value="tools">Tools</option>
+        </select>
+        <select class="filter-select" id="levelFilter">
+          <option value="all">All Levels</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+          <option value="expert">Expert</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="skills-grid-cards" id="skillsGrid">
+      <div class="activity-empty">Loading skills...</div>
+    </div>
+
+  </main>
+
+  <div class="modal-overlay" id="skillModal">
+    <div class="modal-premium modal-sm">
+      <div class="modal-header">
+        <h2 id="skillModalTitle">Add Skill</h2>
+        <button class="modal-close" id="closeSkillModal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="skillForm">
+        <input type="hidden" name="skillId" id="skillId" />
+        <div class="form-group">
+          <label>Skill Name</label>
+          <input type="text" name="name" id="skillName" required placeholder="React" />
+        </div>
+        <div class="form-row-split">
+          <div class="form-group">
+            <label>Category</label>
+            <select name="category" id="skillCategory" required>
+              <option value="frontend">Frontend</option>
+              <option value="backend">Backend</option>
+              <option value="database">Database</option>
+              <option value="tools">Tools</option>
+            </select>
+          </div>
+         <div class="form-group">
+  <label>Level (Percentage)</label>
+  <input type="number" id="skillLevel" name="level" min="0" max="100" value="80" required />
+  <small style="color:var(--admin-text-secondary);">0-100 (e.g., 85 = 85%)</small>
+</div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="cancelSkillModal">Cancel</button>
+          <button type="button" class="btn-danger-outline" id="deleteSkillBtn" style="display:none;">Delete</button>
+          <button type="submit" class="btn-primary-premium">
+            <span class="material-symbols-outlined">save</span>
+            Save Skill
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="deleteSkillConfirm">
+    <div class="modal-premium modal-sm">
+      <div class="modal-header">
+        <h2>Delete Skill</h2>
+        <button class="modal-close" id="closeDeleteSkill">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div style="padding:24px;text-align:center;">
+        <p style="color:var(--admin-text-secondary);margin-bottom:20px;">Delete this skill permanently?</p>
+        <div class="modal-actions" style="justify-content:center;">
+          <button class="btn-cancel" id="cancelDeleteSkill">Cancel</button>
+          <button class="btn-danger" id="confirmDeleteSkill">Delete Skill</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/admin.js"></script>
+  <script src="../../assets/js/admin-skills.js"></script>
+</body>
+</html>

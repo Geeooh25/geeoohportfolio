@@ -4,6 +4,7 @@ class PortfolioApp {
     this.projects = [];
     this.skills = [];
     this.settings = [];
+    this._tmTimer = null;
     this.init();
   }
 
@@ -13,6 +14,7 @@ class PortfolioApp {
     await this.loadContent();
     this.initComponents();
     this.initExpandClose();
+    this.bindGlobalDismiss();
   }
 
   hideLoadingScreen() {
@@ -27,6 +29,8 @@ class PortfolioApp {
     const navbar = document.getElementById('navbar');
     const overlay = document.getElementById('overlay');
     const navLinks = document.querySelectorAll('.nav-link');
+    const header = document.querySelector('.header');
+    const sections = Array.from(document.querySelectorAll('section[id]'));
 
     if (hamburger) {
       hamburger.addEventListener('click', () => {
@@ -48,7 +52,6 @@ class PortfolioApp {
 
     window.addEventListener('scroll', () => {
       let current = '';
-      const sections = document.querySelectorAll('section[id]');
       sections.forEach(section => {
         const sectionTop = section.offsetTop - 100;
         if (window.scrollY >= sectionTop) current = section.getAttribute('id');
@@ -57,20 +60,26 @@ class PortfolioApp {
         link.classList.remove('active');
         if (link.getAttribute('href') === `#${current}`) link.classList.add('active');
       });
-      const header = document.querySelector('.header');
       if (window.scrollY > 50) header?.classList.add('scrolled');
       else header?.classList.remove('scrolled');
-    });
+    }, { passive: true });
   }
 
   async loadContent() {
     try {
-      await this.loadProjects();
-      await this.loadSkills();
-      await this.loadExperiences();
-      await this.loadGitHubStats();
-      await this.loadSettings();
-      await this.loadTestimonials();
+      const results = await Promise.allSettled([
+        this.loadProjects(),
+        this.loadSkills(),
+        this.loadExperiences(),
+        this.loadGitHubStats(),
+        this.loadSettings(),
+        this.loadTestimonials()
+      ]);
+      results.forEach((r, i) => {
+        if (r.status === 'rejected') {
+          console.warn(`[loadContent] loader #${i} failed:`, r.reason);
+        }
+      });
       window.dispatchEvent(new CustomEvent('content-loaded'));
     } catch (error) {
       console.error('Failed to load content:', error);
@@ -100,9 +109,23 @@ class PortfolioApp {
     gallery.innerHTML = '';
     if (dotsContainer) dotsContainer.innerHTML = '';
 
+    const getFullImageUrl = (url) => {
+      if (!url) return '';
+      if (url.startsWith('http')) return url;
+      if (url.startsWith('/')) return 'http://localhost:5000' + url;
+      return url;
+    };
+
+    const placeholderUrl = 'data:image/svg+xml,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250" viewBox="0 0 400 250">' +
+      '<rect fill="#f1f5f9" width="400" height="250"/>' +
+      '<text x="200" y="130" text-anchor="middle" fill="#94a3b8" font-size="14" font-family="Arial, sans-serif">No Image Available</text>' +
+      '</svg>'
+    );
+
     projects.forEach((project, index) => {
       const heroImage = project.images?.find(img => img.isHero) || project.images?.[0];
-      const imgUrl = heroImage?.url || './assets/images/placeholder.jpg';
+      const imgUrl = heroImage?.url ? getFullImageUrl(heroImage.url) : placeholderUrl;
 
       const card = document.createElement('div');
       card.className = 'gallery-card reveal';
@@ -112,7 +135,7 @@ class PortfolioApp {
 
       card.innerHTML = `
         <div class="gallery-card-image">
-          <img src="${imgUrl}" alt="${project.title}" loading="lazy" />
+          <img src="${imgUrl}" alt="${project.title}" loading="lazy" onerror="this.src='${placeholderUrl}'" />
           <div class="gallery-card-overlay">
             ${project.links?.live ? `<a href="${project.links.live}" target="_blank" rel="noopener" class="gallery-overlay-btn live">Live Demo</a>` : ''}
             ${project.links?.github ? `<a href="${project.links.github}" target="_blank" rel="noopener" class="gallery-overlay-btn github">GitHub</a>` : ''}
@@ -151,76 +174,10 @@ class PortfolioApp {
     this.initGallery();
   }
 
-  async loadTestimonials() {
-    try {
-      const data = await api.fetchAPI('/public/testimonials');
-      if (data.success && data.testimonials) {
-        this.buildTestimonials(data.testimonials);
-      }
-    } catch (error) { console.log('No testimonials loaded'); }
-  }
-
-  buildTestimonials(testimonials) {
-    if (!testimonials || testimonials.length === 0) return;
-
-    const featured = testimonials.find(t => t.featured) || testimonials[0];
-    const rest = testimonials.filter(t => t._id !== featured._id);
-
-    const heroContainer = document.getElementById('tmHero');
-    if (heroContainer && featured) {
-      heroContainer.innerHTML = `
-        <div class="tm-hero-card">
-          <div class="tm-hero-quote-mark">"</div>
-          <p class="tm-hero-quote">${featured.quote.replace(/(\d+%)/g, '<em>$1</em>')}</p>
-          <div class="tm-hero-author">
-            <div class="tm-hero-avatar">${featured.name.charAt(0)}</div>
-            <div class="tm-hero-name">${featured.name}</div>
-            <div class="tm-hero-role">${featured.role}, ${featured.company}</div>
-          </div>
-          ${featured.impact && featured.impact.metrics ? `
-            <div class="tm-hero-metrics">
-              ${featured.impact.metrics.map(m => `
-                <div>
-                  <div class="tm-hero-metric-value">${m.value}</div>
-                  <div class="tm-hero-metric-label">${m.label}</div>
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
-        </div>
-      `;
-    }
-
-    const floatingContainer = document.getElementById('tmFloating');
-    if (floatingContainer && rest.length > 0) {
-      floatingContainer.innerHTML = rest.map((t, i) => `
-        <div class="tm-float-card" style="transition-delay:${i * 0.1}s">
-          <p class="tm-float-quote">"${t.shortQuote || t.quote.substring(0, 120)}..."</p>
-          <div class="tm-float-author">
-            <div class="tm-float-avatar">${t.name.charAt(0)}</div>
-            <div>
-              <div class="tm-float-name">${t.name}</div>
-              <div class="tm-float-company">${t.role}, ${t.company}</div>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.tm-float-card').forEach(card => observer.observe(card));
-  }
-
   initGallery() {
     const gallery = document.getElementById('projectGallery');
     const leftArrow = document.getElementById('galleryArrowLeft');
     const rightArrow = document.getElementById('galleryArrowRight');
-    const dots = document.querySelectorAll('.gallery-dot');
     if (!gallery) return;
 
     if (leftArrow) leftArrow.addEventListener('click', () => gallery.scrollBy({ left: -400, behavior: 'smooth' }));
@@ -228,6 +185,7 @@ class PortfolioApp {
 
     gallery.addEventListener('scroll', () => {
       const cards = gallery.querySelectorAll('.gallery-card');
+      const dots = document.querySelectorAll('.gallery-dot');
       const galleryCenter = gallery.scrollLeft + gallery.offsetWidth / 2;
       let activeIndex = 0;
       cards.forEach((card, index) => {
@@ -238,7 +196,7 @@ class PortfolioApp {
       dots.forEach((dot, i) => dot.classList.toggle('active', i === activeIndex));
       if (leftArrow) leftArrow.disabled = gallery.scrollLeft <= 10;
       if (rightArrow) rightArrow.disabled = gallery.scrollLeft >= gallery.scrollWidth - gallery.offsetWidth - 10;
-    });
+    }, { passive: true });
 
     let isDown = false, startX, scrollLeftVal;
     gallery.addEventListener('mousedown', (e) => {
@@ -260,6 +218,7 @@ class PortfolioApp {
 
   scrollToCard(index) {
     const gallery = document.getElementById('projectGallery');
+    if (!gallery) return;
     const cards = gallery.querySelectorAll('.gallery-card');
     if (cards[index]) {
       const cardLeft = cards[index].offsetLeft;
@@ -273,7 +232,7 @@ class PortfolioApp {
   renderProjectFilters(projects) {
     const filterContainer = document.getElementById('projectFilters');
     if (!filterContainer) return;
-    const categories = ['all', ...new Set(projects.map(p => p.category))];
+    const categories = ['all', ...new Set(projects.map(p => p.category).filter(Boolean))];
     filterContainer.innerHTML = '';
     categories.forEach(category => {
       const count = category === 'all' ? projects.length : projects.filter(p => p.category === category).length;
@@ -291,8 +250,101 @@ class PortfolioApp {
     clickedBtn.classList.add('active');
     document.querySelectorAll('.gallery-card').forEach(card => {
       const cat = card.querySelector('.gallery-card-category')?.textContent;
-      card.style.display = (category === 'all' || cat === category) ? 'block' : 'none';
+      card.style.display = (category === 'all' || cat === category) ? '' : 'none';
     });
+  }
+
+  // ===== TESTIMONIALS =====
+  async loadTestimonials() {
+    try {
+      const data = await api.fetchAPI('/public/testimonials');
+      if (data.success && data.testimonials) {
+        this.buildTestimonials(data.testimonials);
+      }
+    } catch (error) { console.log('No testimonials loaded'); }
+  }
+
+  buildTestimonials(testimonials) {
+    if (!testimonials || testimonials.length === 0) return;
+
+    let currentSlide = 0;
+    const heroContainer = document.getElementById('tmHero');
+    const sliderContainer = document.getElementById('tmFloating');
+    if (!heroContainer) return;
+
+    function renderSlide() {
+      const t = testimonials[currentSlide];
+      const companyName = t.company || '';
+      const roleName = t.role || '';
+      const fullTitle = [roleName, companyName].filter(Boolean).join(', ');
+
+      heroContainer.innerHTML = `
+        <div class="tm-hero-card">
+          <div class="tm-hero-quote-mark">"</div>
+          <p class="tm-hero-quote">${(t.quote || '').replace(/(\d+%)/g, '<em>$1</em>')}</p>
+          <div class="tm-hero-author">
+            <div class="tm-hero-avatar">${(t.name || '?').charAt(0).toUpperCase()}</div>
+            <div class="tm-hero-name">${t.name || 'Anonymous'}</div>
+            <div class="tm-hero-role">${fullTitle || 'Client'}</div>
+          </div>
+          ${t.impact && t.impact.metrics && t.impact.metrics.length > 0 ? `
+            <div class="tm-hero-metrics">
+              ${t.impact.metrics.map(m => `
+                <div>
+                  <div class="tm-hero-metric-value">${m.value}</div>
+                  <div class="tm-hero-metric-label">${m.label}</div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      document.querySelectorAll('.tm-slider-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentSlide);
+      });
+
+      const counter = document.getElementById('tmCounter');
+      if (counter) counter.textContent = `${currentSlide + 1} / ${testimonials.length}`;
+    }
+
+    if (sliderContainer) {
+      sliderContainer.innerHTML = `
+        <button class="tm-slider-arrow tm-prev" id="tmPrev" aria-label="Previous testimonial">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="tm-slider-dots" id="tmDots">
+          ${testimonials.map((_, i) => `<span class="tm-slider-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>`).join('')}
+        </div>
+        <button class="tm-slider-arrow tm-next" id="tmNext" aria-label="Next testimonial">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="tm-counter" id="tmCounter">1 / ${testimonials.length}</div>
+      `;
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      if (currentSlide < 0) currentSlide = testimonials.length - 1;
+      if (currentSlide >= testimonials.length) currentSlide = 0;
+      renderSlide();
+    }
+
+    function nextSlide() { goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
+
+    setTimeout(() => {
+      document.getElementById('tmNext')?.addEventListener('click', nextSlide);
+      document.getElementById('tmPrev')?.addEventListener('click', prevSlide);
+      document.querySelectorAll('.tm-slider-dot').forEach(dot => {
+        dot.addEventListener('click', () => goToSlide(parseInt(dot.getAttribute('data-index'))));
+      });
+    }, 100);
+
+    renderSlide();
+
+    if (this._tmTimer) clearInterval(this._tmTimer);
+    this._tmTimer = setInterval(nextSlide, 5000);
   }
 
   // ===== SKILLS =====
@@ -333,17 +385,12 @@ class PortfolioApp {
       bubble.style.animationDelay = `${index * 0.15}s`;
 
       bubble.addEventListener('mouseenter', (e) => {
-        if (window.matchMedia('(pointer: fine)').matches) {
-          this.showSkillTooltip(e, bubble);
-        }
+        if (window.matchMedia('(pointer: fine)').matches) this.showSkillTooltip(e, bubble);
       });
       bubble.addEventListener('mouseleave', () => { this.hideSkillTooltip(); });
       bubble.addEventListener('mousemove', (e) => {
-        if (window.matchMedia('(pointer: fine)').matches) {
-          this.moveTooltip(e);
-        }
+        if (window.matchMedia('(pointer: fine)').matches) this.moveTooltip(e);
       });
-
       bubble.addEventListener('click', (e) => {
         e.stopPropagation();
         const isActive = bubble.classList.contains('active-bubble');
@@ -354,35 +401,21 @@ class PortfolioApp {
           this.showSkillTooltip(e, bubble);
         }
       });
-
       bubble.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          bubble.click();
-        }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); bubble.click(); }
       });
 
       cloud.appendChild(bubble);
     });
 
-    document.addEventListener('click', () => {
-      document.querySelectorAll('.skill-bubble').forEach(b => b.classList.remove('active-bubble'));
-      this.hideSkillTooltip();
-    });
-
     const filterBtns = document.querySelectorAll('.skills-filter-btn');
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        filterBtns.forEach(b => {
-          b.classList.remove('active');
-          b.setAttribute('aria-selected', 'false');
-        });
+        filterBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
         btn.classList.add('active');
         btn.setAttribute('aria-selected', 'true');
-
         const filter = btn.getAttribute('data-filter');
-        const bubbles = cloud.querySelectorAll('.skill-bubble');
-        bubbles.forEach(bubble => {
+        cloud.querySelectorAll('.skill-bubble').forEach(bubble => {
           if (filter === 'all' || bubble.getAttribute('data-category') === filter) {
             bubble.classList.remove('filtered-out');
             bubble.setAttribute('tabindex', '0');
@@ -392,6 +425,14 @@ class PortfolioApp {
           }
         });
       });
+    });
+  }
+
+  // Bound once in init() — dismisses active skill bubble / tooltip on outside click
+  bindGlobalDismiss() {
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.skill-bubble').forEach(b => b.classList.remove('active-bubble'));
+      this.hideSkillTooltip();
     });
   }
 
@@ -409,16 +450,22 @@ class PortfolioApp {
     const level = parseInt(bubble.getAttribute('data-level'));
     const category = bubble.getAttribute('data-category');
     const levelText = this.getLevelText(level);
-    document.getElementById('tooltipName').textContent = name;
-    document.getElementById('tooltipLevel').textContent = `${levelText} • ${level}%`;
-    document.getElementById('tooltipCategory').textContent = category;
+
+    const nameEl = document.getElementById('tooltipName');
+    const levelEl = document.getElementById('tooltipLevel');
+    const catEl = document.getElementById('tooltipCategory');
     const fill = document.getElementById('tooltipFill');
-    fill.style.width = '0%';
-    requestAnimationFrame(() => {
+
+    if (nameEl) nameEl.textContent = name;
+    if (levelEl) levelEl.textContent = `${levelText} • ${level}%`;
+    if (catEl) catEl.textContent = category;
+    if (fill) {
+      fill.style.width = '0%';
       requestAnimationFrame(() => {
-        fill.style.width = level + '%';
+        requestAnimationFrame(() => { fill.style.width = level + '%'; });
       });
-    });
+    }
+
     tooltip.classList.add('show');
     this.moveTooltip(e);
   }
@@ -440,241 +487,262 @@ class PortfolioApp {
     if (tooltip) tooltip.classList.remove('show');
   }
 
-  // ===== LUXURY CINEMATIC EXPERIENCE =====
+  // ===== EXPERIENCE =====
   async loadExperiences() {
     try {
       const data = await api.fetchAPI('/public/experiences');
       if (data.success && data.experiences) {
-        buildLuxuryExperience(data.experiences);
+        this.buildLuxuryExperience(data.experiences);
       }
     } catch (error) {
       console.log('Using static experience data');
     }
   }
 
+  buildLuxuryExperience(experiences) {
+    if (!experiences || experiences.length === 0) return;
+
+    const workExp = experiences.filter(e => e && e.type === 'work');
+    const eduExp = experiences.filter(e => e && (e.type === 'education' || e.type === 'certification'));
+    const showcase = document.getElementById('expShowcase');
+    const impactGrid = document.getElementById('expImpactGrid');
+    const prestigeGrid = document.getElementById('expPrestigeGrid');
+
+    if (showcase) {
+      showcase.innerHTML = workExp.map((exp, i) => {
+        const endDate = exp.current ? 'Present' : (exp.endDate ? new Date(exp.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '');
+        const startDate = new Date(exp.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        const color = exp.color || '#FF6B00';
+        return `
+          <div class="exp-showcase-item visible" style="transition-delay:${i * 0.08}s">
+            <div class="exp-showcase-visual">
+              <div class="exp-showcase-frame" style="border-left: 4px solid ${color};">
+                <div class="exp-showcase-icon" style="background:${color}15;color:${color};">💼</div>
+                <div class="exp-showcase-org">${startDate} — ${endDate}</div>
+                <h3 class="exp-showcase-role">${exp.title || ''}</h3>
+                ${exp.organization ? '<p class="exp-showcase-company">' + exp.organization + '</p>' : ''}
+                ${exp.description ? '<p class="exp-showcase-desc">' + exp.description + '</p>' : ''}
+                ${exp.skills && exp.skills.length ? '<div class="exp-showcase-skills">' + exp.skills.map(s => '<span class="exp-showcase-skill">' + s + '</span>').join('') + '</div>' : ''}
+              </div>
+            </div>
+            <div class="exp-showcase-text">
+              ${exp.achievements && exp.achievements.length ? '<div class="exp-showcase-label">Achievements</div><ul class="exp-showcase-achievements">' + exp.achievements.map(a => '<li>' + a + '</li>').join('') + '</ul>' : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    if (impactGrid) {
+      let totalYears = '3+';
+      if (workExp.length > 0) {
+        const firstExp = workExp[workExp.length - 1];
+        if (firstExp && firstExp.startDate) {
+          const startYear = new Date(firstExp.startDate).getFullYear();
+          if (!isNaN(startYear)) totalYears = Math.max(1, new Date().getFullYear() - startYear) + '+';
+        }
+      }
+      const metrics = [
+        { icon: '📅', value: totalYears, label: 'Years Experience' },
+        { icon: '🚀', value: (workExp.length + 3) + '+', label: 'Projects Built' },
+        { icon: '⚡', value: '15+', label: 'Technologies' },
+        { icon: '📜', value: '2', label: 'Certifications' }
+      ];
+      impactGrid.innerHTML = metrics.map((m, i) => `
+        <div class="exp-impact-card visible" style="transition-delay:${i * 0.08}s">
+          <div class="exp-impact-icon">${m.icon}</div>
+          <div class="exp-impact-value">${m.value}</div>
+          <div class="exp-impact-label">${m.label}</div>
+        </div>
+      `).join('');
+    }
+
+    if (prestigeGrid && eduExp.length) {
+      prestigeGrid.innerHTML = eduExp.map((exp, i) => `
+        <div class="exp-prestige-card visible" style="transition-delay:${i * 0.1}s">
+          <div class="exp-prestige-icon">${exp.type === 'certification' ? '📜' : '🎓'}</div>
+          <h4 class="exp-prestige-degree">${exp.title || ''}</h4>
+          ${exp.organization ? '<p class="exp-prestige-school">' + exp.organization + '</p>' : ''}
+          ${exp.description ? '<p class="exp-prestige-desc">' + exp.description + '</p>' : ''}
+        </div>
+      `).join('');
+    }
+
+    document.querySelectorAll('.exp-intro-eyebrow, .exp-intro-headline, .exp-intro-line, .exp-intro-sub').forEach(el => el.classList.add('visible'));
+    document.querySelectorAll('.exp-impact-headline, .exp-prestige-headline').forEach(el => el.classList.add('visible'));
+  }
   // ===== GITHUB STATS =====
   async loadGitHubStats() {
     const GITHUB_USERNAME = 'geeooh25';
     const GITHUB_API_BASE = 'https://api.github.com';
     const REQUEST_TIMEOUT_MS = 8000;
-
     const githubStatsEl = document.getElementById('githubStats');
-    const githubLoadingEl = document.getElementById('githubLoading');
-    const githubErrorEl = document.getElementById('githubError');
-    const githubUpdatedEl = document.getElementById('githubUpdated');
-    const githubSubtitleEl = document.getElementById('githubSubtitle');
-    const githubRetryBtn = document.getElementById('githubRetry');
-
     if (!githubStatsEl) return;
 
-    // Helper functions
+    const loadingEl = document.getElementById('githubLoading');
+    const errorEl   = document.getElementById('githubError');
+    const retryBtn  = document.getElementById('githubRetry');
+    const updatedEl = document.getElementById('githubUpdated');
+    const subtitleEl = document.getElementById('githubSubtitle');
+
+    // --- state helpers (belt-and-suspenders: hidden attr + inline display) ---
+    const showLoading = () => {
+      if (loadingEl) { loadingEl.hidden = false; loadingEl.style.display = ''; }
+      if (errorEl)   { errorEl.hidden = true;   errorEl.style.display = 'none'; }
+      githubStatsEl.hidden = true;
+      githubStatsEl.style.display = 'none';
+    };
+    const showStats = () => {
+      if (loadingEl) { loadingEl.hidden = true; loadingEl.style.display = 'none'; }
+      if (errorEl)   { errorEl.hidden = true;   errorEl.style.display = 'none'; }
+      githubStatsEl.hidden = false;
+      githubStatsEl.style.display = '';   // defer to your .github-stats CSS
+    };
+    const showError = () => {
+      if (loadingEl) { loadingEl.hidden = true; loadingEl.style.display = 'none'; }
+      if (errorEl)   { errorEl.hidden = false; errorEl.style.display = ''; }
+      githubStatsEl.hidden = true;
+      githubStatsEl.style.display = 'none';
+    };
+
     const fetchWithTimeout = async (url, options = {}) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
       try {
-        const response = await fetch(url, {
-          ...options,
-          signal: controller.signal,
-          headers: {
-            'Accept': 'application/vnd.github.v3+json',
-            ...(options.headers || {})
-          }
-        });
-        clearTimeout(timeoutId);
-        return response;
+        return await fetch(url, { ...options, signal: controller.signal });
       } catch (error) {
-        clearTimeout(timeoutId);
-        if (error.name === 'AbortError') {
-          throw new Error('Request timed out');
-        }
+        if (error.name === 'AbortError') throw new Error('Request timed out');
         throw error;
+      } finally {
+        clearTimeout(timeoutId);
       }
     };
 
-    const fetchGitHubProfile = async (username) => {
-      const response = await fetchWithTimeout(`${GITHUB_API_BASE}/users/${username}`);
-      if (response.status === 404) throw new Error('User not found');
-      if (response.status === 403) throw new Error('Rate limited');
-      if (!response.ok) throw new Error('Failed to fetch profile');
-      return response.json();
-    };
+    const fallbackMetrics = [
+      { icon: '📦', value: '25', label: 'Repositories' },
+      { icon: '⭐', value: '12', label: 'Stars Earned' },
+      { icon: '⑂', value: '2',  label: 'Forks' },
+      { icon: '👥', value: '8',  label: 'Followers' }
+    ];
 
-    const fetchGitHubRepos = async (username) => {
-      const response = await fetchWithTimeout(
-        `${GITHUB_API_BASE}/users/${username}/repos?per_page=100&sort=updated`
-      );
-      if (!response.ok) throw new Error('Failed to fetch repositories');
-      return response.json();
-    };
-
-    const getTopLanguage = (repos) => {
-      const langCount = {};
-      repos.forEach(repo => {
-        if (repo.language) {
-          langCount[repo.language] = (langCount[repo.language] || 0) + 1;
-        }
-      });
-      let topLang = '';
-      let topCount = 0;
-      Object.entries(langCount).forEach(([lang, count]) => {
-        if (count > topCount) {
-          topLang = lang;
-          topCount = count;
-        }
-      });
-      return topLang;
-    };
-
-    const formatNumber = (num) => {
-      if (num >= 1000) {
-        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-      }
-      return String(num);
-    };
-
-    const calculateGitHubMetrics = (profile, repos) => {
-      const totalStars = repos.reduce((sum, repo) => sum + (repo.stargazers_count || 0), 0);
-      const totalForks = repos.reduce((sum, repo) => sum + (repo.forks_count || 0), 0);
-      const repoCount = profile.public_repos || repos.length;
-      const followerCount = profile.followers || 0;
-      const topLanguage = getTopLanguage(repos);
-
-      return [
-        { icon: '📦', value: formatNumber(repoCount), label: 'Repositories' },
-        { icon: '⭐', value: formatNumber(totalStars), label: 'Stars Earned' },
-        { icon: '⑂', value: formatNumber(totalForks), label: 'Forks' },
-        { icon: '👥', value: formatNumber(followerCount), label: 'Followers' },
-        { icon: '🔤', value: topLanguage || '—', label: 'Top Language' }
-      ];
-    };
-
-    const createStatCard = (metric, index) => {
-      const card = document.createElement('div');
-      card.className = 'github-stat-card';
-      card.setAttribute('tabindex', '0');
-      card.setAttribute('role', 'figure');
-      card.setAttribute('aria-label', `${metric.value} ${metric.label}`);
-      card.style.transitionDelay = `${index * 0.08}s`;
-
-      const icon = document.createElement('span');
-      icon.className = 'github-stat-icon';
-      icon.setAttribute('aria-hidden', 'true');
-      icon.textContent = metric.icon;
-
-      const value = document.createElement('div');
-      value.className = 'github-stat-value';
-      value.textContent = metric.value;
-
-      const label = document.createElement('div');
-      label.className = 'github-stat-label';
-      label.textContent = metric.label;
-
-      card.appendChild(icon);
-      card.appendChild(value);
-      card.appendChild(label);
-
-      return card;
-    };
-
-    const renderGitHubStats = (metrics) => {
-      githubStatsEl.innerHTML = '';
-      const fragment = document.createDocumentFragment();
-      metrics.forEach((metric, index) => {
-        fragment.appendChild(createStatCard(metric, index));
-      });
-      githubStatsEl.appendChild(fragment);
-      requestAnimationFrame(() => {
-        githubStatsEl.querySelectorAll('.github-stat-card').forEach(card => {
-          card.style.opacity = '1';
-        });
-      });
-    };
-
-    const showGitHubLoading = () => {
-      if (githubLoadingEl) githubLoadingEl.hidden = false;
-      githubStatsEl.innerHTML = '';
-      if (githubErrorEl) githubErrorEl.hidden = true;
-      if (githubUpdatedEl) githubUpdatedEl.textContent = '';
-      if (githubSubtitleEl) githubSubtitleEl.textContent = '';
-    };
-
-    const showGitHubError = () => {
-      if (githubLoadingEl) githubLoadingEl.hidden = true;
-      if (githubErrorEl) githubErrorEl.hidden = false;
-      if (githubUpdatedEl) githubUpdatedEl.textContent = '';
-    };
-
-    const showGitHubUpdated = () => {
-      if (!githubUpdatedEl) return;
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      githubUpdatedEl.textContent = `Last updated: ${dateStr} at ${timeStr}`;
-    };
-
-    const getFallbackMetrics = () => {
-      return [
-        { icon: '📦', value: '25', label: 'Repositories' },
-        { icon: '⭐', value: '12', label: 'Stars Earned' },
-        { icon: '⑂', value: '8', label: 'Forks' },
-        { icon: '👥', value: '8', label: 'Followers' },
-        { icon: '🔤', value: 'JavaScript', label: 'Top Language' }
-      ];
-    };
-
-    // Retry handler
-    if (githubRetryBtn) {
-      githubRetryBtn.addEventListener('click', () => {
+    // wire retry button ONCE (guard against duplicate binding on re-runs)
+    if (retryBtn && !retryBtn.dataset.bound) {
+      retryBtn.dataset.bound = '1';
+      retryBtn.addEventListener('click', () => {
+        try { sessionStorage.removeItem(`gh-stats-${GITHUB_USERNAME}`); } catch {}
         this.loadGitHubStats();
       });
     }
 
-    // Main loading logic
-    showGitHubLoading();
+    // reset UI to loading state
+    showLoading();
+
+    // --- cache check (1h TTL, sessionStorage) ---
+    const CACHE_KEY = `gh-stats-${GITHUB_USERNAME}`;
+    const CACHE_TTL = 1000 * 60 * 60;
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { t, data } = JSON.parse(cached);
+        if (Date.now() - t < CACHE_TTL && data && data.metrics) {
+          this.renderGitHubMetrics(data.metrics);
+         // this._applyGitHubExtras(data);
+          showStats();
+          if (updatedEl) updatedEl.textContent =
+            `Last updated ${new Date(data.fetchedAt).toLocaleTimeString()} · Data from public GitHub API (cached)`;
+          return;
+        }
+      }
+    } catch { /* ignore cache errors */ }
 
     try {
-      const [profile, repos] = await Promise.all([
-        fetchGitHubProfile(GITHUB_USERNAME),
-        fetchGitHubRepos(GITHUB_USERNAME)
+      const [profileRes, reposRes] = await Promise.all([
+        fetchWithTimeout(`${GITHUB_API_BASE}/users/${GITHUB_USERNAME}`),
+        fetchWithTimeout(`${GITHUB_API_BASE}/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated&type=owner`)
       ]);
+      if (!profileRes.ok || !reposRes.ok) throw new Error('GitHub API request failed');
 
-      const metrics = calculateGitHubMetrics(profile, repos);
+      const profile = await profileRes.json();
+      const repos   = await reposRes.json();
 
-      if (githubLoadingEl) githubLoadingEl.hidden = true;
-      renderGitHubStats(metrics);
-      showGitHubUpdated();
+      const myForks    = repos.filter(r => r.fork);
+      const originals  = repos.filter(r => !r.fork);
+      const totalStars = originals.reduce((s, r) => s + (r.stargazers_count || 0), 0);
 
-      if (githubSubtitleEl && profile.bio) {
-        githubSubtitleEl.textContent = profile.bio;
-      } else if (githubSubtitleEl) {
-        githubSubtitleEl.textContent = `${GITHUB_USERNAME} on GitHub`;
-      }
+      const metrics = [
+        { icon: '📦', value: String(profile.public_repos || repos.length), label: 'Repositories' },
+        { icon: '⭐', value: String(totalStars),                          label: 'Stars Earned' },
+        { icon: '⑂',  value: String(myForks.length),                      label: 'Forks' },
+        { icon: '👥', value: String(profile.followers || 0),              label: 'Followers' }
+      ];
 
+      const payload = {
+        metrics,
+        forks: myForks.map(f => ({ name: f.name, url: f.html_url })),
+        fetchedAt: Date.now()
+      };
+
+      try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: payload.fetchedAt, data: payload })); } catch {}
+
+      this.renderGitHubMetrics(metrics);
+      // this._applyGitHubExtras(payload);
+      showStats();
+      if (updatedEl) updatedEl.textContent =
+        `Last updated ${new Date(payload.fetchedAt).toLocaleTimeString()} · Data from public GitHub API`;
     } catch (error) {
-      console.warn('GitHub stats fetch failed:', error.message);
-      showGitHubError();
-
-      setTimeout(() => {
-        if (githubErrorEl) githubErrorEl.hidden = true;
-        if (githubLoadingEl) githubLoadingEl.hidden = true;
-        renderGitHubStats(getFallbackMetrics());
-        if (githubUpdatedEl) githubUpdatedEl.textContent = 'Showing estimated metrics';
-      }, 1500);
+      console.warn('GitHub fetch failed:', error.message);
+      // show fallback numbers + error note (keeps section populated, not blank)
+      this.renderGitHubMetrics(fallbackMetrics);
+      showStats();
+      if (subtitleEl) subtitleEl.textContent = 'Live stats unavailable — showing cached fallback';
+      if (updatedEl) updatedEl.textContent = `Could not load live data (${error.message})`;
     }
+  }
+
+  // Applies the non-grid extras: subtitle "Forked: …" line
+  /*applyGitHubExtras(payload) {
+    const subtitleEl = document.getElementById('githubSubtitle');
+    if (!subtitleEl) return;
+    const forks = payload && payload.forks ? payload.forks : [];
+    if (forks.length) {
+      subtitleEl.innerHTML = 'Forked: ' + forks
+        .map(f => `<a href="${f.url}" target="_blank" rel="noopener">${f.name}</a>`)
+        .join(', ');
+    } else {
+      subtitleEl.textContent = '';
+    }
+  } */
+
+  renderGitHubMetrics(metrics) {
+    const container = document.getElementById('githubStats');
+    if (!container) return;
+
+    // Ensure loader/error are hidden whenever metrics render (defensive; harmless if already hidden)
+    const loading = document.getElementById('githubLoading');
+    const error   = document.getElementById('githubError');
+    if (loading) { loading.hidden = true; loading.style.display = 'none'; }
+    if (error)   { error.hidden = true;   error.style.display = 'none'; }
+    container.hidden = false;
+    container.style.display = '';
+
+    container.innerHTML = metrics.map((m, i) => `
+      <div class="stat-card reveal" style="transition-delay:${i * 0.1}s">
+        <div class="stat-icon">${m.icon}</div>
+        <div class="stat-number">${m.value}</div>
+        <div class="stat-label">${m.label}</div>
+      </div>
+    `).join('');
   }
 
   // ===== SETTINGS =====
   async loadSettings() {
     try {
       const data = await api.getSettings();
-      if (data.success && data.settings) { 
-        this.settings = data.settings; 
-        this.applySettings(data.settings); 
+      if (data.success && data.settings) {
+        this.settings = data.settings;
+        this.applySettings(data.settings);
       }
-    } catch (error) { 
-      console.log('Using default settings'); 
-    }
+    } catch (error) { console.log('Using default settings'); }
   }
 
   applySettings(settings) {
@@ -700,24 +768,24 @@ class PortfolioApp {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const submitBtn = form.querySelector('.submit-btn');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = 'Sending...';
+      const originalText = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = 'Sending...'; }
       try {
         const result = await api.sendContactMessage({
           name: form.querySelector('#name').value,
           email: form.querySelector('#email').value,
           content: form.querySelector('#message').value
         });
-        if (result.success) { 
-          alert('Message sent! 🎉'); 
-          form.reset(); 
+        if (result.success) {
+          toast('Message sent! 🎉', 'success');
+          form.reset();
+        } else {
+          toast('Failed to send. Try again.', 'error');
         }
-      } catch (error) { 
-        alert('Failed to send. Try again.'); 
+      } catch (error) {
+        toast('Failed to send. Try again.', 'error');
       }
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalText; }
     });
   }
 
@@ -731,32 +799,26 @@ class PortfolioApp {
         const rotateY = ((x - rect.width/2) / (rect.width/2)) * 10;
         el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
       });
-      el.addEventListener('mouseleave', () => { 
-        el.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)'; 
-      });
+      el.addEventListener('mouseleave', () => { el.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)'; });
     });
   }
 
   initExpandClose() {
     const overlay = document.getElementById('projectExpandOverlay');
     const closeBtn = document.getElementById('projectExpandClose');
-
     if (!overlay) return;
-
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
         overlay.classList.remove('active');
         document.body.style.overflow = '';
       });
     }
-
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
         overlay.classList.remove('active');
         document.body.style.overflow = '';
       }
     });
-
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && overlay.classList.contains('active')) {
         overlay.classList.remove('active');
@@ -765,201 +827,62 @@ class PortfolioApp {
     });
   }
 
-  useFallbackContent() { 
-    console.log('Using static fallback content'); 
+  useFallbackContent() { console.log('Using static fallback content'); }
+}
+
+// ===== TOAST HELPER (self-contained, no CSS dependency) =====
+function toast(message, type = 'info', duration = 3200) {
+  let container = document.getElementById('__toastContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = '__toastContainer';
+    container.style.cssText = [
+      'position:fixed', 'right:20px', 'bottom:20px', 'z-index:99999',
+      'display:flex', 'flex-direction:column', 'gap:10px',
+      'pointer-events:none', 'max-width:min(360px, 90vw)'
+    ].join(';');
+    document.body.appendChild(container);
   }
-}
 
-// ===== UTILITIES (outside class — used by experience renderer) =====
-function escapeHTML(str) {
-  if (!str && str !== 0) return '';
-  const div = document.createElement('div');
-  div.textContent = String(str);
-  return div.innerHTML;
-}
+  const colors = {
+    success: { bg: '#16a34a', fg: '#ffffff' },
+    error:   { bg: '#dc2626', fg: '#ffffff' },
+    info:    { bg: '#1f2937', fg: '#ffffff' }
+  }[type] || { bg: '#1f2937', fg: '#ffffff' };
 
-function formatDate(dateStr, fallback) {
-  if (!dateStr) return escapeHTML(fallback || '—');
-  try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return escapeHTML(fallback || '—');
-    return escapeHTML(d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }));
-  } catch (e) {
-    return escapeHTML(fallback || '—');
-  }
-}
+  const el = document.createElement('div');
+  el.setAttribute('role', 'status');
+  el.textContent = message;
+  el.style.cssText = [
+    `background:${colors.bg}`, `color:${colors.fg}`,
+    'padding:12px 16px', 'border-radius:10px',
+    'font:14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+    'box-shadow:0 8px 24px rgba(0,0,0,.25)',
+    'transform:translateY(12px)', 'opacity:0',
+    'transition:transform .25s ease, opacity .25s ease',
+    'pointer-events:auto'
+  ].join(';');
 
-// ===== LUXURY CINEMATIC EXPERIENCE — STANDALONE FUNCTIONS =====
-let luxuryObserver = null;
-
-function disconnectLuxuryObserver() {
-  if (luxuryObserver) {
-    luxuryObserver.disconnect();
-    luxuryObserver = null;
-  }
-}
-
-function observeLuxuryElements() {
-  disconnectLuxuryObserver();
-  luxuryObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        luxuryObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  const selectors = [
-    '.exp-intro-eyebrow',
-    '.exp-intro-headline',
-    '.exp-intro-line',
-    '.exp-intro-sub',
-    '.exp-showcase-item',
-    '.exp-impact-headline',
-    '.exp-impact-card',
-    '.exp-prestige-headline',
-    '.exp-prestige-card'
-  ];
-
-  selectors.forEach(sel => {
-    document.querySelectorAll(sel).forEach(el => luxuryObserver.observe(el));
+  container.appendChild(el);
+  requestAnimationFrame(() => {
+    el.style.transform = 'translateY(0)';
+    el.style.opacity = '1';
   });
+
+  setTimeout(() => {
+    el.style.transform = 'translateY(12px)';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 300);
+  }, duration);
 }
 
-function renderWorkExperience(workExp) {
-  if (!workExp || workExp.length === 0) return '';
-
-  return workExp.map((exp, i) => {
-    const endDate = exp.current ? 'Present' : formatDate(exp.endDate, 'Present');
-    const startDate = formatDate(exp.startDate, '');
-    const color = escapeHTML(exp.color || '#FF6B00');
-    const iconBg = color + '15';
-    const title = escapeHTML(exp.title || 'Untitled Role');
-    const organization = escapeHTML(exp.organization || '');
-    const description = escapeHTML(exp.description || '');
-    const hasAchievements = exp.achievements && exp.achievements.length > 0;
-    const hasSkills = exp.skills && exp.skills.length > 0;
-
-    let skillsHTML = '';
-    if (hasSkills) {
-      skillsHTML = '<div class="exp-showcase-skills">' +
-        exp.skills.map(s => '<span class="exp-showcase-skill">' + escapeHTML(s) + '</span>').join('') +
-        '</div>';
-    }
-
-    let achievementsHTML = '';
-    if (hasAchievements) {
-      achievementsHTML =
-        '<div class="exp-showcase-label">Achievements</div>' +
-        '<ul class="exp-showcase-achievements" role="list">' +
-        exp.achievements.map(a => '<li>' + escapeHTML(a) + '</li>').join('') +
-        '</ul>';
-    }
-
-    return `
-      <div class="exp-showcase-item" style="transition-delay:${i * 0.08}s" role="article" aria-label="Experience: ${title}${organization ? ' at ' + organization : ''}">
-        <div class="exp-showcase-visual">
-          <div class="exp-showcase-frame" tabindex="0" aria-label="${title}${organization ? ' at ' + organization : ''}">
-            <div class="exp-showcase-icon" style="background:${iconBg};color:${color};" aria-hidden="true">💼</div>
-            <div class="exp-showcase-org">${startDate} — ${endDate}</div>
-            <h3 class="exp-showcase-role">${title}</h3>
-            ${organization ? '<p class="exp-showcase-company">' + organization + '</p>' : ''}
-            ${description ? '<p class="exp-showcase-desc">' + description + '</p>' : ''}
-            ${skillsHTML}
-          </div>
-        </div>
-        <div class="exp-showcase-text">
-          ${achievementsHTML}
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-function renderImpactMetrics(workExp) {
-  let totalYears = '3+';
-  if (workExp && workExp.length > 0) {
-    const firstExp = workExp[workExp.length - 1];
-    if (firstExp && firstExp.startDate) {
-      try {
-        const startYear = new Date(firstExp.startDate).getFullYear();
-        if (!isNaN(startYear)) {
-          totalYears = Math.max(1, new Date().getFullYear() - startYear) + '+';
-        }
-      } catch (e) { /* keep default */ }
-    }
-  }
-
-  const metrics = [
-    { icon: '📅', value: totalYears, label: 'Years Experience' },
-    { icon: '🚀', value: (workExp ? workExp.length + 3 : 6) + '+', label: 'Projects Built' },
-    { icon: '⚡', value: '15+', label: 'Technologies' },
-    { icon: '📜', value: '2', label: 'Certifications' }
-  ];
-
-  return metrics.map((m, i) => `
-    <div class="exp-impact-card" style="transition-delay:${i * 0.08}s" role="figure" aria-label="${escapeHTML(m.value)} ${escapeHTML(m.label)}">
-      <div class="exp-impact-icon" aria-hidden="true">${escapeHTML(m.icon)}</div>
-      <div class="exp-impact-value">${escapeHTML(m.value)}</div>
-      <div class="exp-impact-label">${escapeHTML(m.label)}</div>
-    </div>
-  `).join('');
-}
-
-function renderEducation(eduExp) {
-  if (!eduExp || eduExp.length === 0) return '';
-
-  return eduExp.map((exp, i) => {
-    const title = escapeHTML(exp.title || 'Untitled Degree');
-    const organization = escapeHTML(exp.organization || '');
-    const description = escapeHTML(exp.description || '');
-
-    return `
-      <div class="exp-prestige-card" style="transition-delay:${i * 0.1}s" role="article" aria-label="Education: ${title}${organization ? ' at ' + organization : ''}">
-        <div class="exp-prestige-icon" aria-hidden="true">🎓</div>
-        <h4 class="exp-prestige-degree">${title}</h4>
-        ${organization ? '<p class="exp-prestige-school">' + organization + '</p>' : ''}
-        ${description ? '<p class="exp-prestige-desc">' + description + '</p>' : ''}
-      </div>
-    `;
-  }).join('');
-}
-
-function buildLuxuryExperience(experiences) {
-  if (!experiences || experiences.length === 0) return;
-
-  const workExp = experiences.filter(e => e && e.type === 'work');
-  const eduExp = experiences.filter(e => e && e.type === 'education');
-
-  const showcase = document.getElementById('expShowcase');
-  const impactGrid = document.getElementById('expImpactGrid');
-  const prestigeGrid = document.getElementById('expPrestigeGrid');
-
-  if (showcase) {
-    showcase.innerHTML = renderWorkExperience(workExp);
-  }
-
-  if (impactGrid) {
-    impactGrid.innerHTML = renderImpactMetrics(workExp);
-  }
-
-  if (prestigeGrid) {
-    prestigeGrid.innerHTML = renderEducation(eduExp);
-  }
-
-  observeLuxuryElements();
-}
-
-// ===== EVENT DELEGATION FOR FRAME MOUSEMOVE =====
+// ===== EVENT DELEGATION =====
 document.addEventListener('mousemove', function(e) {
   const frame = e.target.closest('.exp-showcase-frame');
   if (!frame) return;
   const rect = frame.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  frame.style.setProperty('--mouse-x', x + 'px');
-  frame.style.setProperty('--mouse-y', y + 'px');
+  frame.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+  frame.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
 }, { passive: true });
 
 // ===== INITIALIZE =====

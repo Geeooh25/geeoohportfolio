@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experience · GEEOOH Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <link rel="stylesheet" href="../../assets/css/admin.css" />
+</head>
+<body class="admin-body">
+<button class="menu-overlay-admin" id="menuOverlay" aria-hidden="true"></button>
+  <div class="admin-ambient">
+    <div class="admin-glow admin-glow-1"></div>
+    <div class="admin-glow admin-glow-2"></div>
+    <div class="admin-grid-overlay"></div>
+  </div>
+
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="./dashboard.html" class="sidebar-logo-link">
+        <span class="logo-icon">G</span>
+        <div class="logo-text-group">
+          <span class="logo-text">GEEOOH</span>
+          <span class="logo-subtext">Admin</span>
+        </div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Overview</div>
+        <a href="./dashboard.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Content</div>
+        <a href="./projects.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">deployed_code</span>
+          <span>Projects</span>
+        </a>
+        <a href="./blog.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">edit_note</span>
+          <span>Blog</span>
+        </a>
+        <a href="./skills.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">trophy</span>
+          <span>Skills</span>
+        </a>
+        <a href="./experience.html" class="nav-item active">
+          <span class="material-symbols-outlined nav-icon">work_history</span>
+          <span>Experience</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Engagement</div>
+        <a href="./messages.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">chat</span>
+          <span>Messages</span>
+        </a>
+        <a href="./testimonials.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">reviews</span>
+          <span>Testimonials</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Configuration</div>
+        <a href="./settings.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">settings</span>
+          <span>Settings</span>
+        </a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">G</div>
+        <div class="user-details">
+          <div class="user-name" id="userName">Ganiyu Usman</div>
+          <div class="user-role" id="userRole">Admin</div>
+        </div>
+      </div>
+      <button class="logout-btn" id="logoutBtn" title="Logout">
+        <span class="material-symbols-outlined">logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    
+    <div class="mobile-header">
+      <button class="menu-toggle" id="menuToggle">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <span class="mobile-logo">GEEOOH</span>
+      <button class="theme-toggle-admin" id="themeToggleMobile">
+        <span class="material-symbols-outlined light-icon">light_mode</span>
+        <span class="material-symbols-outlined dark-icon">dark_mode</span>
+      </button>
+    </div>
+
+    <div class="top-bar">
+      <div class="page-greeting">
+        <h1 class="greeting-title">Experience</h1>
+        <p class="greeting-subtitle">Manage your work history, education, and certifications</p>
+      </div>
+      <div class="top-bar-actions">
+        <button class="theme-toggle-admin" id="themeToggleDesk" title="Toggle theme">
+          <span class="material-symbols-outlined light-icon">light_mode</span>
+          <span class="material-symbols-outlined dark-icon">dark_mode</span>
+        </button>
+        <button class="btn-primary-premium" id="addExpBtn">
+          <span class="material-symbols-outlined">add</span>
+          Add Experience
+        </button>
+      </div>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="search-wrapper">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input type="search" class="search-input" placeholder="Search experience..." id="expSearch" />
+      </div>
+      <div class="toolbar-filters">
+        <select class="filter-select" id="typeFilter">
+          <option value="all">All Types</option>
+          <option value="work">Work</option>
+          <option value="education">Education</option>
+          <option value="certification">Certification</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="experience-timeline" id="experienceTimeline">
+      <div class="activity-empty">Loading experience...</div>
+    </div>
+
+  </main>
+
+  <div class="modal-overlay" id="expModal">
+    <div class="modal-premium">
+      <div class="modal-header">
+        <h2 id="expModalTitle">Add Experience</h2>
+        <button class="modal-close" id="closeExpModal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="expForm">
+        <input type="hidden" name="expId" id="expId" />
+        <div class="form-group">
+          <label>Title / Role</label>
+          <input type="text" name="title" id="expTitle" required placeholder="Full Stack Developer" />
+        </div>
+        <div class="form-group">
+          <label>Company / Institution</label>
+          <input type="text" name="company" id="expCompany" placeholder="Company name" />
+        </div>
+        <div class="form-row-split">
+          <div class="form-group">
+            <label>Type</label>
+            <select name="type" id="expType" required>
+              <option value="work">Work</option>
+              <option value="education">Education</option>
+              <option value="certification">Certification</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" name="location" id="expLocation" placeholder="Remote / City" />
+          </div>
+        </div>
+        <div class="form-row-split">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" name="startDate" id="expStartDate" required />
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="date" name="endDate" id="expEndDate" />
+            <span style="font-size:0.72rem;color:var(--admin-text-tertiary);">Leave empty if current</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea name="description" id="expDescription" rows="4" placeholder="Describe your role, achievements, and responsibilities..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Highlights (one per line)</label>
+          <textarea name="highlights" id="expHighlights" rows="3" placeholder="Built scalable APIs&#10;Led team of 5 developers&#10;Increased performance by 40%"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="cancelExpModal">Cancel</button>
+          <button type="button" class="btn-danger-outline" id="deleteExpBtn" style="display:none;">Delete</button>
+          <button type="submit" class="btn-primary-premium">
+            <span class="material-symbols-outlined">save</span>
+            Save Experience
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="deleteExpConfirm">
+    <div class="modal-premium modal-sm">
+      <div class="modal-header">
+        <h2>Delete Experience</h2>
+        <button class="modal-close" id="closeDeleteExp">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div style="padding:24px;text-align:center;">
+        <p style="color:var(--admin-text-secondary);margin-bottom:20px;">Delete this entry permanently?</p>
+        <div class="modal-actions" style="justify-content:center;">
+          <button class="btn-cancel" id="cancelDeleteExp">Cancel</button>
+          <button class="btn-danger" id="confirmDeleteExp">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/admin.js"></script>
+  <script src="../../assets/js/admin-experience.js"></script>
+</body>
+</html>

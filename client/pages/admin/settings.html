@@ -1,356 +1,309 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Settings · GEEOOH Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" href="../../assets/css/admin.css" />
-  <style>
-    .settings-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 24px;
-    }
-    
-    .settings-card {
-      background: var(--admin-card);
-      border: 1px solid var(--admin-border);
-      border-radius: 16px;
-      padding: 24px;
-    }
-    
-    .settings-card h3 {
-      font-family: 'Space Grotesk', sans-serif;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--admin-border);
-    }
-    
-    .color-picker-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .color-picker-wrapper input[type="color"] {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      border: 2px solid var(--admin-border);
-      cursor: pointer;
-      background: transparent;
-    }
-    
-    .save-bar {
-      position: sticky;
-      bottom: 0;
-      background: var(--admin-surface);
-      border-top: 1px solid var(--admin-border);
-      padding: 16px 0;
-      margin-top: 32px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-    
-    @media (max-width: 480px) {
-      .settings-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
 </head>
 <body class="admin-body">
+
+  <div class="admin-ambient">
+    <div class="admin-glow admin-glow-1"></div>
+    <div class="admin-glow admin-glow-2"></div>
+    <div class="admin-grid-overlay"></div>
+  </div>
+
   <aside class="admin-sidebar" id="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo">GEEOOH</div>
-      <div class="sidebar-subtitle">Admin Dashboard</div>
+      <a href="./dashboard.html" class="sidebar-logo-link">
+        <span class="logo-icon">G</span>
+        <div class="logo-text-group">
+          <span class="logo-text">GEEOOH</span>
+          <span class="logo-subtext">Admin</span>
+        </div>
+      </a>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
-        <div class="nav-section-title">Main</div>
-        <a href="./dashboard.html" class="nav-item">Dashboard</a>
+        <div class="nav-section-title">Overview</div>
+        <a href="./dashboard.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">dashboard</span>
+          <span>Dashboard</span>
+        </a>
       </div>
       <div class="nav-section">
         <div class="nav-section-title">Content</div>
-        <a href="./projects.html" class="nav-item">Projects</a>
-        <a href="./blog.html" class="nav-item">Blog</a>
-        <a href="./messages.html" class="nav-item">Messages</a>
+        <a href="./projects.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">deployed_code</span>
+          <span>Projects</span>
+        </a>
+        <a href="./blog.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">edit_note</span>
+          <span>Blog</span>
+        </a>
+        <a href="./skills.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">trophy</span>
+          <span>Skills</span>
+        </a>
+        <a href="./experience.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">work_history</span>
+          <span>Experience</span>
+        </a>
       </div>
       <div class="nav-section">
-        <div class="nav-section-title">Settings</div>
-        <a href="#" class="nav-item active">Settings</a>
+        <div class="nav-section-title">Engagement</div>
+        <a href="./messages.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">chat</span>
+          <span>Messages</span>
+        </a>
+        <a href="./testimonials.html" class="nav-item">
+          <span class="material-symbols-outlined nav-icon">reviews</span>
+          <span>Testimonials</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title">Configuration</div>
+        <a href="./settings.html" class="nav-item active">
+          <span class="material-symbols-outlined nav-icon">settings</span>
+          <span>Settings</span>
+        </a>
       </div>
     </nav>
     <div class="sidebar-footer">
       <div class="user-info">
-        <div class="user-avatar">G</div>
+        <div class="user-avatar" id="userAvatar">G</div>
         <div class="user-details">
-          <div class="user-name">Admin</div>
-          <div class="user-role">Admin</div>
+          <div class="user-name" id="userName">Ganiyu Usman</div>
+          <div class="user-role" id="userRole">Admin</div>
         </div>
       </div>
-      <button class="logout-btn" onclick="api.logout()">Logout</button>
+      <button class="logout-btn" id="logoutBtn" title="Logout">
+        <span class="material-symbols-outlined">logout</span>
+      </button>
     </div>
   </aside>
 
   <main class="admin-main">
-    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
     
+    <div class="mobile-header">
+      <button class="menu-toggle" id="menuToggle">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <span class="mobile-logo">GEEOOH</span>
+      <button class="theme-toggle-admin" id="themeToggleMobile">
+        <span class="material-symbols-outlined light-icon">light_mode</span>
+        <span class="material-symbols-outlined dark-icon">dark_mode</span>
+      </button>
+    </div>
+
     <div class="top-bar">
-      <div class="page-title">
-        <h1>Settings</h1>
-        <p>Configure your portfolio website</p>
+      <div class="page-greeting">
+        <h1 class="greeting-title">Settings</h1>
+        <p class="greeting-subtitle">Configure your portfolio site</p>
+      </div>
+      <div class="top-bar-actions">
+        <button class="theme-toggle-admin" id="themeToggleDesk" title="Toggle theme">
+          <span class="material-symbols-outlined light-icon">light_mode</span>
+          <span class="material-symbols-outlined dark-icon">dark_mode</span>
+        </button>
       </div>
     </div>
 
     <form id="settingsForm">
-      <div class="settings-grid">
-        <!-- Hero Section -->
-        <div class="settings-card">
-          <h3>🏠 Hero Section</h3>
+      
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <span class="material-symbols-outlined settings-section-icon">home</span>
+          <div>
+            <h2>Hero Section</h2>
+            <p>Main landing section of your portfolio</p>
+          </div>
+        </div>
+        <div class="settings-grid">
           <div class="form-group">
-            <label>Title</label>
-            <input type="text" name="heroTitle" id="heroTitle" value="Ganiyu Usman" />
+            <label>Your Name</label>
+            <input type="text" name="heroTitle" id="heroTitle" placeholder="Ganiyu Usman" />
           </div>
           <div class="form-group">
-            <label>Subtitle</label>
-            <input type="text" name="heroSubtitle" id="heroSubtitle" value="Fullstack Developer" />
+            <label>Tagline</label>
+            <input type="text" name="heroSubtitle" id="heroSubtitle" placeholder="Fullstack Developer" />
           </div>
-          <div class="form-group">
+          <div class="form-group" style="grid-column: 1 / -1;">
             <label>Description</label>
-            <textarea name="heroDescription" id="heroDescription" rows="3">Building Scalable Applications, Real-Time Systems, and Premium Digital Experiences</textarea>
+            <textarea name="heroDescription" id="heroDescription" rows="2" placeholder="Building scalable applications..."></textarea>
           </div>
           <div class="form-group">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-              <input type="checkbox" name="showStats" id="showStats" checked />
-              Show statistics cards
-            </label>
+            <label>CTA Text</label>
+            <input type="text" name="heroCtaText" id="heroCtaText" placeholder="View Projects" />
+          </div>
+          <div class="form-group">
+            <label>CTA Link</label>
+            <input type="text" name="heroCtaLink" id="heroCtaLink" placeholder="#projects" />
           </div>
         </div>
+      </div>
 
-        <!-- Contact Info -->
-        <div class="settings-card">
-          <h3>📧 Contact Information</h3>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" id="email" value="ganiyuusman43@gmail.com" />
-          </div>
-          <div class="form-group">
-            <label>Phone</label>
-            <input type="text" name="phone" id="phone" value="+234 903 659 6606" />
-          </div>
-          <div class="form-group">
-            <label>WhatsApp Number</label>
-            <input type="text" name="whatsapp" id="whatsapp" value="+2349036596606" />
-          </div>
-          <div class="form-group">
-            <label>Location</label>
-            <input type="text" name="address" id="address" value="Nigeria" />
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <span class="material-symbols-outlined settings-section-icon">person</span>
+          <div>
+            <h2>About Section</h2>
+            <p>Personal introduction and story</p>
           </div>
         </div>
+        <div class="settings-grid">
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>About Content</label>
+            <textarea name="aboutContent" id="aboutContent" rows="4" placeholder="Tell your story..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Resume URL</label>
+            <input type="text" name="resumeUrl" id="resumeUrl" placeholder="./assets/documents/resume.pdf" />
+          </div>
+          <div class="form-group">
+            <label>Upload Resume</label>
+            <input type="file" id="resumeUpload" accept=".pdf,.doc,.docx" />
+            <button type="button" class="btn-cancel upload-btn" id="uploadResumeBtn" style="margin-top:8px;">
+              <span class="material-symbols-outlined" style="font-size:16px;">upload</span>
+              Upload Resume
+            </button>
+            <div class="upload-progress" id="resumeProgress" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
 
-        <!-- Social Links -->
-        <div class="settings-card">
-          <h3>🔗 Social Links</h3>
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <span class="material-symbols-outlined settings-section-icon">share</span>
+          <div>
+            <h2>Social Links</h2>
+            <p>Your online presence</p>
+          </div>
+        </div>
+        <div class="settings-grid">
           <div class="form-group">
             <label>GitHub</label>
-            <input type="url" name="github" id="github" value="https://github.com/geeooh25" />
+            <input type="url" name="github" id="socialGithub" placeholder="https://github.com/geeooh25" />
           </div>
           <div class="form-group">
             <label>LinkedIn</label>
-            <input type="url" name="linkedin" id="linkedin" value="https://linkedin.com/in/geeooh" />
+            <input type="url" name="linkedin" id="socialLinkedin" placeholder="https://linkedin.com/in/geeooh" />
           </div>
           <div class="form-group">
-            <label>Twitter</label>
-            <input type="url" name="twitter" id="twitter" value="https://twitter.com/geeooh_dev" />
+            <label>Twitter / X</label>
+            <input type="url" name="twitter" id="socialTwitter" placeholder="https://twitter.com/geeooh_dev" />
           </div>
           <div class="form-group">
-            <label>Instagram (optional)</label>
-            <input type="url" name="instagram" id="instagram" placeholder="https://instagram.com/..." />
-          </div>
-        </div>
-
-        <!-- SEO Settings -->
-        <div class="settings-card">
-          <h3>🔍 SEO</h3>
-          <div class="form-group">
-            <label>Site Name</label>
-            <input type="text" name="siteName" id="siteName" value="GEEOOH Portfolio" />
-          </div>
-          <div class="form-group">
-            <label>Site Description</label>
-            <textarea name="siteDescription" id="siteDescription" rows="2">Full-stack developer portfolio by Ganiyu Usman</textarea>
-          </div>
-          <div class="form-group">
-            <label>Keywords (comma separated)</label>
-            <input type="text" name="keywords" id="keywords" value="fullstack developer, node.js, portfolio, ganiyu usman" />
-          </div>
-          <div class="form-group">
-            <label>Google Analytics ID</label>
-            <input type="text" name="googleAnalytics" id="googleAnalytics" placeholder="UA-XXXXXXXXX-X" />
+            <label>Instagram</label>
+            <input type="url" name="instagram" id="socialInstagram" placeholder="https://instagram.com/..." />
           </div>
         </div>
+      </div>
 
-        <!-- Chat Settings -->
-        <div class="settings-card">
-          <h3>💬 Chat Widget</h3>
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <span class="material-symbols-outlined settings-section-icon">contact_mail</span>
+          <div>
+            <h2>Contact Info</h2>
+            <p>How visitors can reach you</p>
+          </div>
+        </div>
+        <div class="settings-grid">
           <div class="form-group">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <label>Email</label>
+            <input type="email" name="email" id="contactEmail" placeholder="ganiyuusman43@gmail.com" />
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="text" name="phone" id="contactPhone" placeholder="+234 903 659 6606" />
+          </div>
+          <div class="form-group">
+            <label>WhatsApp</label>
+            <input type="text" name="whatsapp" id="contactWhatsapp" placeholder="+2349036596606" />
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" name="address" id="contactAddress" placeholder="Lagos, Nigeria" />
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <span class="material-symbols-outlined settings-section-icon">chat_bubble</span>
+          <div>
+            <h2>Chat Widget</h2>
+            <p>Configure the live chat settings</p>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <div class="form-group">
+            <label class="checkbox-label">
               <input type="checkbox" name="chatEnabled" id="chatEnabled" checked />
-              Enable chat widget
+              <span>Enable chat widget</span>
             </label>
           </div>
-          <div class="form-group">
+          <div class="form-group" style="grid-column: 1 / -1;">
             <label>Welcome Message</label>
-            <textarea name="welcomeMessage" id="welcomeMessage" rows="2">👋 Hi! I'm Ganiyu's virtual assistant. How can I help you today?</textarea>
+            <input type="text" name="chatWelcome" id="chatWelcome" placeholder="👋 Hi! How can I help you today?" />
           </div>
-          <div class="form-group">
+          <div class="form-group" style="grid-column: 1 / -1;">
             <label>Offline Message</label>
-            <textarea name="offlineMessage" id="offlineMessage" rows="2">I'm currently offline. Leave a message and I'll get back to you soon!</textarea>
-          </div>
-        </div>
-
-        <!-- Maintenance -->
-        <div class="settings-card">
-          <h3>🛠️ Maintenance</h3>
-          <div class="form-group">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-              <input type="checkbox" name="maintenanceEnabled" id="maintenanceEnabled" />
-              Enable maintenance mode
-            </label>
-          </div>
-          <div class="form-group">
-            <label>Maintenance Message</label>
-            <textarea name="maintenanceMessage" id="maintenanceMessage" rows="2">Site under maintenance. Please check back soon!</textarea>
+            <input type="text" name="chatOffline" id="chatOffline" placeholder="I'm currently away. Leave a message!" />
           </div>
         </div>
       </div>
 
-      <div class="save-bar">
-        <button type="button" class="btn btn-secondary" onclick="loadSettings()">Reset</button>
-        <button type="submit" class="btn btn-primary">Save Settings</button>
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <span class="material-symbols-outlined settings-section-icon">image</span>
+          <div>
+            <h2>Uploads</h2>
+            <p>Upload images and files for your portfolio</p>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <div class="form-group">
+            <label>Profile Image</label>
+            <input type="file" id="profileImageUpload" accept="image/*" />
+            <button type="button" class="btn-cancel upload-btn" id="uploadProfileBtn" style="margin-top:8px;">
+              <span class="material-symbols-outlined" style="font-size:16px;">upload</span>
+              Upload Image
+            </button>
+            <div class="upload-progress" id="profileUploadProgress" style="display:none;"></div>
+            <div class="upload-preview" id="profilePreview" style="margin-top:8px;"></div>
+          </div>
+          <div class="form-group">
+            <label>General Upload</label>
+            <input type="file" id="generalUpload" accept="image/*,.pdf,.doc,.docx" />
+            <button type="button" class="btn-cancel upload-btn" id="uploadGeneralBtn" style="margin-top:8px;">
+              <span class="material-symbols-outlined" style="font-size:16px;">upload</span>
+              Upload File
+            </button>
+            <div class="upload-progress" id="generalUploadProgress" style="display:none;"></div>
+            <div class="upload-result" id="generalUploadResult" style="margin-top:8px;"></div>
+          </div>
+        </div>
       </div>
+
+      <div class="form-actions-bar">
+        <button type="submit" class="btn-primary-premium btn-lg">
+          <span class="material-symbols-outlined">save</span>
+          Save All Settings
+        </button>
+      </div>
+
     </form>
+
   </main>
 
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="../../assets/js/api.js"></script>
-  <script>
-    if (!api.isAuthenticated()) window.location.href = './login.html';
-
-    async function loadSettings() {
-      try {
-        const data = await api.getAdminSettings();
-        if (data.success && data.settings) {
-          const s = data.settings;
-          
-          document.getElementById('siteName').value = s.siteName || '';
-          document.getElementById('siteDescription').value = s.siteDescription || '';
-          document.getElementById('keywords').value = (s.siteKeywords || []).join(', ');
-          
-          if (s.heroSection) {
-            document.getElementById('heroTitle').value = s.heroSection.title || '';
-            document.getElementById('heroSubtitle').value = s.heroSection.subtitle || '';
-            document.getElementById('heroDescription').value = s.heroSection.description || '';
-            document.getElementById('showStats').checked = s.heroSection.showStats !== false;
-          }
-          
-          if (s.contactInfo) {
-            document.getElementById('email').value = s.contactInfo.email || '';
-            document.getElementById('phone').value = s.contactInfo.phone || '';
-            document.getElementById('whatsapp').value = s.contactInfo.whatsapp || '';
-            document.getElementById('address').value = s.contactInfo.address || '';
-          }
-          
-          if (s.socialLinks) {
-            document.getElementById('github').value = s.socialLinks.github || '';
-            document.getElementById('linkedin').value = s.socialLinks.linkedin || '';
-            document.getElementById('twitter').value = s.socialLinks.twitter || '';
-            document.getElementById('instagram').value = s.socialLinks.instagram || '';
-          }
-          
-          if (s.seo) {
-            document.getElementById('googleAnalytics').value = s.seo.googleAnalyticsId || '';
-          }
-          
-          if (s.chat) {
-            document.getElementById('chatEnabled').checked = s.chat.enabled !== false;
-            document.getElementById('welcomeMessage').value = s.chat.welcomeMessage || '';
-            document.getElementById('offlineMessage').value = s.chat.offlineMessage || '';
-          }
-          
-          if (s.maintenance) {
-            document.getElementById('maintenanceEnabled').checked = s.maintenance.enabled || false;
-            document.getElementById('maintenanceMessage').value = s.maintenance.message || '';
-          }
-        }
-      } catch (error) {
-        showToast('Failed to load settings', 'error');
-      }
-    }
-
-    document.getElementById('settingsForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const settingsData = {
-        siteName: document.getElementById('siteName').value,
-        siteDescription: document.getElementById('siteDescription').value,
-        siteKeywords: document.getElementById('keywords').value.split(',').map(k => k.trim()).filter(k => k),
-        heroSection: {
-          title: document.getElementById('heroTitle').value,
-          subtitle: document.getElementById('heroSubtitle').value,
-          description: document.getElementById('heroDescription').value,
-          showStats: document.getElementById('showStats').checked
-        },
-        contactInfo: {
-          email: document.getElementById('email').value,
-          phone: document.getElementById('phone').value,
-          whatsapp: document.getElementById('whatsapp').value,
-          address: document.getElementById('address').value
-        },
-        socialLinks: {
-          github: document.getElementById('github').value,
-          linkedin: document.getElementById('linkedin').value,
-          twitter: document.getElementById('twitter').value,
-          instagram: document.getElementById('instagram').value
-        },
-        seo: {
-          googleAnalyticsId: document.getElementById('googleAnalytics').value
-        },
-        chat: {
-          enabled: document.getElementById('chatEnabled').checked,
-          welcomeMessage: document.getElementById('welcomeMessage').value,
-          offlineMessage: document.getElementById('offlineMessage').value
-        },
-        maintenance: {
-          enabled: document.getElementById('maintenanceEnabled').checked,
-          message: document.getElementById('maintenanceMessage').value
-        }
-      };
-      
-      try {
-        const result = await api.updateSettings(settingsData);
-        if (result.success) {
-          showToast('Settings saved successfully!', 'success');
-        }
-      } catch (error) {
-        showToast('Failed to save settings', 'error');
-      }
-    });
-
-    function showToast(message, type) {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.textContent = message;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
-
-    loadSettings();
-  </script>
+  <script src="../../assets/js/admin.js"></script>
+  <script src="../../assets/js/admin-settings.js"></script>
 </body>
 </html>

@@ -323,31 +323,43 @@
   }
 
   function renderResults(p) {
-    if (!p.results) return '';
+    if (!p.impact) return '';
     return `
       <section class="pd-section" id="results" aria-labelledby="results-title">
         <div class="pd-section-inner">
           <div class="pd-reveal"><span class="pd-section-label">Impact</span></div>
           <div class="pd-reveal pd-reveal-delay-1"><h2 class="pd-section-title" id="results-title">Results That Matter</h2></div>
-          ${p.results.summary ? `<div class="pd-reveal pd-reveal-delay-2"><p class="pd-section-text">${safeHTML(p.results.summary)}</p></div>` : ''}
-          ${p.results.metrics && p.results.metrics.length > 0 ? `
+          ${p.impact.summary ? `<div class="pd-reveal pd-reveal-delay-2"><p class="pd-section-text">${safeHTML(p.impact.summary)}</p></div>` : ''}
+          ${p.impact.metrics && p.impact.metrics.length > 0 ? `
           <div class="pd-stats-grid">
-            ${p.results.metrics.map((m, i) => `
+            ${p.impact.metrics.map((m, i) => `
               <div class="pd-stat-item pd-reveal pd-reveal-delay-${i + 3}">
                 <div class="pd-stat-number" style="font-size:2rem;">${safeHTML(m.value)}</div>
                 <div class="pd-stat-label">${safeHTML(m.icon || '📊')} ${safeHTML(m.label)}</div>
               </div>
             `).join('')}
           </div>` : ''}
-          ${p.results.beforeAfter ? `
-          <div class="pd-before-after">
-            <div class="pd-ba-card before"><div class="pd-ba-label">Before</div><div class="pd-ba-metric">${safeHTML(p.results.beforeAfter.before)}</div></div>
-            <div class="pd-ba-card after"><div class="pd-ba-label">After</div><div class="pd-ba-metric">${safeHTML(p.results.beforeAfter.after)}</div></div>
-          </div>` : ''}
         </div>
       </section>
     `;
-  }
+}
+function renderCredentials(p) {
+    if (!p.credentials || !p.credentials.hasCredentials) return '';
+    return `
+      <section class="pd-section pd-section-alt" aria-labelledby="creds-title">
+        <div class="pd-section-inner">
+          <div class="pd-reveal"><span class="pd-section-label">Demo Access</span></div>
+          <div class="pd-reveal pd-reveal-delay-1"><h2 class="pd-section-title" id="creds-title">Try It Yourself</h2></div>
+          <div class="pd-creds-card pd-reveal pd-reveal-delay-2">
+            ${p.credentials.adminUrl ? `<div class="pd-creds-row"><span class="pd-creds-label">🔗 Admin URL</span><code>${safeHTML(p.credentials.adminUrl)}</code></div>` : ''}
+            ${p.credentials.username ? `<div class="pd-creds-row"><span class="pd-creds-label">👤 Username</span><code>${safeHTML(p.credentials.username)}</code></div>` : ''}
+            ${p.credentials.password ? `<div class="pd-creds-row"><span class="pd-creds-label">🔑 Password</span><code>${safeHTML(p.credentials.password)}</code></div>` : ''}
+            ${p.credentials.note ? `<p class="pd-creds-note">💡 ${safeHTML(p.credentials.note)}</p>` : ''}
+          </div>
+        </div>
+      </section>
+    `;
+}
 
   function renderShare(p) {
     const url = encodeURIComponent(window.location.href);
@@ -474,14 +486,15 @@
       ${renderFeatures(project)}
       ${renderChallenges(project)}
       ${renderResults(project)}
-      ${renderShare(project)}
-      ${renderCTA(project)}
+      ${renderCredentials(project)}
       ${renderClientFeedback(project)}
       ${renderGallery(project)}
+      ${renderShare(project)}
+      ${renderCTA(project)}
       ${renderRelatedProjects(data)}
       ${renderNextProject(data)}
     `;
-  }
+}
 
   // ===== LIGHTBOX =====
   function initLightbox() {

@@ -4,106 +4,77 @@ const { sendWhatsAppNotification } = require('../utils/whatsapp');
 // @desc    Get all messages (admin)
 exports.getMessages = async (req, res) => {
   try {
-    const { status, search, sort, conversationId } = req.query;
-    
-    const query = {};
-    
-    if (status === 'unread') query.read = false;
-    if (status === 'read') query.read = true;
-    if (status === 'replied') query.replied = true;
-    if (conversationId) query.conversationId = conversationId;
-    if (search) {
-      query.$or = [
-        { 'sender.name': { $regex: search, $options: 'i' } },
-        { 'sender.email': { $regex: search, $options: 'i' } },
-        { content: { $regex: search, $options: 'i' } }
-      ];
-    }
+    const messages = await Message.find().sort({ createdAt: -1 });
 
-    let sortOption = { createdAt: -1 };
-    if (sort === 'oldest') sortOption = { createdAt: 1 };
+    // Build conversations manually (more compatible)
+    const conversationMap = {};
+    messages.forEach(function (m) {
+      var cid = m.conversationId || 'unknown';
+      if (!conversationMap[cid]) {
+        conversationMap[cid] = {
+          _id: cid,
+          lastMessage: m,
+          unreadCount: 0,
+          totalMessages: 0
+        };
+      }
+      conversationMap[cid].totalMessages++;
+      if (!m.read) conversationMap[cid].unreadCount++;
+      if (new Date(m.createdAt) > new Date(conversationMap[cid].lastMessage.createdAt)) {
+        conversationMap[cid].lastMessage = m;
+      }
+    });
 
-    const messages = await Message.find(query).sort(sortOption);
-
-    // Get unique conversations
-    const conversations = await Message.aggregate([
-      { $sort: { createdAt: -1 } },
-      {
-        $group: {
-          _id: '$conversationId',
-          lastMessage: { $first: '$$ROOT' },
-          unreadCount: {
-            $sum: { $cond: [{ $eq: ['$read', false] }, 1, 0] }
-          },
-          totalMessages: { $sum: 1 }
-        }
-      },
-      { $sort: { 'lastMessage.createdAt': -1 } }
-    ]);
+    var conversations = Object.values(conversationMap);
+    conversations.sort(function (a, b) {
+      return new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt);
+    });
 
     res.status(200).json({
       success: true,
       count: messages.length,
-      conversations,
-      messages
+      conversations: conversations,
+      messages: messages
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    console.error('Get messages error:', error.message);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 // @desc    Send message (public)
 exports.sendMessage = async (req, res) => {
   try {
-    const { name, email, content, conversationId } = req.body;
-
     const message = await Message.create({
-      conversationId: conversationId || `conv_${Date.now()}`,
+      conversationId: req.body.conversationId || `conv_${Date.now()}`,
       sender: {
-        name,
-        email,
-        ip: req.ip
+        name: req.body.sender?.name || req.body.name || 'Visitor',
+        email: req.body.sender?.email || req.body.email || 'visitor@website.com'
       },
-      content,
-      metadata: {
-        userAgent: req.headers['user-agent'],
-        platform: req.headers['sec-ch-ua-platform'] || 'Unknown'
-      }
+      content: req.body.content,
+      type: req.body.type || 'visitor',
+      read: req.body.read !== undefined ? req.body.read : false,
+      replied: req.body.replied || false,
+      fileUrl: req.body.fileUrl || undefined,
+      fileName: req.body.fileName || undefined,
+      source: req.body.source || 'website'
     });
 
-    // Emit socket event for real-time notification
     const io = req.app.get('io');
     if (io) {
-      io.to('admin-room').emit('new-message', {
-        message,
-        notification: `New message from ${name}`
-      });
+      if (message.type === 'admin') {
+        // Only emit to visitor
+        io.to(message.conversationId).emit('admin-reply', message);
+      } else {
+        // Visitor message — emit to admin
+        io.to('admin-room').emit('admin-notification', { type: 'new-message', message, timestamp: new Date() });
+      }
     }
 
-    // Send WhatsApp notification
-    try {
-      await sendWhatsAppNotification({
-        name,
-        email,
-        content,
-        timestamp: new Date()
-      });
-    } catch (err) {
-      console.log('WhatsApp notification failed:', err.message);
-    }
-
-    res.status(201).json({
-      success: true,
-      message
-    });
+    res.status(201).json({ success: true, message });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    console.error('Send message error:', error.message);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

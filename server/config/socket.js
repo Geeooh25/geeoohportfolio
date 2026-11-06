@@ -2,153 +2,102 @@ const Message = require('../models/Message');
 
 const setupSocket = (server) => {
   const io = require('socket.io')(server, {
-    cors: {
-      origin: ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://127.0.0.1:5500'],
-      methods: ['GET', 'POST']
-    }
+    cors: { origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5000', 'http://127.0.0.1:5000', 'http://127.0.0.1:5500'], methods: ['GET', 'POST'] }
   });
 
-  // Track online users
-  const onlineUsers = new Map();
-  const adminSockets = new Set();
+  const onlineVisitors = new Map(); // conversationId -> socketId
+  const adminOnline = new Set();
 
   io.on('connection', (socket) => {
-    console.log(`✅ New connection: ${socket.id}`);
+    console.log('✅ Connected: ' + socket.id);
 
-    // User joins
     socket.on('user-join', (userData) => {
       if (userData.role === 'admin') {
-        adminSockets.add(socket.id);
+        adminOnline.add(socket.id);
         socket.join('admin-room');
-        console.log('👑 Admin joined');
       } else {
-        onlineUsers.set(socket.id, {
-          ...userData,
-          socketId: socket.id,
-          joinedAt: new Date()
-        });
-        
-        // Join their conversation room
-        if (userData.conversationId) {
-          socket.join(userData.conversationId);
-        }
+        var cid = userData.conversationId;
+        onlineVisitors.set(cid, socket.id);
+        socket.join(cid);
+        io.to('admin-room').emit('user-online', { conversationId: cid, name: userData.name });
+
+        // Visitor came online — mark admin messages as delivered
+        Message.updateMany({ conversationId: cid, type: 'admin', delivered: false }, { delivered: true })
+          .then(() => io.to('admin-room').emit('messages-delivered', { conversationId: cid }))
+          .catch(() => {});
       }
     });
 
-    // Handle new message
+    // Visitor sends message
     socket.on('send-message', async (data) => {
       try {
-        const message = await Message.create({
+        var adminIsOnline = adminOnline.size > 0;
+        var message = await Message.create({
           conversationId: data.conversationId,
-          sender: {
-            name: data.sender.name,
-            email: data.sender.email
-          },
-          content: data.content,
-          type: data.type || 'text'
+          sender: { name: data.sender?.name || 'Visitor', email: data.sender?.email || 'visitor@website.com' },
+          content: data.content, type: 'visitor',
+          fileUrl: data.fileUrl || undefined, fileName: data.fileName || undefined,
+          source: 'website', delivered: adminIsOnline
         });
-
-        // Send to conversation room
-        io.to(data.conversationId).emit('new-message', message);
-
-        // Notify  admins
-        io.to('admin-room').emit('admin-notification', {
-          type: 'new-message',
-          message,
-          timestamp: new Date()
-        });
-
-        // Auto-reply if enabled
-        const Setting = require('../models/Setting');
-        const settings = await Setting.findOne();
-        if (settings?.chat?.welcomeMessage) {
-          setTimeout(() => {
-            const autoReply = {
-              conversationId: data.conversationId,
-              sender: { name: 'Ganiyu Usman', email: 'admin' },
-              content: settings.chat.welcomeMessage,
-              type: 'text',
-              read: true
-            };
-            io.to(data.conversationId).emit('admin-reply', autoReply);
-          }, 2000);
-        }
-      } catch (error) {
-        console.error('Message error:', error);
-        socket.emit('message-error', { error: error.message });
-      }
+        socket.emit('new-message', message);
+        io.to('admin-room').emit('admin-notification', { type: 'new-message', message, timestamp: new Date() });
+        // Tell visitor: delivered if admin online
+        if (adminIsOnline) socket.emit('message-status', { messageId: message._id.toString(), status: 'delivered' });
+        else socket.emit('message-status', { messageId: message._id.toString(), status: 'sent' });
+      } catch (error) { console.error('Message error:', error.message); }
     });
 
-    // Admin reply
+    // Admin sends reply
     socket.on('admin-reply', async (data) => {
       try {
-        const message = await Message.findByIdAndUpdate(
-          data.messageId,
-          {
-            replied: true,
-            repliedAt: new Date(),
-            replyContent: data.content
-          },
-          { new: true }
-        );
-
-        io.to(data.conversationId).emit('admin-reply', {
-          message,
-          replyContent: data.content
+        var visitorOnline = onlineVisitors.has(data.conversationId);
+        var message = await Message.create({
+          conversationId: data.conversationId,
+          sender: { name: 'Ganiyu Usman', email: 'admin@geeooh.dev' },
+          content: data.content, type: 'admin',
+          read: false, replied: true, delivered: visitorOnline,
+          fileUrl: data.fileUrl || undefined, fileName: data.fileName || undefined,
+          source: 'website'
         });
-
-        // Notify other admins
-        socket.to('admin-room').emit('admin-replied', message);
-      } catch (error) {
-        console.error('Reply error:', error);
-      }
+        io.to(data.conversationId).emit('admin-reply', message);
+        io.to('admin-room').emit('admin-notification', { type: 'new-message', message, timestamp: new Date() });
+      } catch (error) { console.error('Admin reply error:', error.message); }
     });
 
-    // Typing indicator
-    socket.on('typing', (data) => {
-      socket.to(data.conversationId).emit('user-typing', {
-        name: data.name,
-        isTyping: data.isTyping
-      });
+    // Admin opens chat → marks visitor messages as READ
+    socket.on('admin-mark-read', async (data) => {
+      try {
+        var result = await Message.updateMany(
+          { conversationId: data.conversationId, type: 'visitor', read: false },
+          { read: true, readAt: new Date() }
+        );
+        if (result.modifiedCount > 0) {
+          io.to(data.conversationId).emit('message-status', { status: 'read-all' });
+          io.to('admin-room').emit('messages-read', { conversationId: data.conversationId });
+        }
+      } catch (e) { console.error('Admin mark read error:', e); }
     });
 
-    // Mark as read
+    // Visitor opens chat → marks admin messages as READ
     socket.on('mark-read', async (data) => {
       try {
         await Message.updateMany(
-          { conversationId: data.conversationId, read: false },
+          { conversationId: data.conversationId, type: 'admin', read: false },
           { read: true, readAt: new Date() }
         );
-        
-        io.to('admin-room').emit('messages-read', {
-          conversationId: data.conversationId
-        });
-      } catch (error) {
-        console.error('Mark read error:', error);
-      }
+        io.to('admin-room').emit('messages-read', { conversationId: data.conversationId });
+      } catch (e) { console.error('Mark read error:', e); }
     });
 
-    // Get online users count (admin only)
-    socket.on('get-online-users', () => {
-      if (adminSockets.has(socket.id)) {
-        socket.emit('online-users', {
-          count: onlineUsers.size,
-          users: Array.from(onlineUsers.values())
-        });
-      }
+    socket.on('typing', (data) => {
+      if (data.conversationId) io.to('admin-room').emit('typing', { conversationId: data.conversationId, name: data.name });
     });
 
-    // Disconnect
     socket.on('disconnect', () => {
-      console.log(`❌ Disconnected: ${socket.id}`);
-      
-      onlineUsers.delete(socket.id);
-      adminSockets.delete(socket.id);
-      
-      // Update online count for admins
-      io.to('admin-room').emit('online-users-update', {
-        count: onlineUsers.size
-      });
+      for (let [cid, sid] of onlineVisitors) {
+        if (sid === socket.id) { onlineVisitors.delete(cid); io.to('admin-room').emit('user-offline', { conversationId: cid }); break; }
+      }
+      adminOnline.delete(socket.id);
     });
   });
 
