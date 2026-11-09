@@ -658,3 +658,83 @@
   .blog-filters { gap: 0.35rem; }
   .filter-pill { padding: 0.4rem 0.9rem; font-size: 0.75rem; }
 }
+
+/* =========================================
+   UNIVERSAL ACCENT COLOR OVERRIDE (v3)
+   Forces ALL hardcoded orange to obey the theme
+   ========================================= */
+
+/* ── 1. GLOBAL HEADINGS & TEXT ── */
+/* Forces headings that have orange text to change */
+h1 span, h2 span, h3 span, h4 span,
+.gradient-text, .gradient-text-animated,
+.text-accent, .color-accent,
+.logo-text, .logo-icon {
+  color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+/* ── 2. CHAT WIDGET (Frontend & Admin) ── */
+/* Forces the chat header, send button, and toggle to the new color */
+.chat-header, 
+.chat-toggle, 
+.chat-send-btn, 
+.chat-message.user .message-bubble,
+.chat-bubble.admin > div:last-child {
+  background: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background-image: none !important; /* kills hardcoded gradients */
+  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+/* Chat icons and text inside the colored bubbles */
+.chat-header .material-symbols-outlined,
+.chat-header h4,
+.chat-header .chat-status,
+.chat-message.user .message-bubble *,
+.chat-bubble.admin > div:last-child * {
+  color: #ffffff !important;
+}
+
+/* ── 3. GRADIENTS (Buttons, Logos, etc.) ── */
+/* Overrides any linear-gradient that used the hardcoded orange */
+.btn-primary-premium,
+.btn-primary,
+.logo-icon,
+.user-avatar,
+.chat-toggle,
+.profile-ring {
+  background: linear-gradient(135deg, var(--admin-accent, var(--accent-primary, #FF6B00)), var(--admin-accent-hover, #FF8C42)) !important;
+  background-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+/* ── 4. ICONS & BADGES ── */
+/* Forces small accents, icons, and badges to the new color */
+.stat-icon-wrap.accent-orange,
+.qa-icon,
+.nav-item.active,
+.nav-item:hover,
+.card-badge,
+.card-pill,
+.table-badge,
+.activity-dot.project {
+  color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+.stat-icon-wrap.accent-orange,
+.qa-icon {
+  background: var(--admin-accent-soft, rgba(255,107,0,0.1)) !important;
+}
+
+.activity-dot.project,
+.stat-badge {
+  background-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+/* ── 5. INPUT FOCUS BORDERS ── */
+input:focus, 
+textarea:focus, 
+select:focus,
+.search-input:focus {
+  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  box-shadow: 0 0 0 3px var(--admin-accent-soft, rgba(255,107,0,0.2)) !important;
+}

@@ -2,11 +2,27 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Testimonials · GEEOOH Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" href="../../assets/css/admin.css" />
+  <script>
+  // Prevent the white flash of unstyled content (FOUC)
+  (function() {
+    var theme = localStorage.getItem('portfolio_theme');
+    if (!theme) {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.classList.add('light-theme');
+    }
+  })();
+</script>
 </head>
 <body class="admin-body">
 <button class="menu-overlay-admin" id="menuOverlay" aria-hidden="true"></button>
@@ -19,7 +35,7 @@
   <aside class="admin-sidebar" id="sidebar">
     <div class="sidebar-header">
       <a href="./dashboard.html" class="sidebar-logo-link">
-        <span class="logo-icon">G</span>
+       <img src="../../assets/images/logo.png" alt="GEEOOH" class="logo-icon" style="object-fit: cover; border-radius: 13px;" />
         <div class="logo-text-group">
           <span class="logo-text">GEEOOH</span>
           <span class="logo-subtext">Admin</span>
@@ -74,7 +90,9 @@
     </nav>
     <div class="sidebar-footer">
       <div class="user-info">
-        <div class="user-avatar" id="userAvatar">G</div>
+       <div class="user-avatar" id="userAvatar" style="background: none; padding: 0; overflow: hidden;">
+  <img src="../../assets/images/avatar.jpg" alt="Ganiyu" style="width: 100%; height: 100%; object-fit: cover;" />
+</div>
         <div class="user-details">
           <div class="user-name" id="userName">Ganiyu Usman</div>
           <div class="user-role" id="userRole">Admin</div>
@@ -87,7 +105,7 @@
   </aside>
 
   <main class="admin-main">
-    
+
     <div class="mobile-header">
       <button class="menu-toggle" id="menuToggle">
         <span class="material-symbols-outlined">menu</span>
@@ -99,7 +117,7 @@
       </button>
     </div>
 
-    <div class="top-bar">
+    <div class="admin-topbar">
       <div class="page-greeting">
         <h1 class="greeting-title">Testimonials</h1>
         <p class="greeting-subtitle">Manage client reviews and endorsements</p>
@@ -200,6 +218,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/theme.js"></script>
   <script src="../../assets/js/admin.js"></script>
   <script src="../../assets/js/admin-testimonials.js"></script>
 </body>

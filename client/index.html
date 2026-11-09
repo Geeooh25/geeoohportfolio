@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Ganiyu Usman · Fullstack Developer Portfolio</title>
   
   <!-- SEO Meta Tags -->
@@ -39,7 +39,22 @@
 
   <link rel="stylesheet" href="./assets/css/experience.css" />
   <link rel="stylesheet" href="./assets/css/testimonials.css" />
-
+   <script>
+  // Prevent the white flash of unstyled content (FOUC)
+  (function() {
+    var theme = localStorage.getItem('portfolio_theme');
+    if (!theme) {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.classList.add('light-theme');
+    }
+  })();
+</script>
 </head>
 <body>
 
@@ -83,7 +98,11 @@
   <header class="header" id="header">
     <div class="header-container">
       <div class="logo">
+        <img src="./assets/images/logo.png" alt=""> 
+        <div class="logo-text-group">
         <a href="#home" class="logo-text">GEEOOH</a>
+        <span class="logo-subtext">BUILT DIFFERENT</span>
+        </div>
       </div>
       
       <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">
@@ -401,7 +420,7 @@ more_horiz
   <div class="container" style="position:relative;z-index:1;">
     <div class="tm-header">
       <div class="tm-eyebrow">Client Stories</div>
-      <h2 class="tm-headline">Trusted by <em style="font-style:normal;color:#FF6B00;">Innovators</em></h2>
+      <h2 class="tm-headline">Trusted by <em style="font-style:normal;">Innovators</em></h2>
       <p class="tm-subtitle">Real impact, real results, real partnerships</p>
     </div>
 
@@ -457,49 +476,46 @@ more_horiz
         </div>
       </div>
     </div>
-    <!-- CONTACT SECTION -->
-     <section id="contact" class="section">
-      <div class="container">
-        <h2 class="section-title">Let's Work Together</h2>
-        <div class="contact-grid">
-          <div class="contact-form-wrapper">
-            <form id="contactForm" class="contact-form">
-              <div class="form-group">
-                <label for="name">Your Name</label>
-                <input type="text" id="name" name="name" placeholder="John Doe" required />
-              </div>
-              <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="john@example.com" required />
-              </div>
-              <div class="form-group">
-                <label for="message">Tell me about your project</label>
-                <textarea id="message" name="content" rows="5" placeholder="I'd love to hear about your ideas..." required></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary submit-btn">
-                <span>Send Message</span>
-                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-              </button>
-            </form>
+   <!-- CONTACT SECTION -->
+<section id="contact" class="section">
+  <div class="container">
+    <h2 class="section-title">Let's Work Together</h2>
+    <div class="contact-grid">
+      
+      <!-- Left Side: Live Chat CTA -->
+      <div class="contact-form-wrapper">
+        <div class="contact-live-chat-card">
+          <div class="chat-icon-wrapper">
+            <span class="material-symbols-outlined">forum</span>
           </div>
-          
-          <div class="contact-info-side">
-            <h3>Get In Touch</h3>
-            <div class="contact-detail">
-              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-              <a href="mailto:ganiyuusman43@gmail.com">ganiyuusman43@gmail.com</a>
-            </div>
-            <div class="contact-detail">
-              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1.003 1.003 0 011.01-.24c1.12.37 2.33.57 3.58.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.46.57 3.58.1.34.02.71-.24 1.01l-2.2 2.2z"/></svg>
-              <span>+234 903 659 6606</span>
-            </div>
-            <a href="./assets/documents/resume.pdf" class="btn btn-outline resume-btn" download>
-              📄 Download Resume (PDF)
-            </a>
-          </div>
+          <h3>Prefer a quick chat?</h3>
+          <p>Skip the form. Click below to start a real-time conversation with me right now.</p>
+          <button onclick="window.chatWidget.openChat()" class="btn btn-primary chat-trigger-btn">
+            <span class="material-symbols-outlined">chat_bubble</span>
+            Start Live Chat
+          </button>
         </div>
       </div>
-    </section>
+      
+      <!-- Right Side: Contact Info -->
+      <div class="contact-info-side">
+        <h3>Get In Touch</h3>
+        <div class="contact-detail">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/></svg>
+          <a href="mailto:ganiyuusman43@gmail.com">ganiyuusman43@gmail.com</a>
+        </div>
+        <div class="contact-detail">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1.003 1.003 0 011.01-.24c1.12.37 2.33.57 3.58.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.46.57 3.58.1.34.02.71-.24 1.01l-2.2 2.2z" fill="currentColor"/></svg>
+          <span>+234 903 659 6606</span>
+        </div>
+        <a href="./assets/documents/resume.pdf" class="btn btn-outline resume-btn" download>
+          📄 Download Resume (PDF)
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
   </main>
 
   <!-- FOOTER -->
@@ -539,10 +555,7 @@ more_horiz
     </div>
   </footer>
 
-  <!-- Back to Top Button -->
-  <!--<button class="back-to-top" id="backToTop" aria-label="Back to top">
-    <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-  </button>-->
+
 
   <!-- CHAT WIDGET -->
   <div class="chat-widget" id="chatWidget">

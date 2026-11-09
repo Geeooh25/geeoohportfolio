@@ -605,7 +605,7 @@ body.boot-active {
 
 .logo-text {
   font-family: var(--font-display);
-  font-size: 1.8rem;
+  font-size: 1.75rem;
   font-weight: 800;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
@@ -613,11 +613,12 @@ body.boot-active {
   -webkit-text-fill-color: transparent;
   text-decoration: none;
   letter-spacing: -1px;
+  margin-left: 0.5rem;
 }
 
 .logo {
   display: flex;
-  align-items: center;
+ align-items: center;
 }
 
 .menu-overlay {
@@ -2985,4 +2986,479 @@ body.dark-theme .title-line {
   text-align: center;
   padding: 2rem;
   color: var(--text-tertiary);
+}
+
+/* =========================================
+   FORCE ACCENT COLOR ON ALL ELEMENTS
+   ========================================= */
+
+/* 1. Replace Hardcoded Gradients */
+.btn-primary-premium, 
+.logo-icon, 
+.user-avatar, 
+.qa-card:hover, 
+.stat-card:hover {
+  background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-hover, var(--admin-accent))) !important;
+  border-color: var(--admin-accent) !important;
+}
+
+/* 2. Chat Widget Overrides */
+.chat-bubble.user .message-bubble {
+  background: var(--admin-accent) !important;
+}
+.chat-toggle {
+  background: var(--admin-accent) !important;
+}
+.chat-send-btn {
+  background: var(--admin-accent) !important;
+}
+.chat-header {
+  background: var(--admin-accent) !important;
+}
+
+/* 3. Headings & Links */
+.greeting-title span, 
+.activity-dot.project, 
+.stat-icon-wrap.accent-orange,
+.nav-item:hover,
+.nav-item.active {
+  color: var(--admin-accent) !important;
+}
+.activity-dot.project {
+  background: var(--admin-accent) !important;
+  box-shadow: 0 0 8px var(--admin-accent-soft) !important;
+}
+.stat-icon-wrap.accent-orange {
+  background: var(--admin-accent-soft) !important;
+  color: var(--admin-accent) !important;
+}
+
+/* 4. Table & Badge Overrides */
+.table-badge,
+.card-badge,
+.card-pill,
+.stat-badge,
+.table-status.published {
+  background: var(--admin-accent-soft) !important;
+  color: var(--admin-accent) !important;
+}
+
+/* 5. Frontend Public Page Overrides (using frontend variables) */
+body.accent-blue .gradient-text-animated { background: linear-gradient(135deg, #3B82F6, #60A5FA) !important; -webkit-background-clip: text !important; }
+body.accent-emerald .gradient-text-animated { background: linear-gradient(135deg, #10B981, #34D399) !important; -webkit-background-clip: text !important; }
+body.accent-purple .gradient-text-animated { background: linear-gradient(135deg, #8B5CF6, #A78BFA) !important; -webkit-background-clip: text !important; }
+body.accent-rose .gradient-text-animated { background: linear-gradient(135deg, #F43F5E, #FB7185) !important; -webkit-background-clip: text !important; }
+
+/* Buttons on frontend */
+body.accent-blue .btn-primary { background: #3B82F6 !important; border-color: #3B82F6 !important; }
+body.accent-emerald .btn-primary { background: #10B981 !important; border-color: #10B981 !important; }
+body.accent-purple .btn-primary { background: #8B5CF6 !important; border-color: #8B5CF6 !important; }
+body.accent-rose .btn-primary { background: #F43F5E !important; border-color: #F43F5E !important; }
+
+/* =========================================
+   UNIVERSAL ACCENT COLOR OVERRIDE (v3)
+   Forces ALL hardcoded orange to obey the theme
+   ========================================= */
+
+/* ── 1. GLOBAL HEADINGS & TEXT ── */
+/* Forces headings that have orange text to change */
+h1 span, h2 span, h3 span, h4 span,
+.gradient-text, .gradient-text-animated,
+.text-accent, .color-accent,
+.logo-text, .logo-icon {
+  color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+/* ── 2. CHAT WIDGET (Frontend & Admin) ── */
+/* Forces the chat header, send button, and toggle to the new color */
+.chat-header, 
+.chat-toggle, 
+.chat-send-btn, 
+.chat-message.user .message-bubble,
+.chat-bubble.admin > div:last-child {
+  background: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background-image: none !important; /* kills hardcoded gradients */
+  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+/* Chat icons and text inside the colored bubbles */
+.chat-header .material-symbols-outlined,
+.chat-header h4,
+.chat-header .chat-status,
+.chat-message.user .message-bubble *,
+.chat-bubble.admin > div:last-child * {
+  color: #ffffff !important;
+}
+
+/* ── 3. GRADIENTS (Buttons, Logos, etc.) ── */
+/* Overrides any linear-gradient that used the hardcoded orange */
+.btn-primary-premium,
+.btn-primary,
+.logo-icon,
+.user-avatar,
+.chat-toggle,
+.profile-ring {
+  background: linear-gradient(135deg, var(--admin-accent, var(--accent-primary, #FF6B00)), var(--admin-accent-hover, #FF8C42)) !important;
+  background-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+/* ── 4. ICONS & BADGES ── */
+/* Forces small accents, icons, and badges to the new color */
+.stat-icon-wrap.accent-orange,
+.qa-icon,
+.nav-item.active,
+.nav-item:hover,
+.card-badge,
+.card-pill,
+.table-badge,
+.activity-dot.project {
+  color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+.stat-icon-wrap.accent-orange,
+.qa-icon {
+  background: var(--admin-accent-soft, rgba(255,107,0,0.1)) !important;
+}
+
+.activity-dot.project,
+.stat-badge {
+  background-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+/* ── 5. INPUT FOCUS BORDERS ── */
+input:focus, 
+textarea:focus, 
+select:focus,
+.search-input:focus {
+  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  box-shadow: 0 0 0 3px var(--admin-accent-soft, rgba(255,107,0,0.2)) !important;
+}
+
+/* =========================================
+   FORCE EVERY REMAINING ACCENT TO THE THEME
+   ========================================= */
+
+/* 1. The "Innovators" Text in Headings */
+.text-gradient, 
+.gradient-text, 
+.highlight, 
+span[class*="accent"],
+h1 span, h2 span, h3 span {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, var(--accent-primary))) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: var(--accent-primary) !important;
+}
+
+/* 2. The "40%" and "Achievements" Text */
+.stat-number,
+.stat-value,
+.metric-value,
+.achievement-title,
+.exp-date,
+.timeline-date,
+.text-accent {
+  color: var(--accent-primary) !important;
+}
+
+/* 3. The Tag Pills (HTML, CSS, Bootstrap) */
+.skill-tag, 
+.tag, 
+.project-tag,
+.exp-tags span {
+  background-color: rgba(255, 107, 0, 0.1) !important; /* Uses a transparent version of the new color */
+  color: var(--accent-primary) !important;
+  border: 1px solid var(--accent-primary) !important;
+}
+
+/* 4. The "A" Avatar Circle & Chat Toggle */
+.testimonial-avatar, 
+.author-avatar,
+.chat-toggle,
+.chat-send-btn {
+  background: var(--accent-primary) !important;
+  background-image: none !important;
+  box-shadow: 0 8px 25px rgba(255, 107, 0, 0.4) !important; /* Update the glow */
+}
+
+/* 5. The Quote Marks (The orange quotation marks at the top of the testimonial) */
+.testimonial-quote::before, 
+.testimonial-card::before,
+blockquote::before {
+  color: var(--accent-primary) !important;
+  opacity: 0.2 !important;
+}
+
+/* 6. The Chat Widget Glow */
+.chat-toggle {
+  box-shadow: 0 8px 25px var(--accent-primary) !important;
+}
+
+/* Testimonial Avatars */
+.testimonial-avatar,
+.author-avatar,
+.avatar {
+  background: var(--accent-primary, #FF6B00) !important;
+}
+.chat-toggle {
+  background: var(--accent-primary) !important;
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--accent-primary) 40%, transparent) !important;
+}
+
+/* =========================================
+   TESTIMONIALS & HIGHLIGHT TEXT FIX
+   ========================================= */
+
+/* Forces the <em> inside headings to use the theme color */
+.tm-headline em,
+h1 em,
+h2 em,
+h3 em {
+  color: var(--accent-primary) !important;
+  font-style: normal;
+}
+
+/* If the 40% is wrapped in a <span> or <strong>, catch it here */
+.testimonial-quote strong,
+.testimonial-quote span.highlight {
+  color: var(--accent-primary) !important;
+}
+
+/* The Quotation mark background */
+.testimonial-card::before,
+.tm-card::before {
+  color: var(--accent-primary) !important;
+}
+
+/* =========================================
+   FIX FOR THE GITHUB IMPACT CARDS
+   ========================================= */
+
+/* 1. Force the cards to keep their normal background, never turn solid color */
+.impact-card, 
+.impact-card:hover, 
+.impact-card:first-child {
+ 
+  color: var(--text-primary, #0f172a) !important;
+  border: 1px solid var(--border-color, #e2e8f0) !important;
+  box-shadow: var(--shadow-md, 0 4px 16px rgba(0,0,0,0.06)) !important;
+}
+
+/* 2. Make the numbers use the theme color (Purple, Blue, etc.) */
+.impact-card .impact-number,
+.impact-card h3,
+.impact-card .stat-value {
+  color: var(--accent-primary, #FF6B00) !important;
+  -webkit-text-fill-color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 3. Make the labels readable */
+.impact-card p,
+.impact-card .impact-label,
+.impact-card span {
+  color: var(--text-secondary, #64748b) !important;
+}
+
+/* 4. Optional: If you want a subtle purple border on hover instead of a solid block */
+.impact-card:hover {
+  border-color: var(--accent-primary, #FF6B00) !important;
+  transform: translateY(-4px);
+}
+
+/* =========================================
+   FORCE BORDER-ONLY HOVER (Frontend Cards)
+   ========================================= */
+
+/* 1. Force the background to stay identical to the normal state */
+.impact-card,
+.impact-card:hover,
+.impact-card:first-child,
+.impact-card::before,
+.impact-card::after {
+ 
+  background-image: none !important;
+  box-shadow: var(--shadow-sm, 0 4px 12px rgba(0,0,0,0.05)) !important;
+}
+
+/* 2. Only change the border and the number color on hover */
+.impact-card:hover {
+  border: 1px solid var(--accent-primary, #FF6B00) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* 3. Ensure the text stays readable */
+.impact-card h3,
+.impact-card .stat-value,
+.impact-card .impact-number {
+  color: var(--accent-primary, #FF6B00) !important;
+  -webkit-text-fill-color: var(--accent-primary, #FF6B00) !important;
+}
+
+.impact-card p,
+.impact-card .impact-label {
+  color: var(--text-secondary, #64748b) !important;
+}
+
+/* =========================================
+   ULTIMATE HOVER FIX (NO BACKGROUNDS)
+   ========================================= */
+
+/* 1. Force the card itself to stay exactly as it is normally */
+.impact-card,
+.impact-card:hover,
+.impact-card:first-child,
+.stat-card,
+.stat-card:hover,
+.stat-card-premium,
+.stat-card-premium:hover {
+  background: var(--bg-card, #ffffff) !important;
+  background-color: var(--bg-card, #ffffff) !important;
+  background-image: none !important;
+  color: var(--text-primary, #0f172a) !important;
+}
+
+/* 2. Kill any overlay or pseudo-element that is painting the background purple/orange */
+.impact-card::before,
+.impact-card::after,
+.impact-card:hover::before,
+.impact-card:hover::after,
+.stat-card::before,
+.stat-card::after,
+.stat-card:hover::before,
+.stat-card:hover::after {
+  display: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* 3. Force ALL children inside the card to keep their normal text/icon colors */
+.impact-card *,
+.stat-card * {
+  background-color: transparent !important; 
+  color: var(--text-primary, #0f172a) !important;
+}
+
+/* 4. Give the text specific colors so it looks good */
+.impact-card h3,
+.impact-card .impact-number,
+.stat-card .stat-value {
+  color: var(--accent-primary, var(--admin-accent, #FF6B00)) !important;
+}
+
+.impact-card p,
+.impact-card .impact-label,
+.stat-card .stat-label {
+  color: var(--text-secondary, #64748b) !important;
+}
+
+/* 5. Finally, make ONLY the border change on hover */
+.impact-card:hover,
+.stat-card:hover {
+  border: 2px solid var(--accent-primary, var(--admin-accent, #FF6B00)) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: none !important; /* Optional: remove the heavy shadow */
+}
+
+/* =========================================
+   CONTACT LIVE CHAT CARD
+   ========================================= */
+.contact-live-chat-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-lg, 20px);
+  padding: 48px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 400px;
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-sm, 0 4px 12px rgba(0,0,0,0.05));
+}
+
+.chat-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--accent-primary, #FF6B00);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px var(--admin-accent-soft, rgba(255, 107, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.contact-live-chat-card:hover .chat-icon-wrapper {
+  transform: scale(1.05);
+}
+
+.chat-icon-wrapper .material-symbols-outlined {
+  font-size: 40px;
+}
+
+.contact-live-chat-card h3 {
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+  color: var(--text-primary, #0f172a);
+}
+
+.contact-live-chat-card p {
+  color: var(--text-secondary, #64748b);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  max-width: 320px;
+}
+
+.chat-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 36px;
+  font-size: 1.05rem;
+  background: var(--accent-primary, #FF6B00);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full, 9999px);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px var(--admin-accent-soft, rgba(255, 107, 0, 0.2));
+}
+
+.chat-trigger-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px var(--admin-accent-soft, rgba(255, 107, 0, 0.4));
+}
+
+/* Ensure the SVG icons in contact details look right */
+.contact-detail svg {
+  color: var(--accent-primary, #FF6B00);
+}
+
+.logo img {
+  width: 45px;
+  height: 45px;
+}
+.logo-text-group {
+  display: flex;
+  flex-direction: column;
+ 
+  
+}
+.logo-subtext {
+  font-size: 0.5rem;
+  color: var(--text-secondary);
+  margin-top: -11px;
+  margin-left: 0.8rem;
+ font-family: var(--font-sans);
+
 }

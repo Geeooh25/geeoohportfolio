@@ -1,6 +1,6 @@
 /* ===== THEME SYSTEM ===== */
 
-/* Theme transition class */
+/* ── 1. THEME TRANSITIONS (For smooth toggle) ── */
 .theme-ready * {
   transition: background-color 0.3s ease,
               color 0.3s ease,
@@ -8,7 +8,7 @@
               box-shadow 0.3s ease !important;
 }
 
-/* Dark theme specific overrides */
+/* ── 2. DARK THEME OVERRIDES ── */
 body.dark-theme .header {
   background: rgba(11, 15, 25, 0.8);
   backdrop-filter: blur(20px) saturate(180%);
@@ -48,12 +48,12 @@ body.dark-theme .btn-outline:hover {
   box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
 }
 
-/* Light theme specific */
+/* ── 3. LIGHT THEME OVERRIDES ── */
 body.light-theme .header {
   background: rgba(248, 250, 252, 0.8);
 }
 
-/* Auto theme detection (default) */
+/* ── 4. SYSTEM PREFERENCE (Fallback) ── */
 @media (prefers-color-scheme: dark) {
   body:not(.light-theme):not(.dark-theme) {
     --bg-primary: #0B0F19;
@@ -67,30 +67,29 @@ body.light-theme .header {
   }
 }
 
-/* Theme toggle animation */
+/* ── 5. THEME TOGGLE CIRCLE ANIMATION ── */
 .theme-transition-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
-  z-index: 9999;
-  animation: theme-switch 0.5s ease-out forwards;
+  z-index: 99999;
+  background: var(--bg-primary, #f8fafc);
+  animation: theme-circle 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-@keyframes theme-switch {
-  0% {
-    clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
-    background: var(--bg-primary);
-  }
-  100% {
-    clip-path: circle(150% at var(--x, 50%) var(--y, 50%));
-    background: var(--bg-primary);
-  }
+body.dark-theme .theme-transition-overlay {
+  background: var(--bg-primary, #06080d);
 }
 
-/* Theme-specific gradients */
+@keyframes theme-circle {
+  0% { clip-path: circle(0% at var(--x, 50%) var(--y, 50%)); }
+  100% { clip-path: circle(150% at var(--x, 50%) var(--y, 50%)); }
+}
+
+/* ── 6. THEME-SPECIFIC GRADIENTS & SHADOWS ── */
 body.dark-theme .gradient-text-animated {
   background: linear-gradient(135deg, #FF6B00, #FF8C42, #7C3AED, #06B6D4);
   background-size: 300% 300%;
@@ -109,27 +108,108 @@ body.light-theme .gradient-text-animated {
   animation: gradient-shift 5s ease infinite;
 }
 
-/* Theme-specific shadows */
-body.dark-theme .glow-orange {
-  box-shadow: 0 0 30px rgba(255, 107, 0, 0.4);
+body.dark-theme .glow-orange { box-shadow: 0 0 30px rgba(255, 107, 0, 0.4); }
+body.dark-theme .glow-purple { box-shadow: 0 0 30px rgba(124, 58, 237, 0.4); }
+body.dark-theme .glow-cyan { box-shadow: 0 0 30px rgba(6, 182, 212, 0.4); }
+
+body.light-theme .glow-orange { box-shadow: 0 0 20px rgba(255, 107, 0, 0.2); }
+body.light-theme .glow-purple { box-shadow: 0 0 20px rgba(124, 58, 237, 0.2); }
+body.light-theme .glow-cyan { box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); }
+
+/* ── 7. TOGGLE ICONS FADE ── */
+.theme-toggle-admin .theme-icon-light,
+.theme-toggle-admin .theme-icon-dark {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+body.light-theme .theme-toggle-admin .theme-icon-light { opacity: 1; transform: rotate(0deg); }
+body.light-theme .theme-toggle-admin .theme-icon-dark { opacity: 0; transform: rotate(90deg) scale(0.5); }
+body.dark-theme .theme-toggle-admin .theme-icon-light { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+body.dark-theme .theme-toggle-admin .theme-icon-dark { opacity: 1; transform: rotate(0deg); }
+
+/* =========================================
+   ULTIMATE FLASH KILLER (HARDWARE ACCELERATED)
+   ========================================= */
+
+/* 1. Force the absolute base of the document to always be the theme color */
+html {
+  background-color: #06080d !important;
+}
+html[data-theme="light"] {
+  background-color: #f8fafc !important;
 }
 
-body.dark-theme .glow-purple {
-  box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+/* 2. Force the body and main containers to have the background and block rendering drops */
+body.admin-body,
+.admin-main {
+  background-color: var(--admin-bg, #06080d) !important;
+  transition: none !important; /* Never animate the background */
 }
 
-body.dark-theme .glow-cyan {
-  box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+/* 3. Force hardware acceleration on the page to prevent paint flashing */
+.admin-body {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
 }
 
-body.light-theme .glow-orange {
-  box-shadow: 0 0 20px rgba(255, 107, 0, 0.2);
+/* 4. Fix the sidebar and overlay so they never paint white */
+.admin-sidebar {
+  background-color: var(--admin-surface, #0a0d14) !important;
+  transition: transform 0.3s ease !important;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
-body.light-theme .glow-purple {
-  box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+.menu-overlay-admin {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  transition: opacity 0.2s ease !important;
+  will-change: opacity;
 }
 
-body.light-theme .glow-cyan {
-  box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+/* 5. Override the global * transition to NEVER touch background-color */
+* {
+  transition-property: color, border-color, box-shadow, transform, opacity !important;
+}
+
+
+/* =========================================
+   GLOBAL ACCENT THEMES (Admin + Frontend)
+   ========================================= */
+
+/* 🟠 ORANGE (Default - No class needed) */
+
+/* 🔵 BLUE */
+body.accent-blue {
+  --admin-accent: #3B82F6;
+  --admin-accent-hover: #2563EB;
+  --admin-accent-soft: rgba(59, 130, 246, 0.1);
+  --accent-primary: #3B82F6;
+  --gradient-primary: linear-gradient(135deg, #3B82F6, #60A5FA);
+}
+
+/* 🟢 EMERALD */
+body.accent-emerald {
+  --admin-accent: #10B981;
+  --admin-accent-hover: #059669;
+  --admin-accent-soft: rgba(16, 185, 129, 0.1);
+  --accent-primary: #10B981;
+  --gradient-primary: linear-gradient(135deg, #10B981, #34D399);
+}
+
+/* 🟣 PURPLE */
+body.accent-purple {
+  --admin-accent: #8B5CF6;
+  --admin-accent-hover: #7C3AED;
+  --admin-accent-soft: rgba(139, 92, 246, 0.1);
+  --accent-primary: #8B5CF6;
+  --gradient-primary: linear-gradient(135deg, #8B5CF6, #A78BFA);
+}
+
+/* 🔴 ROSE */
+body.accent-rose {
+  --admin-accent: #F43F5E;
+  --admin-accent-hover: #E11D48;
+  --admin-accent-soft: rgba(244, 63, 94, 0.1);
+  --accent-primary: #F43F5E;
+  --gradient-primary: linear-gradient(135deg, #F43F5E, #FB7185);
 }

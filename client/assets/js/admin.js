@@ -1,6 +1,6 @@
 /* ===========================================
    ADMIN.JS — Shared Admin Utilities
-   Auth, Theme, Navigation, Toast, Socket
+   Auth, Navigation, Toast, Socket
    =========================================== */
 (function () {
   'use strict';
@@ -20,8 +20,8 @@
 
   // ── Get Token ──
   function getToken() {
-  return api && api.token ? api.token : localStorage.getItem('auth_token');
-}
+    return api && api.token ? api.token : localStorage.getItem('auth_token');
+  }
 
   // ── Get Current User ──
   function getCurrentUser() {
@@ -66,65 +66,56 @@
     }, 3500);
   }
 
-  // ── Theme Toggle ──
-  function initTheme() {
-    const saved = localStorage.getItem('admin_theme');
-    if (saved === 'dark') document.body.classList.add('dark-theme');
-    if (saved === 'light') document.body.classList.remove('dark-theme');
+  // ── Mobile Menu (Handles BOTH desktop & mobile buttons) ──
+  function initMobileMenu() {
+    // Grab both possible menu buttons
+    const hamburger = document.getElementById('hamburgerAdmin'); 
+    const mobileToggle = document.getElementById('menuToggle'); 
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('menuOverlay');
 
-    document.querySelectorAll('.theme-toggle-admin').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        document.body.classList.toggle('dark-theme');
-        localStorage.setItem('admin_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
-      });
+    if (!sidebar) return;
+
+    function openMenu() {
+      sidebar.classList.add('open');
+      if (hamburger) hamburger.classList.add('active');
+      if (overlay) overlay.classList.add('active');
+    }
+
+    function closeMenu() {
+      sidebar.classList.remove('open');
+      if (hamburger) hamburger.classList.remove('active');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    function toggleMenu() {
+      if (sidebar.classList.contains('open')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    }
+
+    // Bind to both the desktop hamburger and the mobile menu button
+    if (hamburger) hamburger.addEventListener('click', toggleMenu);
+    if (mobileToggle) mobileToggle.addEventListener('click', toggleMenu);
+
+    if (overlay) {
+      overlay.addEventListener('click', closeMenu);
+    }
+
+    // Close if clicking outside the sidebar
+    document.addEventListener('click', function (e) {
+      if (sidebar.classList.contains('open') &&
+          !sidebar.contains(e.target) &&
+          (!hamburger || !hamburger.contains(e.target)) &&
+          (!mobileToggle || !mobileToggle.contains(e.target))) {
+        closeMenu();
+      }
     });
   }
 
-  // ── Mobile Menu (REPLACE existing initMobileMenu) ──
-function initMobileMenu() {
-  const hamburger = document.getElementById('hamburgerAdmin');
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('menuOverlay');
-
-  if (!hamburger || !sidebar) return;
-
-  function openMenu() {
-    sidebar.classList.add('open');
-    hamburger.classList.add('active');
-    if (overlay) overlay.classList.add('active');
-    hamburger.setAttribute('aria-expanded', 'true');
-  }
-
-  function closeMenu() {
-    sidebar.classList.remove('open');
-    hamburger.classList.remove('active');
-    if (overlay) overlay.classList.remove('active');
-    hamburger.setAttribute('aria-expanded', 'false');
-  }
-
-  hamburger.addEventListener('click', function () {
-    if (sidebar.classList.contains('open')) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
-  });
-
-  if (overlay) {
-    overlay.addEventListener('click', closeMenu);
-  }
-
-  document.addEventListener('click', function (e) {
-    if (sidebar.classList.contains('open') &&
-        !sidebar.contains(e.target) &&
-        e.target !== hamburger &&
-        !hamburger.contains(e.target)) {
-      closeMenu();
-    }
-  });
-}
-
-  // ── User Info ──
+    // ── User Info ──
   function initUserInfo() {
     const user = getCurrentUser();
     if (!user) return;
@@ -134,8 +125,15 @@ function initMobileMenu() {
     const userRole = document.getElementById('userRole');
 
     if (userName) userName.textContent = user.name || 'Admin';
-    if (userAvatar) userAvatar.textContent = (user.name?.[0] || 'A').toUpperCase();
     if (userRole) userRole.textContent = user.role || 'Admin';
+    
+    // CHECK: Only replace with the letter if there is NO image already there
+    if (userAvatar) {
+      const hasImage = userAvatar.querySelector('img');
+      if (!hasImage) {
+        userAvatar.textContent = (user.name?.[0] || 'A').toUpperCase();
+      }
+    }
   }
 
   // ── Greeting ──
@@ -244,12 +242,12 @@ function initMobileMenu() {
 
   // ── Init ──
   if (checkAuth()) {
-    initTheme();
     initMobileMenu();
     initUserInfo();
     initGreeting();
     initLogout();
     initSocket();
+    // Note: initTheme() was removed here because theme.js handles it globally!
   }
 
 })();

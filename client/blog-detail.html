@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Blog Post · Ganiyu Usman</title>
   
   <meta name="description" content="Read this article by Ganiyu Usman." />
@@ -27,6 +27,22 @@
   <link rel="stylesheet" href="./assets/css/animations.css" />
   <link rel="stylesheet" href="./assets/css/blog.css" />
   <link rel="stylesheet" href="./assets/css/blog-detail.css" />
+  <script>
+  // Prevent the white flash of unstyled content (FOUC)
+  (function() {
+    var theme = localStorage.getItem('portfolio_theme');
+    if (!theme) {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.classList.add('light-theme');
+    }
+  })();
+</script>
 </head>
 <body>
 
@@ -38,8 +54,12 @@
   <!-- HEADER -->
   <header class="header" id="header">
     <div class="header-container">
-      <div class="logo">
+       <div class="logo">
+        <img src="./assets/images/logo.png" alt=""> 
+        <div class="logo-text-group">
         <a href="./index.html" class="logo-text">GEEOOH</a>
+        <span class="logo-subtext">BUILT DIFFERENT</span>
+        </div>
       </div>
       
       <button class="hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false">
@@ -48,14 +68,14 @@
       
       <nav class="navigation" id="navbar">
         <ul>
-          <li><a href="./index.html" class="nav-link">Home</a></li>
-          <li><a href="./index.html#about" class="nav-link">About</a></li>
-          <li><a href="./index.html#projects" class="nav-link">Projects</a></li>
-          <li><a href="./index.html#skills" class="nav-link">Skills</a></li>
-          <li><a href="./index.html#experience" class="nav-link">Experience</a></li>
-          <li><a href="./index.html#testimonials" class="nav-link">Testimonials</a></li>
-          <li><a href="./blog.html" class="nav-link active">Blog</a></li>
-          <li><a href="./index.html#contact" class="nav-link">Contact</a></li>
+         <li><a href="./index.html?skipboot=true" class="nav-link">Home</a></li>
+<li><a href="./index.html?skipboot=true#about" class="nav-link">About</a></li>
+<li><a href="./index.html?skipboot=true#projects" class="nav-link">Projects</a></li>
+<li><a href="./index.html?skipboot=true#skills" class="nav-link">Skills</a></li>
+<li><a href="./index.html?skipboot=true#experience" class="nav-link">Experience</a></li>
+<li><a href="./index.html?skipboot=true#testimonials" class="nav-link">Testimonials</a></li>
+<li><a href="./blog.html" class="nav-link active">Blog</a></li>
+<li><a href="./index.html?skipboot=true#contact" class="nav-link">Contact</a></li>
         </ul>
       </nav>
       
@@ -206,22 +226,7 @@
   <div class="post-comments-inner">
     <h3 class="comments-heading">Join the Discussion</h3>
     <div class="giscus-wrapper">
-      <script src="https://giscus.app/client.js"
-        data-repo="geeooh25/geeoohportfolio"
-        data-repo-id="R_kgDOTkW2_Q"
-        data-category="General"
-        data-category-id="DIC_kwDOTkW2_c4DCB8h"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>
+      <!-- Giscus will be injected here by blog-detail.js -->
     </div>
   </div>
 </section>

@@ -1,122 +1,81 @@
-// ===== THEME MANAGER =====
-class ThemeManager {
-  constructor() {
-    this.body = document.body;
-    this.themeToggle = document.getElementById('themeToggle');
-    this.currentTheme = 'light';
-    
-    this.init();
+/**
+ * GLOBAL THEME & ACCENT MANAGER
+ */
+(function () {
+  'use strict';
+
+  const API_BASE = 'http://localhost:5000/api/v1';
+  const ACCENT_KEY = 'portfolio_accent';
+
+  // 1. Apply saved theme & accent INSTANTLY (Prevents flash)
+  const savedTheme = localStorage.getItem('portfolio_theme') || 'dark';
+  const savedAccent = localStorage.getItem(ACCENT_KEY) || 'orange';
+
+  // Theme
+  if (savedTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.body.classList.add('dark-theme');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.body.classList.add('light-theme');
   }
 
-  init() {
-    // Load saved theme
-    const savedTheme = localStorage.getItem('portfolio_theme');
-    
-    if (savedTheme) {
-      this.setTheme(savedTheme, false);
-    } else {
-      // Check system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      this.setTheme(prefersDark ? 'dark' : 'light', false);
-    }
+  // Accent
+  document.body.classList.remove('accent-orange', 'accent-blue', 'accent-emerald', 'accent-purple', 'accent-rose');
+  if (savedAccent !== 'orange') {
+    document.body.classList.add(`accent-${savedAccent}`);
+  }
 
-    // Add click handler
-    if (this.themeToggle) {
-      this.themeToggle.addEventListener('click', (e) => {
-        this.toggleTheme(e);
+  // 2. Fetch Global Accent from Database (Sync across devices)
+  async function syncGlobalAccent() {
+    try {
+      const res = await fetch(`${API_BASE}/settings`);
+      const data = await res.json();
+      
+      if (data.success && data.settings.accentColor) {
+        const color = data.settings.accentColor;
+        
+        // Only apply if it's different from what we have
+        if (localStorage.getItem(ACCENT_KEY) !== color) {
+          localStorage.setItem(ACCENT_KEY, color); // Save locally for next page
+          
+          document.body.classList.remove('accent-orange', 'accent-blue', 'accent-emerald', 'accent-purple', 'accent-rose');
+          if (color !== 'orange') {
+            document.body.classList.add(`accent-${color}`);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Failed to sync accent color', err);
+    }
+  }
+
+  syncGlobalAccent();
+
+  // 3. Handle Light/Dark Toggle
+  function initToggles() {
+    document.querySelectorAll('#themeToggle, #themeToggleDesk, #themeToggleMobile, .theme-toggle, .theme-toggle-admin').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const current = localStorage.getItem('portfolio_theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        
+        if (next === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          document.body.classList.add('dark-theme');
+          document.body.classList.remove('light-theme');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+          document.body.classList.add('light-theme');
+          document.body.classList.remove('dark-theme');
+        }
+        localStorage.setItem('portfolio_theme', next);
       });
-    }
-
-    // Listen for system theme changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      if (!localStorage.getItem('portfolio_theme')) {
-        this.setTheme(e.matches ? 'dark' : 'light', true);
-      }
-    });
-
-    // Add keyboard shortcut (Ctrl/Cmd + T)
-    document.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 't') {
-        e.preventDefault();
-        this.toggleTheme();
-      }
     });
   }
 
-  setTheme(theme, animate = true) {
-    this.currentTheme = theme;
-    
-    if (animate) {
-      this.createTransitionOverlay();
-    }
-
-    if (theme === 'dark') {
-      this.body.classList.add('dark-theme');
-      this.body.classList.remove('light-theme');
-    } else {
-      this.body.classList.remove('dark-theme');
-      this.body.classList.add('light-theme');
-    }
-
-    // Update theme toggle icon
-    this.updateToggleIcon();
-
-    // Save preference
-    localStorage.setItem('portfolio_theme', theme);
-
-    // Dispatch custom event
-    window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme } }));
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initToggles);
+  } else {
+    initToggles();
   }
-
-  toggleTheme(event) {
-    const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
-    this.setTheme(newTheme, true);
-
-    // Update transition overlay position
-    if (event) {
-      const overlay = document.querySelector('.theme-transition-overlay');
-      if (overlay) {
-        overlay.style.setProperty('--x', `${event.clientX}px`);
-        overlay.style.setProperty('--y', `${event.clientY}px`);
-      }
-    }
-  }
-
-  createTransitionOverlay() {
-    // Remove existing overlay
-    const existing = document.querySelector('.theme-transition-overlay');
-    if (existing) existing.remove();
-
-    // Create new overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'theme-transition-overlay';
-    document.body.appendChild(overlay);
-
-    // Remove after animation
-    setTimeout(() => {
-      overlay.remove();
-    }, 500);
-  }
-
-  updateToggleIcon() {
-    if (!this.themeToggle) return;
-
-    const sunIcon = this.themeToggle.querySelector('.sun-icon');
-    const moonIcon = this.themeToggle.querySelector('.moon-icon');
-
-    if (this.currentTheme === 'dark') {
-      this.themeToggle.setAttribute('aria-label', 'Switch to light mode');
-      this.themeToggle.style.transform = 'rotate(180deg)';
-    } else {
-      this.themeToggle.setAttribute('aria-label', 'Switch to dark mode');
-      this.themeToggle.style.transform = 'rotate(0deg)';
-    }
-  }
-
-  getCurrentTheme() {
-    return this.currentTheme;
-  }
-}
-
-// Initialize theme manager
-const themeManager = new ThemeManager();
+})();

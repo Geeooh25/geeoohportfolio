@@ -35,6 +35,7 @@
     generalUploadResult: document.getElementById('generalUploadResult'),
   };
 
+  // ── 1. LOAD SETTINGS ──
   async function loadSettings() {
     try {
       const data = await Admin.request(Admin.API_BASE + '/admin/settings');
@@ -54,57 +55,58 @@
     const contact = s.contactInfo || {};
     const chat = s.chat || {};
 
-    DOM.heroTitle.value = hero.title || '';
-    DOM.heroSubtitle.value = hero.subtitle || '';
-    DOM.heroDescription.value = hero.description || '';
-    DOM.heroCtaText.value = hero.ctaText || '';
-    DOM.heroCtaLink.value = hero.ctaLink || '';
-    DOM.aboutContent.value = about.content || '';
-    DOM.resumeUrl.value = about.resumeUrl || '';
-    DOM.socialGithub.value = social.github || '';
-    DOM.socialLinkedin.value = social.linkedin || '';
-    DOM.socialTwitter.value = social.twitter || '';
-    DOM.socialInstagram.value = social.instagram || '';
-    DOM.contactEmail.value = contact.email || '';
-    DOM.contactPhone.value = contact.phone || '';
-    DOM.contactWhatsapp.value = contact.whatsapp || '';
-    DOM.contactAddress.value = contact.address || '';
-    DOM.chatEnabled.checked = chat.enabled !== false;
-    DOM.chatWelcome.value = chat.welcomeMessage || '';
-    DOM.chatOffline.value = chat.offlineMessage || '';
+    if (DOM.heroTitle) DOM.heroTitle.value = hero.title || '';
+    if (DOM.heroSubtitle) DOM.heroSubtitle.value = hero.subtitle || '';
+    if (DOM.heroDescription) DOM.heroDescription.value = hero.description || '';
+    if (DOM.heroCtaText) DOM.heroCtaText.value = hero.ctaText || '';
+    if (DOM.heroCtaLink) DOM.heroCtaLink.value = hero.ctaLink || '';
+    if (DOM.aboutContent) DOM.aboutContent.value = about.content || '';
+    if (DOM.resumeUrl) DOM.resumeUrl.value = about.resumeUrl || '';
+    if (DOM.socialGithub) DOM.socialGithub.value = social.github || '';
+    if (DOM.socialLinkedin) DOM.socialLinkedin.value = social.linkedin || '';
+    if (DOM.socialTwitter) DOM.socialTwitter.value = social.twitter || '';
+    if (DOM.socialInstagram) DOM.socialInstagram.value = social.instagram || '';
+    if (DOM.contactEmail) DOM.contactEmail.value = contact.email || '';
+    if (DOM.contactPhone) DOM.contactPhone.value = contact.phone || '';
+    if (DOM.contactWhatsapp) DOM.contactWhatsapp.value = contact.whatsapp || '';
+    if (DOM.contactAddress) DOM.contactAddress.value = contact.address || '';
+    if (DOM.chatEnabled) DOM.chatEnabled.checked = chat.enabled !== false;
+    if (DOM.chatWelcome) DOM.chatWelcome.value = chat.welcomeMessage || '';
+    if (DOM.chatOffline) DOM.chatOffline.value = chat.offlineMessage || '';
   }
 
+  // ── 2. SAVE SETTINGS ──
   async function saveSettings(e) {
     e.preventDefault();
 
     const payload = {
       heroSection: {
-        title: DOM.heroTitle.value.trim(),
-        subtitle: DOM.heroSubtitle.value.trim(),
-        description: DOM.heroDescription.value.trim(),
-        ctaText: DOM.heroCtaText.value.trim(),
-        ctaLink: DOM.heroCtaLink.value.trim(),
+        title: DOM.heroTitle ? DOM.heroTitle.value.trim() : '',
+        subtitle: DOM.heroSubtitle ? DOM.heroSubtitle.value.trim() : '',
+        description: DOM.heroDescription ? DOM.heroDescription.value.trim() : '',
+        ctaText: DOM.heroCtaText ? DOM.heroCtaText.value.trim() : '',
+        ctaLink: DOM.heroCtaLink ? DOM.heroCtaLink.value.trim() : '',
       },
       aboutSection: {
-        content: DOM.aboutContent.value.trim(),
-        resumeUrl: DOM.resumeUrl.value.trim(),
+        content: DOM.aboutContent ? DOM.aboutContent.value.trim() : '',
+        resumeUrl: DOM.resumeUrl ? DOM.resumeUrl.value.trim() : '',
       },
       socialLinks: {
-        github: DOM.socialGithub.value.trim(),
-        linkedin: DOM.socialLinkedin.value.trim(),
-        twitter: DOM.socialTwitter.value.trim(),
-        instagram: DOM.socialInstagram.value.trim(),
+        github: DOM.socialGithub ? DOM.socialGithub.value.trim() : '',
+        linkedin: DOM.socialLinkedin ? DOM.socialLinkedin.value.trim() : '',
+        twitter: DOM.socialTwitter ? DOM.socialTwitter.value.trim() : '',
+        instagram: DOM.socialInstagram ? DOM.socialInstagram.value.trim() : '',
       },
       contactInfo: {
-        email: DOM.contactEmail.value.trim(),
-        phone: DOM.contactPhone.value.trim(),
-        whatsapp: DOM.contactWhatsapp.value.trim(),
-        address: DOM.contactAddress.value.trim(),
+        email: DOM.contactEmail ? DOM.contactEmail.value.trim() : '',
+        phone: DOM.contactPhone ? DOM.contactPhone.value.trim() : '',
+        whatsapp: DOM.contactWhatsapp ? DOM.contactWhatsapp.value.trim() : '',
+        address: DOM.contactAddress ? DOM.contactAddress.value.trim() : '',
       },
       chat: {
-        enabled: DOM.chatEnabled.checked,
-        welcomeMessage: DOM.chatWelcome.value.trim(),
-        offlineMessage: DOM.chatOffline.value.trim(),
+        enabled: DOM.chatEnabled ? DOM.chatEnabled.checked : true,
+        welcomeMessage: DOM.chatWelcome ? DOM.chatWelcome.value.trim() : '',
+        offlineMessage: DOM.chatOffline ? DOM.chatOffline.value.trim() : '',
       },
     };
 
@@ -122,8 +124,12 @@
     }
   }
 
+  // ── 3. UPLOAD FILE ──
   async function uploadFile(file, type, progressEl, resultEl) {
-    if (!file) return;
+    if (!file) {
+      Admin.showToast('Please select a file first', 'error');
+      return;
+    }
 
     const formData = new FormData();
     formData.append('file', file);
@@ -149,7 +155,7 @@
         if (resultEl) {
           resultEl.innerHTML = '<span style="color:var(--admin-green);font-size:0.85rem;">✓ ' + Admin.escapeHTML(data.url || data.fileUrl || 'Uploaded') + '</span>';
         }
-        if (type === 'profile' && data.url) {
+        if (type === 'profile' && data.url && DOM.profilePreview) {
           DOM.profilePreview.innerHTML = '<img src="' + data.url + '" alt="Profile" style="width:80px;height:80px;border-radius:12px;object-fit:cover;margin-top:8px;" />';
         }
         return data;
@@ -163,22 +169,92 @@
     }
   }
 
-  DOM.form.addEventListener('submit', saveSettings);
+  // ── 4. ACCENT COLOR THEME LOGIC ──
+  function initThemeColors() {
+    const colorBtns = document.querySelectorAll('.theme-color-btn');
+    if (!colorBtns.length) return;
 
-  DOM.uploadProfileBtn.addEventListener('click', function () {
-    const file = document.getElementById('profileImageUpload').files[0];
-    uploadFile(file, 'profile', DOM.profileUploadProgress, null);
-  });
+    // Highlight current active color
+    async function loadCurrentColor() {
+      try {
+        const res = await Admin.request(Admin.API_BASE + '/settings');
+        if (res.success && res.settings) {
+          const current = res.settings.accentColor || 'orange';
+          document.querySelectorAll('.theme-color-btn').forEach(b => b.style.borderColor = 'transparent');
+          const activeBtn = document.querySelector(`.theme-color-btn[data-color="${current}"]`);
+          if (activeBtn) activeBtn.style.borderColor = 'var(--admin-text)';
+        }
+      } catch (e) { console.error(e); }
+    }
+    loadCurrentColor();
 
-  DOM.uploadResumeBtn.addEventListener('click', function () {
-    const file = document.getElementById('resumeUpload').files[0];
-    uploadFile(file, 'resume', DOM.resumeProgress, null);
-  });
+    // Handle color click
+    colorBtns.forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const color = btn.dataset.color;
+        
+        // 1. Apply instantly for immediate visual feedback
+        document.body.classList.remove('accent-orange', 'accent-blue', 'accent-emerald', 'accent-purple', 'accent-rose');
+        if (color !== 'orange') document.body.classList.add(`accent-${color}`);
+        
+        // 2. Update button rings
+        document.querySelectorAll('.theme-color-btn').forEach(b => b.style.borderColor = 'transparent');
+        btn.style.borderColor = 'var(--admin-text)';
 
-  DOM.uploadGeneralBtn.addEventListener('click', function () {
-    const file = document.getElementById('generalUpload').files[0];
-    uploadFile(file, 'general', DOM.generalUploadProgress, DOM.generalUploadResult);
-  });
+        // 3. Save to Database
+        try {
+          const res = await Admin.request(Admin.API_BASE + '/settings', {
+            method: 'PUT',
+            body: JSON.stringify({ accentColor: color })
+          });
+          if (res.success) {
+            Admin.showToast('Global theme updated!', 'success');
+          }
+        } catch (err) {
+          Admin.showToast('Failed to save theme', 'error');
+        }
+      });
+    });
+  }
 
-  loadSettings();
+  // ── 5. BIND EVENTS & INIT ──
+  function init() {
+    // Form submit
+    if (DOM.form) DOM.form.addEventListener('submit', saveSettings);
+
+    // Upload buttons
+    if (DOM.uploadProfileBtn) {
+      DOM.uploadProfileBtn.addEventListener('click', function () {
+        const fileInput = document.getElementById('profileImageUpload');
+        if (fileInput) uploadFile(fileInput.files[0], 'profile', DOM.profileUploadProgress, null);
+      });
+    }
+
+    if (DOM.uploadResumeBtn) {
+      DOM.uploadResumeBtn.addEventListener('click', function () {
+        const fileInput = document.getElementById('resumeUpload');
+        if (fileInput) uploadFile(fileInput.files[0], 'resume', DOM.resumeProgress, null);
+      });
+    }
+
+    if (DOM.uploadGeneralBtn) {
+      DOM.uploadGeneralBtn.addEventListener('click', function () {
+        const fileInput = document.getElementById('generalUpload');
+        if (fileInput) uploadFile(fileInput.files[0], 'general', DOM.generalUploadProgress, DOM.generalUploadResult);
+      });
+    }
+
+    // Initialize colors
+    initThemeColors();
+
+    // Load initial settings
+    loadSettings();
+  }
+
+  // Run when DOM is fully loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();

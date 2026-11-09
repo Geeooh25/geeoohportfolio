@@ -941,3 +941,178 @@
   color: var(--text-tertiary);
   font-style: italic;
 }
+
+/* =========================================
+   PROJECT DETAIL — GLOBAL THEME OVERRIDES
+   ========================================= */
+
+/* 1. Progress Bar */
+.pd-progress {
+  background: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 2. Sticky TOC Active Links & CTA */
+.pd-toc-link:hover,
+.pd-toc-link.active,
+.pd-toc-cta {
+  color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 3. Hero Back Link & Category Badge */
+.pd-back:hover {
+  color: var(--accent-primary, #FF6B00) !important;
+}
+.pd-category-badge {
+  color: var(--accent-primary, #FF6B00) !important;
+  border-color: var(--accent-primary, #FF6B00) !important;
+  background: var(--admin-accent-soft, rgba(255,107,0,0.08)) !important;
+}
+
+/* 4. Personal Note Quote */
+.pd-personal-note {
+  color: var(--accent-primary, #FF6B00) !important;
+  border-left-color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 5. Primary Button */
+.pd-btn-primary {
+  background: var(--accent-primary, #FF6B00) !important;
+  background-image: none !important;
+  box-shadow: 0 8px 25px rgba(255,107,0,0.25) !important;
+}
+.pd-btn-outline:hover {
+  border-color: var(--accent-primary, #FF6B00) !important;
+  color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 6. Stats Numbers (Gradient) */
+.pd-stat-number {
+  background: var(--accent-primary, #FF6B00) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 7. Section Labels & Voice Block */
+.pd-section-label,
+.pd-voice-label,
+.pd-challenge-label,
+.pd-timeline-duration {
+  color: var(--accent-primary, #FF6B00) !important;
+}
+.pd-voice-block {
+  border-left-color: var(--accent-primary, #FF6B00) !important;
+  background: var(--admin-accent-soft, rgba(255,107,0,0.03)) !important;
+}
+
+/* 8. Tech Tags */
+.pd-tech-tag:hover {
+  border-color: var(--accent-primary, #FF6B00) !important;
+  color: var(--accent-primary, #FF6B00) !important;
+  box-shadow: 0 8px 20px var(--admin-accent-soft, rgba(255,107,0,0.08)) !important;
+}
+
+/* 9. Feature Cards */
+.pd-feature-card::before {
+  background: var(--accent-primary, #FF6B00) !important;
+}
+.pd-feature-card:hover {
+  border-color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 10. Timeline */
+.pd-timeline-line {
+  background: var(--accent-primary, #FF6B00) !important;
+}
+.pd-timeline-dot {
+  background: var(--accent-primary, #FF6B00) !important;
+  box-shadow: 0 0 12px var(--admin-accent-soft, rgba(255,107,0,0.3)) !important;
+}
+
+/* 11. Credentials Card Border */
+.pd-creds-card {
+  border-color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 12. Spotlight / Testimonial */
+.pd-spotlight {
+  background: var(--admin-accent-soft, rgba(255,107,0,0.03)) !important;
+  border-color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 13. Next Project Hover */
+.pd-next-title:hover {
+  color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 14. Related Card Hover */
+.pd-related-card:hover {
+  border-color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 15. Share Buttons */
+.pd-share-btn.copy:hover {
+  border-color: var(--accent-primary, #FF6B00) !important;
+  color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* =========================================
+   GLOBAL OVERRIDES (For the Chat Widget)
+   ========================================= */
+.chat-header, 
+.chat-toggle, 
+.chat-send-btn, 
+.chat-message.user .message-bubble,
+.chat-bubble.admin > div:last-child {
+  background: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background-image: none !important;
+  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+}
+
+.chat-header .material-symbols-outlined,
+.chat-header h4,
+.chat-header .chat-status,
+.chat-message.user .message-bubble *,
+.chat-bubble.admin > div:last-child * {
+  color: #ffffff !important;
+}
+
+.chat-toggle {
+  box-shadow: 0 8px 25px var(--admin-accent-soft, rgba(255,107,0,0.4)) !important;
+}
+
+/* =========================================
+   FIX FOR THE GITHUB IMPACT CARDS
+   ========================================= */
+
+/* 1. Force the cards to keep their normal background, never turn solid color */
+.impact-card, 
+.impact-card:hover, 
+.impact-card:first-child {
+  
+  color: var(--text-primary, #0f172a) !important;
+  border: 1px solid var(--border-color, #e2e8f0) !important;
+  box-shadow: var(--shadow-md, 0 4px 16px rgba(0,0,0,0.06)) !important;
+}
+
+/* 2. Make the numbers use the theme color (Purple, Blue, etc.) */
+.impact-card .impact-number,
+.impact-card h3,
+.impact-card .stat-value {
+  color: var(--accent-primary, #FF6B00) !important;
+  -webkit-text-fill-color: var(--accent-primary, #FF6B00) !important;
+}
+
+/* 3. Make the labels readable */
+.impact-card p,
+.impact-card .impact-label,
+.impact-card span {
+  color: var(--text-secondary, #64748b) !important;
+}
+
+/* 4. Optional: If you want a subtle purple border on hover instead of a solid block */
+.impact-card:hover {
+  border-color: var(--accent-primary, #FF6B00) !important;
+  transform: translateY(-4px);
+}

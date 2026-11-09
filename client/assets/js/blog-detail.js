@@ -105,13 +105,51 @@
     // Show article
     DOM.postLoading.style.display = 'none';
     DOM.postArticle.style.display = '';
+
+    // ── INJECT GISCUS ──
+    // Dynamically loads Giscus using the specific slug for THIS post
+    var giscusContainer = document.querySelector('.giscus-wrapper');
+    if (giscusContainer) {
+      giscusContainer.innerHTML = ''; // Clear old widget if switching posts
+
+      var giscusScript = document.createElement('script');
+      giscusScript.src = 'https://giscus.app/client.js';
+      giscusScript.setAttribute('data-repo', 'geeooh25/geeoohportfolio');
+      giscusScript.setAttribute('data-repo-id', 'R_kgDOTkW2_Q');
+      giscusScript.setAttribute('data-category', 'General');
+      giscusScript.setAttribute('data-category-id', 'DIC_kwDOTkW2_c4DCB8h');
+      
+      // Pass the specific blog slug as the term so comments don't bleed across posts
+      giscusScript.setAttribute('data-mapping', 'specific'); 
+      giscusScript.setAttribute('data-term', b.slug); 
+      
+      giscusScript.setAttribute('data-strict', '0');
+      giscusScript.setAttribute('data-reactions-enabled', '1');
+      giscusScript.setAttribute('data-emit-metadata', '0');
+      giscusScript.setAttribute('data-input-position', 'bottom');
+      giscusScript.setAttribute('data-theme', 'preferred_color_scheme');
+      giscusScript.setAttribute('data-lang', 'en');
+      giscusScript.setAttribute('data-loading', 'lazy');
+      giscusScript.setAttribute('crossorigin', 'anonymous');
+      giscusScript.async = true;
+
+      giscusContainer.appendChild(giscusScript);
+    }
   }
 
   function generateTOC() {
     const headings = DOM.postContent.querySelectorAll('h2, h3');
+    const layout = document.querySelector('.post-layout');
+    
     if (headings.length < 2) {
-      document.querySelector('.post-toc-sidebar').style.display = 'none';
+      if (layout) layout.classList.add('no-toc');
+      const sidebar = document.querySelector('.post-toc-sidebar');
+      if (sidebar) sidebar.style.display = 'none';
       return;
+    } else {
+      if (layout) layout.classList.remove('no-toc');
+      const sidebar = document.querySelector('.post-toc-sidebar');
+      if (sidebar) sidebar.style.display = ''; // Show it if there are headings
     }
 
     let html = '';

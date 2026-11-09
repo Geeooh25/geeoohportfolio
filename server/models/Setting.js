@@ -7,6 +7,10 @@ const settingSchema = new mongoose.Schema({
   },
   siteDescription: String,
   siteKeywords: [String],
+  accentColor: {
+    type: String,
+    default: 'orange' // 'orange', 'blue', 'emerald', 'purple', 'rose'
+  },
   logo: {
     url: String,
     public_id: String

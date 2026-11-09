@@ -1,7 +1,27 @@
 // ===== GEEOOH OS AWAKENING SEQUENCE =====
 (function() {
   'use strict';
+
+  // 1. Check if the user clicked the "Back" button OR came from a link (like the Navbar)
+  const navEntries = performance.getEntriesByType("navigation");
+  const navType = navEntries.length > 0 ? navEntries[0].type : "navigate";
   
+  // 2. Check if the URL has our special flag (?skipboot=true)
+  const urlParams = new URLSearchParams(window.location.search);
+  const skipBoot = urlParams.get('skipboot');
+
+  // If they clicked "Back" OR the flag is present, kill the boot sequence instantly.
+  if (navType === "back_forward" || skipBoot === "true") {
+    const bootScreen = document.getElementById('loadingScreen');
+    if (bootScreen) bootScreen.remove();
+    document.body.classList.remove('boot-active');
+    document.querySelectorAll('.hero-content, .stats-grid').forEach(el => {
+      el.classList.remove('boot-hidden');
+    });
+    return; // Stop the script
+  }
+  
+  // 3. Otherwise, run the boot sequence (on refresh or direct visit)
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', startBoot);
   } else {
@@ -19,6 +39,9 @@
     const terminalWindow = document.getElementById('terminalWindow');
     
     if (!bootScreen || !terminal) return;
+
+    // Mark this session as booted so it never runs again while they browse
+    sessionStorage.setItem('geeooh_booted', 'true');
 
     // Only prevent scrolling and hide hero content – header stays untouched
     document.body.classList.add('boot-active');
@@ -166,22 +189,17 @@
       }
     }
     
-    // ===== FIXED LISTENERS (only these 2 lines changed) =====
     if (bootHint) bootHint.addEventListener('click', e => { e.stopPropagation(); skipAll(); });
 
     document.addEventListener('click', e => {
-      // Only respond while the boot screen is still active
       if (!document.body.classList.contains('boot-active')) return;
-      // Don't hijack clicks inside input/textarea fields
       const t = e.target;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       if (e.target !== bootHint && Date.now() - startTime > 2000) skipAll();
     });
 
     document.addEventListener('keydown', e => {
-      // Only respond while the boot screen is still active
       if (!document.body.classList.contains('boot-active')) return;
-      // Don't hijack keys while the user is typing in a field
       const t = e.target;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       if ((e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') && Date.now() - startTime > 2000) {
@@ -189,7 +207,6 @@
         skipAll();
       }
     });
-    // ===== END FIXED LISTENERS =====
     
     if (progressFill) progressFill.style.width = '0%';
     if (percentText) percentText.textContent = '0%';

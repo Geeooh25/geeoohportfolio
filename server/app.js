@@ -72,6 +72,7 @@ app.use('/api/v1/messages', require('./routes/messages'));
 app.use('/api/v1/upload', require('./routes/upload'));
 app.use('/api/v1/public', require('./routes/public'));
 app.use('/api/v1/admin', require('./routes/admin'));
+app.use('/api/v1/settings', require('./routes/settings'));
 // Admin routes
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/pages/admin/login.html'));

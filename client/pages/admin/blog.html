@@ -2,11 +2,66 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Blog · GEEOOH Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" href="../../assets/css/admin.css" />
+  <script>
+  // Prevent the white flash of unstyled content (FOUC)
+  (function() {
+    var theme = localStorage.getItem('portfolio_theme');
+    if (!theme) {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.classList.add('light-theme');
+    }
+  })();
+</script>
+  <!-- Custom styles for the rich text editor and image uploader -->
+  <style>
+    .editor-toolbar {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      background: var(--admin-bg); border: 1px solid var(--admin-border);
+      border-bottom: none; border-radius: 10px 10px 0 0; padding: 8px;
+    }
+    .editor-toolbar button {
+      background: var(--admin-card); border: 1px solid var(--admin-border);
+      border-radius: 6px; height: 32px; padding: 0 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--admin-text); font-size: 0.8rem; transition: all 0.2s;
+    }
+    .editor-toolbar button:hover { border-color: var(--admin-accent); color: var(--admin-accent); }
+    .editor-toolbar button span { font-size: 18px; }
+    
+    .rich-editor {
+      width: 100%; min-height: 250px; max-height: 500px; overflow-y: auto;
+      background: var(--admin-bg); border: 1px solid var(--admin-border);
+      border-radius: 0 0 10px 10px; padding: 16px; font-size: 0.95rem; line-height: 1.6;
+      outline: none; color: var(--admin-text);
+    }
+    .rich-editor:empty:before {
+      content: attr(placeholder); color: var(--admin-text-tertiary); pointer-events: none; display: block;
+    }
+    .rich-editor h2 { font-size: 1.5rem; font-weight: 700; margin: 16px 0 8px; }
+    .rich-editor h3 { font-size: 1.2rem; font-weight: 600; margin: 12px 0 6px; }
+    .rich-editor p { margin-bottom: 12px; }
+    .rich-editor blockquote { border-left: 3px solid var(--admin-accent); padding-left: 12px; color: var(--admin-text-secondary); font-style: italic; margin: 12px 0; }
+    .rich-editor pre { background: var(--admin-bg); padding: 10px; border-radius: 6px; font-family: monospace; border: 1px solid var(--admin-border); }
+
+    .image-upload-area {
+      border: 2px dashed var(--admin-border); border-radius: var(--admin-radius-md);
+      padding: 24px; text-align: center; cursor: pointer;
+      background: var(--admin-bg); transition: all 0.2s;
+    }
+    .image-upload-area:hover { border-color: var(--admin-accent); }
+    .image-preview { max-width: 100%; max-height: 180px; border-radius: 8px; margin-top: 12px; display: none; object-fit: cover; box-shadow: var(--admin-shadow-sm); }
+  </style>
 </head>
 <body class="admin-body">
 
@@ -16,7 +71,7 @@
   <aside class="admin-sidebar" id="sidebar">
     <div class="sidebar-header">
       <a href="./dashboard.html" class="sidebar-logo-link">
-        <span class="logo-icon">G</span>
+        <img src="../../assets/images/logo.png" alt="GEEOOH" class="logo-icon" style="object-fit: cover; border-radius: 13px;" />
         <div class="logo-text-group">
           <span class="logo-text">GEEOOH</span>
           <span class="logo-subtext">Admin</span>
@@ -71,8 +126,10 @@
     </nav>
     <div class="sidebar-footer">
       <div class="user-info">
-        <div class="user-avatar" id="userAvatar">G</div>
-        <div class="user-details">
+        <div class="user-avatar" id="userAvatar" style="background: none; padding: 0; overflow: hidden;">
+  <img src="../../assets/images/avatar.jpg" alt="Ganiyu" style="width: 100%; height: 100%; object-fit: cover;" />
+</div>
+        <div class="user-details"> 
           <div class="user-name" id="userName">Ganiyu Usman</div>
           <div class="user-role" id="userRole">Admin</div>
         </div>
@@ -85,18 +142,19 @@
 
   <main class="admin-main">
     
+    <!-- MOBILE HEADER INSIDE MAIN -->
     <div class="mobile-header">
       <button class="menu-toggle" id="menuToggle">
         <span class="material-symbols-outlined">menu</span>
       </button>
       <span class="mobile-logo">GEEOOH</span>
-      <button class="theme-toggle-admin" id="themeToggleMobile">
-        <span class="material-symbols-outlined light-icon">light_mode</span>
-        <span class="material-symbols-outlined dark-icon">dark_mode</span>
-      </button>
+      <button class="theme-toggle-admin" id="themeToggle" aria-label="Toggle theme">
+          <span class="material-symbols-outlined theme-icon-light">light_mode</span>
+          <span class="material-symbols-outlined theme-icon-dark">dark_mode</span>
+        </button>
     </div>
 
-    <div class="top-bar">
+    <div class="admin-topbar">
       <div class="page-greeting">
         <h1 class="greeting-title">Blog</h1>
         <p class="greeting-subtitle">Write, edit, and manage your articles</p>
@@ -158,7 +216,7 @@
     </div>
 
   </main>
-
+ 
   <div class="modal-overlay" id="blogModal">
     <div class="modal-premium modal-lg">
       <div class="modal-header">
@@ -169,18 +227,12 @@
       </div>
       <form id="blogForm">
         <input type="hidden" name="blogId" id="blogId" />
+        
         <div class="form-group">
           <label>Title</label>
           <input type="text" name="title" id="blogTitle" required placeholder="Post title" />
         </div>
-        <div class="form-group">
-          <label>Subtitle</label>
-          <input type="text" name="subtitle" id="blogSubtitle" placeholder="Optional subtitle" />
-        </div>
-        <div class="form-group">
-          <label>Excerpt</label>
-          <textarea name="excerpt" id="blogExcerpt" placeholder="Short description for cards and SEO" rows="2"></textarea>
-        </div>
+        
         <div class="form-row-split">
           <div class="form-group">
             <label>Category</label>
@@ -200,14 +252,50 @@
             <input type="number" name="readTime" id="blogReadTime" value="5" min="1" max="60" />
           </div>
         </div>
+
+        <div class="form-group">
+          <label>Excerpt (SEO)</label>
+          <textarea name="excerpt" id="blogExcerpt" placeholder="Short description for cards and SEO" rows="2"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Hero Image (Cover)</label>
+          <div class="image-upload-area" id="heroImageDropArea">
+            <span class="material-symbols-outlined" style="font-size:2rem;color:var(--admin-text-tertiary);">add_photo_alternate</span>
+            <p style="font-size:0.85rem;color:var(--admin-text-secondary);margin-top:8px;">Click to upload cover image</p>
+            <img src="" id="heroImagePreview" class="image-preview" />
+            <input type="file" id="heroImageInput" accept="image/*" style="display:none;" />
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:24px;">
+          <label>Content</label>
+          
+          <!-- Rich Text Editor Toolbar -->
+          <div class="editor-toolbar">
+            <button type="button" id="btn-h2" title="Heading 2 (for TOC)"><b>H2</b></button>
+            <button type="button" id="btn-h3" title="Heading 3 (for TOC)"><b>H3</b></button>
+            <button type="button" id="btn-p" title="Normal Text"><b>P</b></button>
+            <div style="width:1px;background:var(--admin-border);margin:0 4px;"></div>
+            <button type="button" id="btn-bold" title="Bold"><span class="material-symbols-outlined">format_bold</span></button>
+            <button type="button" id="btn-italic" title="Italic"><span class="material-symbols-outlined">format_italic</span></button>
+            <button type="button" id="btn-code" title="Code Block"><span class="material-symbols-outlined">code</span></button>
+            <button type="button" id="btn-quote" title="Blockquote"><span class="material-symbols-outlined">format_quote</span></button>
+            <button type="button" id="btn-img" title="Insert Image"><span class="material-symbols-outlined">image</span></button>
+          </div>
+          
+          <!-- The Editor Area -->
+          <div id="blogContentEditor" class="rich-editor" contenteditable="true" placeholder="Start writing your post here..."></div>
+          
+          <!-- Hidden Input to Send to Database -->
+          <textarea name="content" id="blogContent" required style="display:none;"></textarea>
+        </div>
+
         <div class="form-group">
           <label>Tags (comma separated)</label>
           <input type="text" name="tags" id="blogTags" placeholder="nodejs, tutorial, backend" />
         </div>
-        <div class="form-group">
-          <label>Content (HTML)</label>
-          <textarea name="content" id="blogContent" required placeholder="<h2>Introduction</h2><p>Write your content here...</p>" rows="10"></textarea>
-        </div>
+
         <div class="form-row-split">
           <div class="form-group">
             <label class="checkbox-label">
@@ -222,6 +310,7 @@
             </label>
           </div>
         </div>
+
         <div class="modal-actions">
           <button type="button" class="btn-cancel" id="cancelBlogModal">Cancel</button>
           <button type="button" class="btn-danger-outline" id="deleteBlogBtn" style="display:none;">Delete</button>
@@ -255,6 +344,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/theme.js"></script>
   <script src="../../assets/js/admin.js"></script>
   <script src="../../assets/js/admin-blog.js"></script>
 </body>

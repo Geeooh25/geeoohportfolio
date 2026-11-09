@@ -2,12 +2,28 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Messages · GEEOOH Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
   <link rel="stylesheet" href="../../assets/css/admin.css" />
   <link rel="stylesheet" href="../../assets/css/chat.css" />
+  <script>
+  // Prevent the white flash of unstyled content (FOUC)
+  (function() {
+    var theme = localStorage.getItem('portfolio_theme');
+    if (!theme) {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.classList.add('light-theme');
+    }
+  })();
+</script>
 </head>
 <body class="admin-body">
 
@@ -17,7 +33,7 @@
   <aside class="admin-sidebar" id="sidebar">
     <div class="sidebar-header">
       <a href="./dashboard.html" class="sidebar-logo-link">
-        <span class="logo-icon">G</span>
+        <img src="../../assets/images/logo.png" alt="GEEOOH" class="logo-icon" style="object-fit: cover; border-radius: 13px;" />
         <div class="logo-text-group">
           <span class="logo-text">GEEOOH</span>
           <span class="logo-subtext">Admin</span>
@@ -73,7 +89,9 @@
     </nav>
     <div class="sidebar-footer">
       <div class="user-info">
-        <div class="user-avatar" id="userAvatar">G</div>
+       <div class="user-avatar" id="userAvatar" style="background: none; padding: 0; overflow: hidden;">
+  <img src="../../assets/images/avatar.jpg" alt="Ganiyu" style="width: 100%; height: 100%; object-fit: cover;" />
+</div>
         <div class="user-details">
           <div class="user-name" id="userName">Ganiyu Usman</div>
           <div class="user-role" id="userRole">Admin</div>
@@ -85,24 +103,25 @@
     </div>
   </aside>
 
-  <main class="admin-main chat-layout">
-    
-    <div class="mobile-header">
-      <button class="menu-toggle" id="menuToggle">
-        <span class="material-symbols-outlined">menu</span>
+  <!-- MOBILE HEADER MOVED OUTSIDE MAIN -->
+  <div class="mobile-header">
+    <button class="menu-toggle" id="menuToggle">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+    <span class="mobile-logo">GEEOOH</span>
+    <div class="mobile-header-actions">
+      <span class="online-count" id="onlineCount" style="display:none;">
+        <span class="online-dot"></span>
+        <span id="onlineCountText">0</span>
+      </span>
+      <button class="theme-toggle-admin" id="themeToggleMobile">
+        <span class="material-symbols-outlined light-icon">light_mode</span>
+        <span class="material-symbols-outlined dark-icon">dark_mode</span>
       </button>
-      <span class="mobile-logo">GEEOOH</span>
-      <div class="mobile-header-actions">
-        <span class="online-count" id="onlineCount" style="display:none;">
-          <span class="online-dot"></span>
-          <span id="onlineCountText">0</span>
-        </span>
-        <button class="theme-toggle-admin" id="themeToggleMobile">
-          <span class="material-symbols-outlined light-icon">light_mode</span>
-          <span class="material-symbols-outlined dark-icon">dark_mode</span>
-        </button>
-      </div>
     </div>
+  </div>
+
+  <main class="admin-main chat-layout">
 
     <div class="chat-container">
       
@@ -194,7 +213,7 @@
             <div class="chat-date-divider"><span>Today</span></div>
           </div>
 
-          <div class="typing-indicator" id="typingIndicator" style="display:none;">
+          <div class="typing-indicator" id="typingIndicator" >
             <span class="typing-dots">
               <span></span><span></span><span></span>
             </span>
@@ -221,7 +240,7 @@
                 <span class="material-symbols-outlined">attach_file</span>
               </button>
               <div class="chat-input-wrapper">
-                <input type="text" id="chatMessageInput" placeholder="Type your reply..." autocomplete="off" />
+                <textarea id="chatMessageInput" rows="1" placeholder="Type your reply..." autocomplete="off"></textarea>
                 <button type="button" class="chat-input-action" id="emojiBtn" title="Emoji">
                   <span class="material-symbols-outlined">mood</span>
                 </button>
@@ -257,6 +276,7 @@
 
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/theme.js"></script>
   <script src="../../assets/js/admin.js"></script>
   <script src="../../assets/js/admin-messages.js"></script>
 </body>
