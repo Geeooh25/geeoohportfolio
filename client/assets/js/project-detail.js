@@ -584,7 +584,11 @@ function renderCTA(p) {
 
     container.innerHTML = showSkeleton();
 
-    const url = (typeof api !== 'undefined' && api.baseURL ? api.baseURL : 'http://localhost:5000/api/v1') + '/public/projects/' + slug;
+  const BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api/v1'
+  : '/api/v1'; // Netlify proxies this to Render
+
+const url = BASE_URL + '/public/projects/' + slug;
 
     fetch(url)
       .then(function(r) {

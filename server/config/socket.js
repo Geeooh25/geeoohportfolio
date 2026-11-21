@@ -4,11 +4,15 @@ const setupSocket = (server) => {
   const io = require('socket.io')(server, {
     cors: {
       origin: [
-        'http://localhost:3000', 'http://127.0.0.1:3000',
-        'http://localhost:5000', 'http://127.0.0.1:5000',
-        'http://127.0.0.1:5500'
+        'http://localhost:3000', 
+        'http://127.0.0.1:3000',
+        'http://localhost:5000', 
+        'http://127.0.0.1:5000',
+        'http://127.0.0.1:5500',
+        'https://geeoohdev.netlify.app' 
       ],
-      methods: ['GET', 'POST']
+      methods: ['GET', 'POST'],
+      credentials: true // <-- Important for cookies/auth if you use them
     }
   });
 

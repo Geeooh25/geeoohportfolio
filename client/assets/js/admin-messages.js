@@ -438,7 +438,11 @@
   /** Establish the admin socket connection and wire all events. */
   function connectSocket() {
     if (typeof io === 'undefined') return;
-    socket = io('http://localhost:5000', { transports: ['websocket', 'polling'], reconnection: true });
+   const SOCKET_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000'
+  : window.location.origin; 
+
+const socket = io(SOCKET_URL);{ transports: ['websocket', 'polling'], reconnection: true });
 
     socket.on('connect', function () {
       console.log('✅ Admin socket connected');

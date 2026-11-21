@@ -5,7 +5,9 @@
 (function () {
   'use strict';
 
-  const API_BASE = 'http://localhost:5000/api/v1/public/blogs';
+ const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api/v1/public/blogs'
+  : '/api/v1/public/blogs';
   const POSTS_PER_PAGE = 6;
 
   let state = {

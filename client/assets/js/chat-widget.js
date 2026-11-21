@@ -175,7 +175,11 @@
     async loadHistory() {
       if (!this.keepChat) { this.messagesContainer.innerHTML = ''; this.showWelcome(); return; }
       try {
-        var r = await fetch('http://localhost:5000/api/v1/public/messages/' + this.conversationId);
+       var API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000'
+  : ''; // Empty string means it will use the current domain (Netlify) and proxy to Render
+
+var r = await fetch(API_BASE + '/api/v1/public/messages/' + this.conversationId);
         var d = await r.json();
         if (d.success && d.messages && d.messages.length > 0) {
           this.messagesContainer.innerHTML = '';
@@ -199,43 +203,58 @@
       }, 300);
     }
 
-    initSocket() {
-      if (typeof io === 'undefined') return;
-      this.socket = io('http://localhost:5000', { transports: ['websocket', 'polling'], reconnection: true });
-      this.socket.on('connect', () => { this.socket.emit('user-join', { conversationId: this.conversationId, name: this.userName || 'Visitor' }); });
-      this.socket.on('new-message', (msg) => {
-        if (msg.type === 'admin') {
-          this.renderMessage(msg, 'admin');
-          if (!this.isOpen) { this.unreadCount++; this.updateBadge(); }
-          if (this.isOpen && this.socket && this.socket.connected) {
-            this.socket.emit('mark-read', { conversationId: this.conversationId });
-          }
-        }
-      });
-      this.socket.on('admin-reply', (msg) => {
-        this.renderMessage(msg, 'admin');
-        if (!this.isOpen) { this.unreadCount++; this.updateBadge(); }
-        if (this.isOpen && this.socket && this.socket.connected) {
-          this.socket.emit('mark-read', { conversationId: this.conversationId });
-        }
-      });
-      this.socket.on('message-status', (data) => {
-        if (data.messageId) {
-          var el = document.getElementById('msg-' + data.messageId);
-          if (el) {
-            var s = el.querySelector('.msg-status');
-            if (s) {
-              if (data.status === 'delivered') { s.textContent = '✓✓'; s.style.opacity = '1'; }
-              if (data.status === 'sent') { s.textContent = '✓'; s.style.opacity = '0.6'; }
-            }
-          }
-        }
-        if (data.status === 'read-all') {
-          var allStatus = document.querySelectorAll('.chat-message.user .msg-status');
-          allStatus.forEach(function(s) { s.textContent = '✓✓'; s.style.color = '#3b82f6'; s.style.opacity = '1'; });
-        }
-      });
+   initSocket() {
+  if (typeof io === 'undefined') return;
+  
+  // Environment-aware Socket URL
+  const SOCKET_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:5000'
+    : 'https://geeoohportfolio.onrender.com'; // Direct connection to Render for stability
+
+  this.socket = io(SOCKET_URL, { 
+    transports: ['websocket', 'polling'], 
+    reconnection: true 
+  });
+  
+  this.socket.on('connect', () => { 
+    this.socket.emit('user-join', { conversationId: this.conversationId, name: this.userName || 'Visitor' }); 
+  });
+  
+  this.socket.on('new-message', (msg) => {
+    if (msg.type === 'admin') {
+      this.renderMessage(msg, 'admin');
+      if (!this.isOpen) { this.unreadCount++; this.updateBadge(); }
+      if (this.isOpen && this.socket && this.socket.connected) {
+        this.socket.emit('mark-read', { conversationId: this.conversationId });
+      }
     }
+  });
+  
+  this.socket.on('admin-reply', (msg) => {
+    this.renderMessage(msg, 'admin');
+    if (!this.isOpen) { this.unreadCount++; this.updateBadge(); }
+    if (this.isOpen && this.socket && this.socket.connected) {
+      this.socket.emit('mark-read', { conversationId: this.conversationId });
+    }
+  });
+  
+  this.socket.on('message-status', (data) => {
+    if (data.messageId) {
+      var el = document.getElementById('msg-' + data.messageId);
+      if (el) {
+        var s = el.querySelector('.msg-status');
+        if (s) {
+          if (data.status === 'delivered') { s.textContent = '✓✓'; s.style.opacity = '1'; }
+          if (data.status === 'sent') { s.textContent = '✓'; s.style.opacity = '0.6'; }
+        }
+      }
+    }
+    if (data.status === 'read-all') {
+      var allStatus = document.querySelectorAll('.chat-message.user .msg-status');
+      allStatus.forEach(function(s) { s.textContent = '✓✓'; s.style.color = '#3b82f6'; s.style.opacity = '1'; });
+    }
+  });
+}
 
     toggleChat() { this.isOpen ? this.closeChat() : this.openChat(); }
     openChat() {
@@ -393,9 +412,27 @@
       }
       this.renderUploadPreviews();
     }
+async uploadFile(file) { 
+  var fd = new FormData(); 
+  fd.append('file', file); 
+  
+  // Environment-aware base URL
+  const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:5000/api/v1'
+    : '/api/v1'; // Proxied by Netlify to Render
 
-    async uploadFile(file) { var fd = new FormData(); fd.append('file', file); try { var r = await fetch('http://localhost:5000/api/v1/upload/public', { method: 'POST', body: fd }); var d = await r.json(); return d.success ? d.url : null; } catch (e) { return null; } }
-
+  try { 
+    var r = await fetch(API_BASE + '/upload/public', { 
+      method: 'POST', 
+      body: fd 
+    }); 
+    var d = await r.json(); 
+    return d.success ? d.url : null; 
+  } catch (e) { 
+    console.error("Upload failed:", e);
+    return null; 
+  } 
+}
     renderUploadPreviews() {
       var bar = document.getElementById('uploadPreviewBar'), list = document.getElementById('uploadPreviewList');
       if (!this.uploadedFiles.length) { bar.style.display = 'none'; return; }

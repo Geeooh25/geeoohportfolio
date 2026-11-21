@@ -3,8 +3,9 @@
  */
 (function () {
   'use strict';
-
-  const API_BASE = 'http://localhost:5000/api/v1';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api/v1'
+  : '/api/v1';
   const ACCENT_KEY = 'portfolio_accent';
 
   // 1. Apply saved theme & accent INSTANTLY (Prevents flash)

@@ -7,7 +7,9 @@
 
   window.Admin = window.Admin || {};
 
-  const API_BASE = 'http://localhost:5000/api/v1';
+ const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api/v1'
+  : '/api/v1';
 
   // ── Auth Check ──
   function checkAuth() {
@@ -164,7 +166,11 @@
   function initSocket() {
     if (typeof io === 'undefined') return;
 
-    const socket = io('http://localhost:5000');
+   const SOCKET_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000'
+  : window.location.origin; // Uses Netlify's proxy
+
+const socket = io(SOCKET_URL);
 
     socket.on('connect', function () {
       socket.emit('user-join', { role: 'admin' });

@@ -109,12 +109,18 @@ class PortfolioApp {
     gallery.innerHTML = '';
     if (dotsContainer) dotsContainer.innerHTML = '';
 
-    const getFullImageUrl = (url) => {
-      if (!url) return '';
-      if (url.startsWith('http')) return url;
-      if (url.startsWith('/')) return 'http://localhost:5000' + url;
-      return url;
-    };
+   const getFullImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  
+  // Environment-aware backend URL
+  const BACKEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:5000'
+    : 'https://geeoohportfolio.onrender.com';
+
+  if (url.startsWith('/')) return BACKEND_URL + url;
+  return url;
+};
 
     const placeholderUrl = 'data:image/svg+xml,' + encodeURIComponent(
       '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250" viewBox="0 0 400 250">' +

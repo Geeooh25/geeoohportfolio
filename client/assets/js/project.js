@@ -123,22 +123,26 @@ function createMuseumCard(project, index) {
       </div>
     `;
     
-    // Fetch project data
-    fetch('http://localhost:5000/api/v1/public/projects/' + projectId)
-      .then(r => r.json())
-      .then(d => {
-        if (!d.success || !d.project) throw new Error('Not found');
-        content.innerHTML = buildCaseStudyHTML(d.project);
-      })
-      .catch(() => {
-        content.innerHTML = `
-          <div style="text-align:center;padding:60px 20px;">
-            <h3>Project not found</h3>
-            <p style="color:var(--text-secondary);">Try again later</p>
-          </div>
-        `;
-      });
-  }
+  // Fetch project data
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api/v1'
+  : '/api/v1'; // Netlify proxies to Render
+
+fetch(API_BASE + '/public/projects/' + projectId)
+  .then(r => r.json())
+  .then(d => {
+    if (!d.success || !d.project) throw new Error('Not found');
+    content.innerHTML = buildCaseStudyHTML(d.project);
+  })
+  .catch(() => {
+    content.innerHTML = `
+      <div style="text-align:center;padding:60px 20px;">
+        <h3>Project not found</h3>
+        <p style="color:var(--text-secondary);">Try again later</p>
+      </div>
+    `;
+  });
+}
   
   // Build case study HTML (simplified for modal)
   function buildCaseStudyHTML(p) {
