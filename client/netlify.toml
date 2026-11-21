@@ -1,17 +1,17 @@
 [build]
-  publish = "client"
-  
+  publish = "."
+
 [[redirects]]
   from = "/api/*"
   to = "https://geeoohportfolio-j34k.onrender.com/api/:splat"
   status = 200
   force = true
 
-# This tells Netlify to serve the HTML file if the extension is missing
 [[redirects]]
-  from = "/pages/admin/login"
-  to = "/pages/admin/login.html"
+  from = "/socket.io/*"
+  to = "https://geeoohportfolio-j34k.onrender.com/socket.io/:splat"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/*"
