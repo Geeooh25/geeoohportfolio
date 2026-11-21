@@ -209,7 +209,7 @@ var r = await fetch(API_BASE + '/api/v1/public/messages/' + this.conversationId)
   // Environment-aware Socket URL
   const SOCKET_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:5000'
-    : 'https://geeoohportfolio.onrender.com'; // Direct connection to Render for stability
+    : 'https://geeoohportfolio-j34k.onrender.com'; // Direct connection to Render for stability
 
   this.socket = io(SOCKET_URL, { 
     transports: ['websocket', 'polling'], 

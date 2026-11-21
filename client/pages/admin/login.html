@@ -621,10 +621,9 @@
       try {
         const result = await api.login(email, password);
         
-        if (result.success) {
-          // Success - redirect to dashboard
-          window.location.href = 'dashboard.html';
-        } else {
+       if (result.success) {
+  window.location.href = '/pages/admin/dashboard.html';
+} else {
           throw new Error(result.message || 'Login failed');
         }
       } catch (error) {
