@@ -12,6 +12,10 @@
   --text-tertiary: #94a3b8;
   
   --accent-primary: #FF6B00;
+  --accent-secondary: #FF8C42;
+  --accent-hover: #E05E00;
+  --accent-soft: rgba(255, 107, 0, 0.12);
+  --accent-border: rgba(255, 107, 0, 0.32);
   --accent-purple: #7C3AED;
   --accent-cyan: #06B6D4;
   --accent-green: #10b981;
@@ -29,7 +33,12 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 20px rgba(255, 107, 0, 0.3);
+  --shadow-glow: 0 0 25px rgba(255, 107, 0, 0.35);
+  --admin-accent: var(--accent-primary);
+  --admin-accent-hover: var(--accent-secondary);
+  --admin-accent-soft: var(--accent-soft);
+  --chat-accent: var(--accent-primary);
+  --chat-accent-gradient: var(--gradient-primary);
   --shadow-purple: 0 0 20px rgba(124, 58, 237, 0.3);
   --shadow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
   
@@ -218,7 +227,7 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
   transform: translate(-50%, -50%);
   width: 0px;
   height: 0px;
-  background: radial-gradient(circle, rgba(255, 107, 0, 0.3), transparent 70%);
+  background: radial-gradient(circle, var(--accent-soft), transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 1;
@@ -264,7 +273,7 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
   position: absolute;
   width: 2px;
   height: 2px;
-  background: rgba(255, 107, 0, 0.6);
+  background: var(--accent-primary);
   border-radius: 50%;
   animation: floatUp 8s linear infinite;
 }
@@ -372,7 +381,7 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 }
 
 .terminal-prompt {
-  color: #FF6B00;
+  color: var(--accent-primary);
   margin-right: 8px;
   font-weight: bold;
 }
@@ -386,7 +395,7 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 }
 
 .terminal-output.highlight {
-  color: #FF6B00;
+  color: var(--accent-primary);
   font-weight: 500;
 }
 
@@ -409,7 +418,7 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 }
 
 .status-found {
-  color: #FF6B00;
+  color: var(--accent-primary);
   font-weight: bold;
   animation: foundPulse 0.6s ease;
 }
@@ -452,8 +461,8 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
   font-size: 2.2rem;
   font-weight: 700;
   letter-spacing: 0.25em;
-  color: #FF6B00;
-  text-shadow: 0 0 40px rgba(255, 107, 0, 0.5), 0 0 80px rgba(255, 107, 0, 0.2);
+  color: var(--accent-primary);
+  text-shadow: 0 0 40px var(--accent-soft), 0 0 80px var(--accent-soft);
   animation: signatureAppear 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   margin-bottom: 12px;
 }
@@ -505,10 +514,10 @@ h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
 .boot-progress-fill {
   width: 0%;
   height: 100%;
-  background: linear-gradient(90deg, #FF6B00, #FF9A52);
+  background: var(--gradient-primary);
   border-radius: 1px;
   transition: width 0.3s ease;
-  box-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
+  box-shadow: 0 0 10px var(--accent-soft);
 }
 
 .boot-progress-info {
@@ -1056,7 +1065,7 @@ body.dark-theme .title-line {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(255, 107, 0, 0.5);
+  box-shadow: var(--shadow-glow);
 }
 
 .btn-outline {
@@ -1243,7 +1252,7 @@ body.dark-theme .title-line {
 }
 
 .about-image-wrapper.phase-4-active {
-  box-shadow: 0 0 60px rgba(255, 107, 0, 0.2), var(--shadow-2xl);
+  box-shadow: 0 0 60px var(--accent-soft), var(--shadow-2xl);
 }
 
 .about-image {
@@ -1279,7 +1288,7 @@ body.dark-theme .title-line {
   transform: translate(-50%, -50%);
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, rgba(255, 107, 0, 0.2), transparent 70%);
+  background: radial-gradient(circle, var(--accent-soft), transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   opacity: 0;
@@ -1590,12 +1599,12 @@ body.dark-theme .title-line {
 .gallery-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-2xl);
-  border-color: rgba(255, 107, 0, 0.4);
+  border-color: var(--accent-border);
 }
 
 .gallery-card.active-card {
   border-color: var(--accent-primary);
-  box-shadow: 0 0 40px rgba(255, 107, 0, 0.15);
+  box-shadow: var(--shadow-glow);
 }
 
 /* Card Image */
@@ -1661,7 +1670,7 @@ body.dark-theme .title-line {
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  background: rgba(255, 107, 0, 0.08);
+  background: var(--accent-soft);
   border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 600;
@@ -1749,7 +1758,7 @@ body.dark-theme .title-line {
   background: var(--accent-primary);
   color: white;
   border-color: var(--accent-primary);
-  box-shadow: 0 0 25px rgba(255, 107, 0, 0.3);
+  box-shadow: var(--shadow-glow);
   transform: translateY(-50%) scale(1.1);
 }
 
@@ -2003,13 +2012,13 @@ body.dark-theme .title-line {
 }
 
 .github-stat-card:focus-visible {
-  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.25);
+  box-shadow: 0 0 0 3px var(--accent-soft);
   border-color: var(--accent-primary);
 }
 
 .github-stat-card:hover {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-  border-color: rgba(255, 107, 0, 0.25);
+  border-color: var(--accent-border);
 }
 
 .github-stat-icon {
@@ -2022,7 +2031,7 @@ body.dark-theme .title-line {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 2rem;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--accent-primary), #FF8C42);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -2241,7 +2250,7 @@ body.dark-theme .title-line {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .form-group textarea {
@@ -2585,7 +2594,7 @@ body.dark-theme .title-line {
   background: var(--accent-primary);
   border-color: var(--accent-primary);
   color: white;
-  box-shadow: 0 4px 15px rgba(255, 107, 0, 0.25);
+  box-shadow: 0 4px 15px var(--accent-soft);
 }
 
 /* Cloud */
@@ -2622,7 +2631,7 @@ body.dark-theme .title-line {
 .skill-bubble:focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 3px;
-  box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+  box-shadow: var(--shadow-glow);
 }
 
 /* Staggered animation delays */
@@ -2644,15 +2653,15 @@ body.dark-theme .title-line {
 
 /* Category Colors */
 .skill-bubble.frontend {
-  background: rgba(255, 107, 0, 0.1);
+  background: var(--accent-soft);
   color: var(--accent-primary);
-  border-color: rgba(255, 107, 0, 0.2);
+  border-color: var(--accent-border);
 }
 .skill-bubble.frontend:hover,
 .skill-bubble.frontend:focus-visible {
-  background: rgba(255, 107, 0, 0.2);
+  background: var(--accent-soft);
   border-color: var(--accent-primary);
-  box-shadow: 0 0 30px rgba(255, 107, 0, 0.25);
+  box-shadow: var(--shadow-glow);
   transform: translateY(-6px) scale(1.08);
 }
 
@@ -2799,8 +2808,8 @@ body.dark-theme .title-line {
 }
 .legend-dot.beginner     { background: #94a3b8; opacity: 0.6; }
 .legend-dot.intermediate { background: #f59e0b; }
-.legend-dot.advanced     { background: #FF6B00; }
-.legend-dot.expert       { background: #FF6B00; box-shadow: 0 0 8px rgba(255,107,0,0.5); }
+.legend-dot.advanced     { background: var(--accent-primary); }
+.legend-dot.expert       { background: var(--accent-primary); box-shadow: 0 0 8px var(--accent-soft); }
 
 /* ── REDUCED MOTION ── */
 @media (prefers-reduced-motion: reduce) {
@@ -3066,7 +3075,7 @@ h1 span, h2 span, h3 span, h4 span,
 .gradient-text, .gradient-text-animated,
 .text-accent, .color-accent,
 .logo-text, .logo-icon {
-  color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* ── 2. CHAT WIDGET (Frontend & Admin) ── */
@@ -3076,9 +3085,9 @@ h1 span, h2 span, h3 span, h4 span,
 .chat-send-btn, 
 .chat-message.user .message-bubble,
 .chat-bubble.admin > div:last-child {
-  background: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background: var(--admin-accent, var(--accent-primary)) !important;
   background-image: none !important; /* kills hardcoded gradients */
-  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  border-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* Chat icons and text inside the colored bubbles */
@@ -3098,8 +3107,8 @@ h1 span, h2 span, h3 span, h4 span,
 .user-avatar,
 .chat-toggle,
 .profile-ring {
-  background: linear-gradient(135deg, var(--admin-accent, var(--accent-primary, #FF6B00)), var(--admin-accent-hover, #FF8C42)) !important;
-  background-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background: linear-gradient(135deg, var(--admin-accent, var(--accent-primary)), var(--admin-accent-hover, var(--accent-secondary))) !important;
+  background-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* ── 4. ICONS & BADGES ── */
@@ -3112,18 +3121,18 @@ h1 span, h2 span, h3 span, h4 span,
 .card-pill,
 .table-badge,
 .activity-dot.project {
-  color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
-  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  color: var(--admin-accent, var(--accent-primary)) !important;
+  border-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 .stat-icon-wrap.accent-orange,
 .qa-icon {
-  background: var(--admin-accent-soft, rgba(255,107,0,0.1)) !important;
+  background: var(--admin-accent-soft, var(--accent-soft)) !important;
 }
 
 .activity-dot.project,
 .stat-badge {
-  background-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* ── 5. INPUT FOCUS BORDERS ── */
@@ -3131,8 +3140,8 @@ input:focus,
 textarea:focus, 
 select:focus,
 .search-input:focus {
-  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
-  box-shadow: 0 0 0 3px var(--admin-accent-soft, rgba(255,107,0,0.2)) !important;
+  border-color: var(--admin-accent, var(--accent-primary)) !important;
+  box-shadow: 0 0 0 3px var(--admin-accent-soft, var(--accent-soft)) !important;
 }
 
 /* =========================================
@@ -3168,7 +3177,7 @@ h1 span, h2 span, h3 span {
 .tag, 
 .project-tag,
 .exp-tags span {
-  background-color: rgba(255, 107, 0, 0.1) !important; /* Uses a transparent version of the new color */
+  background-color: var(--accent-soft) !important; /* Uses a transparent version of the new color */
   color: var(--accent-primary) !important;
   border: 1px solid var(--accent-primary) !important;
 }
@@ -3180,7 +3189,7 @@ h1 span, h2 span, h3 span {
 .chat-send-btn {
   background: var(--accent-primary) !important;
   background-image: none !important;
-  box-shadow: 0 8px 25px rgba(255, 107, 0, 0.4) !important; /* Update the glow */
+  box-shadow: 0 8px 25px var(--accent-soft) !important; /* Update the glow */
 }
 
 /* 5. The Quote Marks (The orange quotation marks at the top of the testimonial) */
@@ -3200,7 +3209,7 @@ blockquote::before {
 .testimonial-avatar,
 .author-avatar,
 .avatar {
-  background: var(--accent-primary, #FF6B00) !important;
+  background: var(--accent-primary) !important;
 }
 .chat-toggle {
   background: var(--accent-primary) !important;
@@ -3250,8 +3259,8 @@ h3 em {
 .impact-card .impact-number,
 .impact-card h3,
 .impact-card .stat-value {
-  color: var(--accent-primary, #FF6B00) !important;
-  -webkit-text-fill-color: var(--accent-primary, #FF6B00) !important;
+  color: var(--accent-primary) !important;
+  -webkit-text-fill-color: var(--accent-primary) !important;
 }
 
 /* 3. Make the labels readable */
@@ -3263,7 +3272,7 @@ h3 em {
 
 /* 4. Optional: If you want a subtle purple border on hover instead of a solid block */
 .impact-card:hover {
-  border-color: var(--accent-primary, #FF6B00) !important;
+  border-color: var(--accent-primary) !important;
   transform: translateY(-4px);
 }
 
@@ -3284,7 +3293,7 @@ h3 em {
 
 /* 2. Only change the border and the number color on hover */
 .impact-card:hover {
-  border: 1px solid var(--accent-primary, #FF6B00) !important;
+  border: 1px solid var(--accent-primary) !important;
   transform: translateY(-4px) !important;
 }
 
@@ -3292,8 +3301,8 @@ h3 em {
 .impact-card h3,
 .impact-card .stat-value,
 .impact-card .impact-number {
-  color: var(--accent-primary, #FF6B00) !important;
-  -webkit-text-fill-color: var(--accent-primary, #FF6B00) !important;
+  color: var(--accent-primary) !important;
+  -webkit-text-fill-color: var(--accent-primary) !important;
 }
 
 .impact-card p,
@@ -3345,7 +3354,7 @@ h3 em {
 .impact-card h3,
 .impact-card .impact-number,
 .stat-card .stat-value {
-  color: var(--accent-primary, var(--admin-accent, #FF6B00)) !important;
+  color: var(--accent-primary, var(--admin-accent)) !important;
 }
 
 .impact-card p,
@@ -3357,7 +3366,7 @@ h3 em {
 /* 5. Finally, make ONLY the border change on hover */
 .impact-card:hover,
 .stat-card:hover {
-  border: 2px solid var(--accent-primary, var(--admin-accent, #FF6B00)) !important;
+  border: 2px solid var(--accent-primary, var(--admin-accent)) !important;
   transform: translateY(-4px) !important;
   box-shadow: none !important; /* Optional: remove the heavy shadow */
 }
@@ -3385,13 +3394,13 @@ h3 em {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: var(--accent-primary, #FF6B00);
+  background: var(--accent-primary);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 24px;
-  box-shadow: 0 10px 30px var(--admin-accent-soft, rgba(255, 107, 0, 0.3));
+  box-shadow: 0 10px 30px var(--admin-accent-soft, var(--accent-soft));
   transition: transform 0.3s ease;
 }
 
@@ -3424,24 +3433,24 @@ h3 em {
   gap: 10px;
   padding: 14px 36px;
   font-size: 1.05rem;
-  background: var(--accent-primary, #FF6B00);
+  background: var(--accent-primary);
   color: #fff;
   border: none;
   border-radius: var(--radius-full, 9999px);
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px var(--admin-accent-soft, rgba(255, 107, 0, 0.2));
+  box-shadow: 0 4px 15px var(--admin-accent-soft, var(--accent-soft));
 }
 
 .chat-trigger-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px var(--admin-accent-soft, rgba(255, 107, 0, 0.4));
+  box-shadow: 0 8px 25px var(--admin-accent-soft, var(--accent-soft));
 }
 
 /* Ensure the SVG icons in contact details look right */
 .contact-detail svg {
-  color: var(--accent-primary, #FF6B00);
+  color: var(--accent-primary);
 }
 
 .logo img {

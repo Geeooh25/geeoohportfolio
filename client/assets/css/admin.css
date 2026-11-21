@@ -17,6 +17,17 @@
 }
 
 /* ── 2. BASE THEME TOKENS (DARK THEME DEFAULT) ── */
+:root {
+  /* Existing accent base variables (Default Orange) */
+  --accent-primary: #FF6B00;
+  --accent-secondary: #FF8C42;
+  --accent-hover: #E05E00;
+  --accent-soft: rgba(255, 107, 0, 0.12);
+  --accent-border: rgba(255, 107, 0, 0.32);
+  --gradient-primary: linear-gradient(135deg, #FF6B00, #FF8C42);
+  --shadow-glow: 0 0 25px rgba(255, 107, 0, 0.35);
+}
+
 :root,
 body.dark-theme,
 html[data-theme="dark"] body {
@@ -30,11 +41,6 @@ html[data-theme="dark"] body {
   --text-secondary: #9CA3AF;
   --text-tertiary: #64748B;
   --border-color: rgba(255, 255, 255, 0.08);
-
-  /* Existing accent base variables (Default Orange) */
-  --accent-primary: #FF6B00;
-  --accent-secondary: #FF8C42;
-  --gradient-primary: linear-gradient(135deg, #FF6B00, #FF8C42);
 
   /* Theme mappings for Admin System compatibility */
   --admin-bg: var(--bg-primary);
@@ -57,11 +63,11 @@ html[data-theme="dark"] body {
   --admin-text-inverse: #06080D;
 
   --admin-accent: var(--accent-primary);
-  --admin-accent-hover: #E55F00;
+  --admin-accent-hover: var(--accent-hover, #E05E00);
   --admin-accent-light: var(--accent-secondary);
-  --admin-accent-soft: rgba(255, 107, 0, 0.12);
+  --admin-accent-soft: var(--accent-soft, rgba(255, 107, 0, 0.12));
   --admin-accent-subtle: var(--admin-accent-soft);
-  --admin-accent-glow: rgba(255, 107, 0, 0.3);
+  --admin-accent-glow: color-mix(in srgb, var(--accent-primary) 30%, transparent);
 
   --admin-purple: #7C3AED;
   --admin-purple-subtle: rgba(124, 58, 237, 0.12);
@@ -72,6 +78,7 @@ html[data-theme="dark"] body {
   --admin-amber: #F59E0B;
   --admin-amber-subtle: rgba(245, 158, 11, 0.12);
   --admin-danger: #EF4444;
+  --admin-red: var(--admin-danger);
   --admin-danger-hover: #DC2626;
   --admin-danger-subtle: rgba(239, 68, 68, 0.12);
 
@@ -88,7 +95,7 @@ html[data-theme="dark"] body {
   --admin-overlay-bg: rgba(5, 8, 14, 0.8);
   --admin-modal-bg: var(--bg-secondary);
 
-  --admin-glow-color-1: rgba(255, 107, 0, 0.07);
+  --admin-glow-color-1: color-mix(in srgb, var(--accent-primary) 7%, transparent);
   --admin-glow-color-2: rgba(124, 58, 237, 0.05);
 
   --admin-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -152,7 +159,7 @@ html[data-theme="light"] body {
   --admin-shadow-lg: 0 16px 36px rgba(15, 23, 42, 0.12);
 
   --admin-overlay-bg: rgba(15, 23, 42, 0.5);
-  --admin-glow-color-1: rgba(255, 107, 0, 0.04);
+  --admin-glow-color-1: color-mix(in srgb, var(--accent-primary) 4%, transparent);
   --admin-glow-color-2: rgba(124, 58, 237, 0.03);
 }
 
@@ -238,7 +245,7 @@ body.dark-theme .theme-transition-overlay {
 
 /* ── 7. THEME-SPECIFIC GRADIENTS & SHADOWS ── */
 body.dark-theme .gradient-text-animated {
-  background: linear-gradient(135deg, var(--admin-accent), #FF8C42, #7C3AED, #06B6D4);
+  background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-light), var(--admin-purple), var(--admin-cyan));
   background-size: 300% 300%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -247,7 +254,7 @@ body.dark-theme .gradient-text-animated {
 }
 
 body.light-theme .gradient-text-animated {
-  background: linear-gradient(135deg, var(--admin-accent), #7C3AED, #06B6D4);
+  background: linear-gradient(135deg, var(--admin-accent), var(--admin-purple), var(--admin-cyan));
   background-size: 300% 300%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -261,11 +268,11 @@ body.light-theme .gradient-text-animated {
   100% { background-position: 0% 50%; }
 }
 
-body.dark-theme .glow-orange { box-shadow: 0 0 30px rgba(255, 107, 0, 0.4); }
+body.dark-theme .glow-orange { box-shadow: 0 0 30px var(--admin-accent-glow); }
 body.dark-theme .glow-purple { box-shadow: 0 0 30px rgba(124, 58, 237, 0.4); }
 body.dark-theme .glow-cyan { box-shadow: 0 0 30px rgba(6, 182, 212, 0.4); }
 
-body.light-theme .glow-orange { box-shadow: 0 0 20px rgba(255, 107, 0, 0.2); }
+body.light-theme .glow-orange { box-shadow: 0 0 20px var(--admin-accent-soft); }
 body.light-theme .glow-purple { box-shadow: 0 0 20px rgba(124, 58, 237, 0.2); }
 body.light-theme .glow-cyan { box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); }
 
@@ -338,7 +345,8 @@ html[data-theme="dark"] .theme-toggle-admin .theme-icon-dark {
 html {
   background-color: #06080d !important;
 }
-html[data-theme="light"] {
+html[data-theme="light"],
+html.light-theme {
   background-color: #f8fafc !important;
 }
 
@@ -378,11 +386,30 @@ body.admin-body,
    ========================================================================== */
 
 /* 🟠 ORANGE (Default) */
-/* Defined in root/base */
+body.accent-orange,
+html.accent-orange body,
+html[data-accent="orange"] body,
+html[data-accent="orange"] {
+  --admin-accent: #FF6B00;
+  --admin-accent-hover: #E05E00;
+  --admin-accent-light: #FF8C42;
+  --admin-accent-soft: rgba(255, 107, 0, 0.12);
+  --admin-accent-subtle: var(--admin-accent-soft);
+  --admin-accent-glow: rgba(255, 107, 0, 0.3);
+  --accent-primary: #FF6B00;
+  --accent-secondary: #FF8C42;
+  --accent-hover: #E05E00;
+  --accent-soft: rgba(255, 107, 0, 0.12);
+  --accent-border: rgba(255, 107, 0, 0.32);
+  --gradient-primary: linear-gradient(135deg, #FF6B00, #FF8C42);
+  --shadow-glow: 0 0 25px rgba(255, 107, 0, 0.35);
+}
 
 /* 🔵 BLUE */
 body.accent-blue,
-html.accent-blue body {
+html.accent-blue body,
+html[data-accent="blue"] body,
+html[data-accent="blue"] {
   --admin-accent: #3B82F6;
   --admin-accent-hover: #2563EB;
   --admin-accent-light: #60A5FA;
@@ -391,12 +418,22 @@ html.accent-blue body {
   --admin-accent-glow: rgba(59, 130, 246, 0.3);
   --accent-primary: #3B82F6;
   --accent-secondary: #60A5FA;
+  --accent-hover: #2563EB;
+  --accent-soft: rgba(59, 130, 246, 0.12);
+  --accent-border: rgba(59, 130, 246, 0.32);
   --gradient-primary: linear-gradient(135deg, #3B82F6, #60A5FA);
+  --shadow-glow: 0 0 25px rgba(59, 130, 246, 0.35);
 }
 
-/* 🟢 EMERALD */
+/* 🟢 EMERALD / GREEN */
 body.accent-emerald,
-html.accent-emerald body {
+body.accent-green,
+html.accent-emerald body,
+html.accent-green body,
+html[data-accent="emerald"] body,
+html[data-accent="emerald"],
+html[data-accent="green"] body,
+html[data-accent="green"] {
   --admin-accent: #10B981;
   --admin-accent-hover: #059669;
   --admin-accent-light: #34D399;
@@ -405,12 +442,18 @@ html.accent-emerald body {
   --admin-accent-glow: rgba(16, 185, 129, 0.3);
   --accent-primary: #10B981;
   --accent-secondary: #34D399;
+  --accent-hover: #059669;
+  --accent-soft: rgba(16, 185, 129, 0.12);
+  --accent-border: rgba(16, 185, 129, 0.32);
   --gradient-primary: linear-gradient(135deg, #10B981, #34D399);
+  --shadow-glow: 0 0 25px rgba(16, 185, 129, 0.35);
 }
 
 /* 🟣 PURPLE */
 body.accent-purple,
-html.accent-purple body {
+html.accent-purple body,
+html[data-accent="purple"] body,
+html[data-accent="purple"] {
   --admin-accent: #8B5CF6;
   --admin-accent-hover: #7C3AED;
   --admin-accent-light: #A78BFA;
@@ -419,12 +462,18 @@ html.accent-purple body {
   --admin-accent-glow: rgba(139, 92, 246, 0.3);
   --accent-primary: #8B5CF6;
   --accent-secondary: #A78BFA;
+  --accent-hover: #7C3AED;
+  --accent-soft: rgba(139, 92, 246, 0.12);
+  --accent-border: rgba(139, 92, 246, 0.32);
   --gradient-primary: linear-gradient(135deg, #8B5CF6, #A78BFA);
+  --shadow-glow: 0 0 25px rgba(139, 92, 246, 0.35);
 }
 
 /* 🔴 ROSE */
 body.accent-rose,
-html.accent-rose body {
+html.accent-rose body,
+html[data-accent="rose"] body,
+html[data-accent="rose"] {
   --admin-accent: #F43F5E;
   --admin-accent-hover: #E11D48;
   --admin-accent-light: #FB7185;
@@ -433,7 +482,31 @@ html.accent-rose body {
   --admin-accent-glow: rgba(244, 63, 94, 0.3);
   --accent-primary: #F43F5E;
   --accent-secondary: #FB7185;
+  --accent-hover: #E11D48;
+  --accent-soft: rgba(244, 63, 94, 0.12);
+  --accent-border: rgba(244, 63, 94, 0.32);
   --gradient-primary: linear-gradient(135deg, #F43F5E, #FB7185);
+  --shadow-glow: 0 0 25px rgba(244, 63, 94, 0.35);
+}
+
+/* 🌊 CYAN */
+body.accent-cyan,
+html.accent-cyan body,
+html[data-accent="cyan"] body,
+html[data-accent="cyan"] {
+  --admin-accent: #06B6D4;
+  --admin-accent-hover: #0891B2;
+  --admin-accent-light: #22D3EE;
+  --admin-accent-soft: rgba(6, 182, 212, 0.12);
+  --admin-accent-subtle: var(--admin-accent-soft);
+  --admin-accent-glow: rgba(6, 182, 212, 0.3);
+  --accent-primary: #06B6D4;
+  --accent-secondary: #22D3EE;
+  --accent-hover: #0891B2;
+  --accent-soft: rgba(6, 182, 212, 0.12);
+  --accent-border: rgba(6, 182, 212, 0.32);
+  --gradient-primary: linear-gradient(135deg, #06B6D4, #22D3EE);
+  --shadow-glow: 0 0 25px rgba(6, 182, 212, 0.35);
 }
 
 /* ==========================================================================
@@ -2878,7 +2951,7 @@ table button .material-symbols-outlined,
 .timeline-item-admin:last-child { padding-bottom: 0; }
 .timeline-dot-admin { position: absolute; left: -32px; top: 4px; width: 28px; height: 28px; border-radius: 50%; background: var(--admin-card); border: 2px solid var(--admin-accent); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; z-index: 1; color: var(--admin-accent); }
 .timeline-content-admin { flex: 1; background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: var(--admin-radius-md); padding: 20px 24px; transition: all var(--admin-transition, 0.3s ease); }
-.timeline-content-admin:hover { border-color: rgba(255,107,0,0.15); box-shadow: var(--admin-shadow-sm); }
+.timeline-content-admin:hover { border-color: var(--accent-border, var(--admin-accent-soft)); box-shadow: var(--admin-shadow-sm); }
 .timeline-header-admin { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
 .timeline-header-admin h3 { font-family: var(--admin-font-display); font-size: 1.05rem; font-weight: 700; color: var(--admin-text); margin-bottom: 2px; }
 .timeline-company { font-size: 0.85rem; color: var(--admin-text-secondary); }
@@ -2896,7 +2969,7 @@ table button .material-symbols-outlined,
 /* ── MESSAGES INBOX & CARDS ── */
 .messages-inbox { display: flex; flex-direction: column; gap: 10px; }
 .message-card { background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: var(--admin-radius-md); padding: 20px 24px; display: flex; gap: 16px; transition: all var(--admin-transition, 0.3s ease); }
-.message-card:hover { border-color: rgba(255,107,0,0.15); }
+.message-card:hover { border-color: var(--accent-border, var(--admin-accent-soft)); }
 .message-card.unread { border-left: 3px solid var(--admin-accent); background: var(--admin-accent-soft); }
 .message-avatar { width: 44px; height: 44px; border-radius: 12px; background: var(--admin-accent) !important; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; color: #fff; flex-shrink: 0; }
 .message-body { flex: 1; min-width: 0; }
@@ -2911,7 +2984,7 @@ table button .material-symbols-outlined,
 .message-source.linkedin { background: rgba(59,130,246,0.1); color: #3b82f6; }
 .message-source.twitter { background: rgba(59,130,246,0.1); color: #3b82f6; }
 .message-time { font-size: 0.75rem; color: var(--admin-text-tertiary); white-space: nowrap; }
-.message-unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--admin-accent); box-shadow: 0 0 8px rgba(255,107,0,0.4); }
+.message-unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--admin-accent); box-shadow: 0 0 8px var(--admin-accent-glow); }
 .message-content { font-size: 0.9rem; color: var(--admin-text-secondary); line-height: 1.6; margin-bottom: 12px; }
 .message-reply { background: var(--admin-bg); border-left: 2px solid var(--admin-green); padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 0.85rem; color: var(--admin-text-secondary); margin-bottom: 12px; }
 .message-actions { display: flex; gap: 8px; }
@@ -2922,7 +2995,7 @@ table button .material-symbols-outlined,
 /* ── TESTIMONIALS CARDS ── */
 .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
 .testimonial-card-admin { background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: var(--admin-radius-md); padding: 24px; display: flex; flex-direction: column; gap: 16px; transition: all var(--admin-transition, 0.3s ease); }
-.testimonial-card-admin:hover { border-color: rgba(255,107,0,0.15); box-shadow: var(--admin-shadow-sm); }
+.testimonial-card-admin:hover { border-color: var(--accent-border, var(--admin-accent-soft)); box-shadow: var(--admin-shadow-sm); }
 .testimonial-card-admin.unapproved { opacity: 0.7; border-style: dashed; }
 .testimonial-card-top { display: flex; align-items: flex-start; gap: 14px; }
 .testimonial-avatar-admin { width: 48px; height: 48px; border-radius: 14px; background: var(--admin-accent) !important; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; color: #fff; flex-shrink: 0; }
@@ -3399,10 +3472,10 @@ table button .material-symbols-outlined,
 }
 
 /* Stat icons & badges */
-.stat-icon-wrap.orange, .accent-orange { background: var(--admin-accent-soft) !important; color: var(--admin-accent) !important; }
-.stat-icon-wrap.purple, .accent-purple { background: rgba(124,58,237,0.08) !important; color: var(--admin-purple) !important; }
-.stat-icon-wrap.cyan, .accent-cyan { background: rgba(6,182,212,0.08) !important; color: var(--admin-cyan) !important; }
-.stat-icon-wrap.green, .accent-green { background: rgba(16,185,129,0.08) !important; color: var(--admin-green) !important; }
+.stat-icon-wrap.orange, .stat-icon-wrap.accent-orange { background: var(--admin-accent-soft) !important; color: var(--admin-accent) !important; }
+.stat-icon-wrap.purple, .stat-icon-wrap.accent-purple { background: rgba(124,58,237,0.08) !important; color: var(--admin-purple) !important; }
+.stat-icon-wrap.cyan, .stat-icon-wrap.accent-cyan { background: rgba(6,182,212,0.08) !important; color: var(--admin-cyan) !important; }
+.stat-icon-wrap.green, .stat-icon-wrap.accent-green { background: rgba(16,185,129,0.08) !important; color: var(--admin-green) !important; }
 .stat-badge-unread { position: static !important; margin-top: 10px !important; }
 
 /* Activity list items */

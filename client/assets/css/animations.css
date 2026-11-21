@@ -68,8 +68,8 @@
 
 /* ===== GLOW PULSE ===== */
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 5px rgba(255, 107, 0, 0.3); }
-  50% { box-shadow: 0 0 20px rgba(255, 107, 0, 0.6); }
+  0%, 100% { box-shadow: 0 0 5px var(--accent-soft); }
+  50% { box-shadow: 0 0 20px color-mix(in srgb, var(--accent-primary) 60%, transparent); }
 }
 
 .glow-pulse {
@@ -384,7 +384,7 @@ h1 span, h2 span, h3 span, h4 span,
 .gradient-text, .gradient-text-animated,
 .text-accent, .color-accent,
 .logo-text, .logo-icon {
-  color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* ── 2. CHAT WIDGET (Frontend & Admin) ── */
@@ -394,9 +394,9 @@ h1 span, h2 span, h3 span, h4 span,
 .chat-send-btn, 
 .chat-message.user .message-bubble,
 .chat-bubble.admin > div:last-child {
-  background: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background: var(--admin-accent, var(--accent-primary)) !important;
   background-image: none !important; /* kills hardcoded gradients */
-  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  border-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* Chat icons and text inside the colored bubbles */
@@ -416,8 +416,8 @@ h1 span, h2 span, h3 span, h4 span,
 .user-avatar,
 .chat-toggle,
 .profile-ring {
-  background: linear-gradient(135deg, var(--admin-accent, var(--accent-primary, #FF6B00)), var(--admin-accent-hover, #FF8C42)) !important;
-  background-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background: linear-gradient(135deg, var(--admin-accent, var(--accent-primary)), var(--admin-accent-hover, var(--accent-secondary))) !important;
+  background-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* ── 4. ICONS & BADGES ── */
@@ -430,18 +430,18 @@ h1 span, h2 span, h3 span, h4 span,
 .card-pill,
 .table-badge,
 .activity-dot.project {
-  color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
-  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  color: var(--admin-accent, var(--accent-primary)) !important;
+  border-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 .stat-icon-wrap.accent-orange,
 .qa-icon {
-  background: var(--admin-accent-soft, rgba(255,107,0,0.1)) !important;
+  background: var(--admin-accent-soft, var(--accent-soft)) !important;
 }
 
 .activity-dot.project,
 .stat-badge {
-  background-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* ── 5. INPUT FOCUS BORDERS ── */
@@ -449,6 +449,6 @@ input:focus,
 textarea:focus, 
 select:focus,
 .search-input:focus {
-  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
-  box-shadow: 0 0 0 3px var(--admin-accent-soft, rgba(255,107,0,0.2)) !important;
+  border-color: var(--admin-accent, var(--accent-primary)) !important;
+  box-shadow: 0 0 0 3px var(--admin-accent-soft, var(--accent-soft)) !important;
 }

@@ -22,7 +22,7 @@
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,107,0,0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent-primary) 25%, transparent) 0%, transparent 70%);
   z-index: -1;
   opacity: 0;
   transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -43,8 +43,8 @@
   bottom: -15px;
   border-radius: 50%;
   border: 2px solid transparent;
-  border-top-color: #FF6B00;
-  border-right-color: rgba(255,107,0,0.3);
+  border-top-color: var(--accent-primary);
+  border-right-color: color-mix(in srgb, var(--accent-primary) 30%, transparent);
   animation: idRingSpin 10s linear infinite;
   pointer-events: none;
   z-index: 0;
@@ -59,8 +59,8 @@
   bottom: 8px;
   border-radius: 50%;
   border: 1px solid transparent;
-  border-bottom-color: rgba(124,58,237,0.2);
-  border-left-color: rgba(6,182,212,0.2);
+  border-bottom-color: color-mix(in srgb, var(--accent-purple) 20%, transparent);
+  border-left-color: color-mix(in srgb, var(--accent-cyan) 20%, transparent);
   animation: idRingSpin 14s linear infinite reverse;
 }
 @keyframes idRingSpin {
@@ -68,10 +68,10 @@
   to { transform: rotate(360deg); }
 }
 .id-ring.active {
-  border-top-color: #FF6B00;
-  border-right-color: #FF6B00;
+  border-top-color: var(--accent-primary);
+  border-right-color: var(--accent-primary);
   animation-duration: 3s;
-  box-shadow: 0 0 40px rgba(255,107,0,0.3);
+  box-shadow: 0 0 40px color-mix(in srgb, var(--accent-primary) 30%, transparent);
 }
 
 /* ---------- PHOTO ---------- */
@@ -80,7 +80,7 @@
   height: 250px;
   border-radius: 50%;
   overflow: hidden;
-  border: 4px solid #ffffff;
+  border: 4px solid var(--bg-secondary);
   cursor: pointer;
   position: relative;
   z-index: 3;
@@ -89,7 +89,7 @@
   transform-style: preserve-3d;
 }
 body.dark-theme .id-photo {
-  border-color: #1a1a2e;
+  border-color: var(--bg-tertiary);
   box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
 .id-photo:hover {
@@ -97,8 +97,8 @@ body.dark-theme .id-photo {
 }
 .id-photo.revealing {
   transform: rotateY(-25deg) scale(1.05);
-  border-color: #FF6B00;
-  box-shadow: 0 30px 70px rgba(255,107,0,0.15);
+  border-color: var(--accent-primary);
+  box-shadow: 0 30px 70px color-mix(in srgb, var(--accent-primary) 15%, transparent);
 }
 .id-photo img {
   width: 100%;
@@ -150,7 +150,7 @@ body.dark-theme .id-photo {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.6rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -158,20 +158,20 @@ body.dark-theme .id-photo {
 }
 .id-stat-label {
   font-size: 0.55rem;
-  color: #64748b;
+  color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-top: 2px;
 }
 body.dark-theme .id-stat-label {
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 /* Philosophy */
 .id-philosophy {
   margin-top: 14px;
   font-size: 0.58rem;
-  color: #94a3b8;
+  color: var(--text-tertiary);
   font-style: italic;
   line-height: 1.4;
   opacity: 0;
@@ -206,17 +206,17 @@ body.dark-theme .id-stat-label {
   transform: scale(1);
 }
 .id-indicator.node {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: var(--gradient-primary);
   top: -15px;
   right: -30px;
 }
 .id-indicator.mongo {
-  background: linear-gradient(135deg, #10b981, #34D399);
+  background: linear-gradient(135deg, var(--accent-emerald), #34D399);
   bottom: 20px;
   right: -50px;
 }
 .id-indicator.react {
-  background: linear-gradient(135deg, #06B6D4, #22D3EE);
+  background: linear-gradient(135deg, var(--accent-cyan), #22D3EE);
   top: 60px;
   left: -50px;
 }
@@ -225,7 +225,7 @@ body.dark-theme .id-stat-label {
 .id-hint {
   text-align: center;
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-tertiary);
   margin-top: 10px;
   transition: opacity 0.3s ease;
 }
@@ -306,7 +306,7 @@ h1 span, h2 span, h3 span, h4 span,
 .gradient-text, .gradient-text-animated,
 .text-accent, .color-accent,
 .logo-text, .logo-icon {
-  color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* ── 2. CHAT WIDGET (Frontend & Admin) ── */
@@ -316,9 +316,9 @@ h1 span, h2 span, h3 span, h4 span,
 .chat-send-btn, 
 .chat-message.user .message-bubble,
 .chat-bubble.admin > div:last-child {
-  background: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background: var(--admin-accent, var(--accent-primary)) !important;
   background-image: none !important; /* kills hardcoded gradients */
-  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  border-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* Chat icons and text inside the colored bubbles */
@@ -338,8 +338,8 @@ h1 span, h2 span, h3 span, h4 span,
 .user-avatar,
 .chat-toggle,
 .profile-ring {
-  background: linear-gradient(135deg, var(--admin-accent, var(--accent-primary, #FF6B00)), var(--admin-accent-hover, #FF8C42)) !important;
-  background-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background: linear-gradient(135deg, var(--admin-accent, var(--accent-primary)), var(--admin-accent-hover, var(--accent-secondary))) !important;
+  background-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* ── 4. ICONS & BADGES ── */
@@ -352,18 +352,18 @@ h1 span, h2 span, h3 span, h4 span,
 .card-pill,
 .table-badge,
 .activity-dot.project {
-  color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
-  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  color: var(--admin-accent, var(--accent-primary)) !important;
+  border-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 .stat-icon-wrap.accent-orange,
 .qa-icon {
-  background: var(--admin-accent-soft, rgba(255,107,0,0.1)) !important;
+  background: var(--admin-accent-soft, var(--accent-soft)) !important;
 }
 
 .activity-dot.project,
 .stat-badge {
-  background-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
+  background-color: var(--admin-accent, var(--accent-primary)) !important;
 }
 
 /* ── 5. INPUT FOCUS BORDERS ── */
@@ -371,6 +371,6 @@ input:focus,
 textarea:focus, 
 select:focus,
 .search-input:focus {
-  border-color: var(--admin-accent, var(--accent-primary, #FF6B00)) !important;
-  box-shadow: 0 0 0 3px var(--admin-accent-soft, rgba(255,107,0,0.2)) !important;
+  border-color: var(--admin-accent, var(--accent-primary)) !important;
+  box-shadow: 0 0 0 3px var(--admin-accent-soft, var(--accent-soft)) !important;
 }

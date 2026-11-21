@@ -24,5 +24,8 @@
   "devDependencies": {
     "concurrently": "^8.2.2",
     "live-server": "^1.2.2"
+  },
+  "dependencies": {
+    "dotenv": "18.0.10"
   }
 }

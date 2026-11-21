@@ -1,4 +1,4 @@
-/* ===== 3D TRANSFORM UTILITIES ===== */
+/* ===== 3D TRANSFORM UTILITIES === 3d-effects.css == */
 .perspective-500 { perspective: 500px; }
 .perspective-1000 { perspective: 1000px; }
 .perspective-1500 { perspective: 1500px; }
@@ -109,7 +109,7 @@
   width: 100px;
   height: 100px;
   border: 2px solid var(--accent-primary);
-  background: rgba(255, 107, 0, 0.1);
+  background: var(--accent-soft);
   backdrop-filter: blur(5px);
 }
 
@@ -126,14 +126,14 @@
   height: 200px;
   border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, 
-    rgba(255, 107, 0, 0.4),
+    var(--accent-soft),
     rgba(124, 58, 237, 0.2),
     rgba(6, 182, 212, 0.1)
   );
   box-shadow: 
     inset -10px -10px 20px rgba(0, 0, 0, 0.2),
     inset 10px 10px 20px rgba(255, 255, 255, 0.1),
-    0 0 50px rgba(255, 107, 0, 0.3);
+    0 0 50px var(--accent-soft);
   animation: float 6s ease-in-out infinite;
 }
 
@@ -252,7 +252,7 @@
     4px 4px 0 var(--accent-primary),
     5px 5px 0 var(--accent-primary),
     6px 6px 0 var(--accent-primary);
-  color: white;
+  color: #ffffff;
   transition: text-shadow 0.3s ease;
 }
 
@@ -265,10 +265,10 @@
 
 /* ===== GLASS 3D PANEL ===== */
 .glass-3d {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-glass);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl, 20px);
   transform-style: preserve-3d;
   transition: transform 0.3s ease;
 }
@@ -276,8 +276,8 @@
 .glass-3d:hover {
   transform: translateZ(20px) rotateX(2deg);
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    inset 0 0 20px rgba(255, 255, 255, 0.1);
+    0 20px 40px rgba(0, 0, 0, 0.25),
+    inset 0 0 20px var(--accent-soft);
 }
 
 /* ===== HOLOGRAPHIC EFFECT ===== */
@@ -296,7 +296,7 @@
   background: linear-gradient(
     45deg,
     transparent 30%,
-    rgba(255, 107, 0, 0.1) 40%,
+    var(--accent-soft) 40%,
     rgba(124, 58, 237, 0.1) 50%,
     rgba(6, 182, 212, 0.1) 60%,
     transparent 70%
@@ -313,17 +313,29 @@
 /* ===== NEUMORPHISM 3D ===== */
 .neu-3d {
   background: var(--bg-secondary);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg, 16px);
   box-shadow: 
-    8px 8px 16px rgba(0, 0, 0, 0.1),
-    -8px -8px 16px rgba(255, 255, 255, 0.1);
+    8px 8px 16px rgba(0, 0, 0, 0.08),
+    -8px -8px 16px rgba(255, 255, 255, 0.08);
   transition: box-shadow 0.3s ease;
+}
+
+body.dark-theme .neu-3d {
+  box-shadow: 
+    8px 8px 16px rgba(0, 0, 0, 0.4),
+    -8px -8px 16px rgba(255, 255, 255, 0.05);
 }
 
 .neu-3d:hover {
   box-shadow: 
-    12px 12px 24px rgba(0, 0, 0, 0.15),
-    -12px -12px 24px rgba(255, 255, 255, 0.15);
+    12px 12px 24px rgba(0, 0, 0, 0.12),
+    -12px -12px 24px rgba(255, 255, 255, 0.12);
+}
+
+body.dark-theme .neu-3d:hover {
+  box-shadow: 
+    12px 12px 24px rgba(0, 0, 0, 0.5),
+    -12px -12px 24px rgba(255, 255, 255, 0.07);
 }
 
 .neu-3d:active {
@@ -349,15 +361,15 @@
       0deg,
       transparent,
       transparent 40px,
-      rgba(255, 255, 255, 0.03) 40px,
-      rgba(255, 255, 255, 0.03) 41px
+      var(--border-color) 40px,
+      var(--border-color) 41px
     ),
     repeating-linear-gradient(
       90deg,
       transparent,
       transparent 40px,
-      rgba(255, 255, 255, 0.03) 40px,
-      rgba(255, 255, 255, 0.03) 41px
+      var(--border-color) 40px,
+      var(--border-color) 41px
     );
   pointer-events: none;
 }

@@ -43,15 +43,7 @@
   let currentLightboxIndex = 0;
   let revealObserver = null;
 
-  // ===== THEME & NAVIGATION =====
-  const st = localStorage.getItem('portfolio_theme');
-  if (st === 'dark') document.body.classList.add('dark-theme');
-
-  document.getElementById('themeToggle').addEventListener('click', function() {
-    document.body.classList.toggle('dark-theme');
-    localStorage.setItem('portfolio_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
-  });
-
+  // ===== NAVIGATION =====
   const hb = document.getElementById('hamburgerBtn'),
     nb = document.getElementById('navbar'),
     ol = document.getElementById('overlay');
@@ -67,8 +59,6 @@
     if (btt) btt.classList.toggle('visible', window.scrollY > 500);
     updateTocHighlight();
   });
-
-  document.getElementById('backToTop').addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
   function updateTocHighlight() {
     const links = document.querySelectorAll('.pd-toc-link');
@@ -342,8 +332,8 @@
         </div>
       </section>
     `;
-}
-function renderCredentials(p) {
+  }
+  function renderCredentials(p) {
     if (!p.credentials || !p.credentials.hasCredentials) return '';
     return `
       <section class="pd-section pd-section-alt" aria-labelledby="creds-title">
@@ -359,7 +349,7 @@ function renderCredentials(p) {
         </div>
       </section>
     `;
-}
+  }
 
   function renderShare(p) {
     const url = encodeURIComponent(window.location.href);
@@ -387,22 +377,21 @@ function renderCredentials(p) {
       </section>
     `;
   }
-
-  function renderCTA(p) {
-    return `
-      <section class="pd-cta-section" id="contact-cta" aria-labelledby="cta-title">
-        <div class="pd-section-inner">
-          <div class="pd-reveal"><span class="pd-section-label">Next Steps</span></div>
-          <div class="pd-reveal pd-reveal-delay-1"><h2 class="pd-cta-title" id="cta-title">Want something like this?</h2></div>
-          <div class="pd-reveal pd-reveal-delay-2"><p class="pd-cta-subtitle">I build products people remember. Let's build yours.</p></div>
-          <div class="pd-cta-actions pd-reveal pd-reveal-delay-3">
-            <a href="./index.html#contact" class="pd-btn pd-btn-primary">💬 Start a Conversation</a>
-            ${p.links && p.links.live ? `<a href="${safeHTML(p.links.live)}" target="_blank" rel="noopener" class="pd-btn pd-btn-outline">🚀 Try Live Demo</a>` : ''}
-          </div>
+function renderCTA(p) {
+  return `
+    <section class="pd-cta-section" id="contact-cta" aria-labelledby="cta-title">
+      <div class="pd-section-inner">
+        <div class="pd-reveal"><span class="pd-section-label">Next Steps</span></div>
+        <div class="pd-reveal pd-reveal-delay-1"><h2 class="pd-cta-title" id="cta-title">Want something like this?</h2></div>
+        <div class="pd-reveal pd-reveal-delay-2"><p class="pd-cta-subtitle">I build products people remember. Let's build yours.</p></div>
+        <div class="pd-cta-actions pd-reveal pd-reveal-delay-3">
+          <button type="button" class="pd-btn pd-btn-primary" onclick="if (window.chatWidget) { window.chatWidget.openChat(); } else { const btn = document.getElementById('chatToggle'); if (btn) { btn.click(); } else { window.location.href = './index.html?openChat=1#contact'; } }">💬 Start a Conversation</button>
+          ${p.links && p.links.live ? `<a href="${safeHTML(p.links.live)}" target="_blank" rel="noopener" class="pd-btn pd-btn-outline">🚀 Try Live Demo</a>` : ''}
         </div>
-      </section>
-    `;
-  }
+      </div>
+    </section>
+  `;
+}
 
   function renderClientFeedback(p) {
     if (!p.clientFeedback || !p.clientFeedback.quote) return '';
