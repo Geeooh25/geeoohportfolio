@@ -436,14 +436,17 @@
 
   // ── §12  Socket wiring ────────────────────────────────────────────────
   /** Establish the admin socket connection and wire all events. */
-  function connectSocket() {
+   function connectSocket() {
     if (typeof io === 'undefined') return;
-   const SOCKET_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://localhost:5000'
-  : window.location.origin; 
+    
+    const SOCKET_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000'
+      : 'https://geeoohportfolio-j34k.onrender.com'; 
 
-const socket = io(SOCKET_URL);{ transports: ['websocket', 'polling'], reconnection: true });
-
+    const socket = io(SOCKET_URL, { 
+      transports: ['websocket', 'polling'], 
+      reconnection: true 
+    });
     socket.on('connect', function () {
       console.log('✅ Admin socket connected');
       socket.emit('user-join', { role: 'admin' });
