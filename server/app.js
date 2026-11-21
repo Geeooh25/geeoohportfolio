@@ -13,7 +13,8 @@ const app = express();
 // ===== SECURITY MIDDLEWARE =====
 app.use(helmet({
   contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
 app.use(cors({
@@ -63,6 +64,8 @@ app.use(express.static(path.join(__dirname, '../client')));
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use('/assets/images', express.static(path.join(__dirname, 'assets/images')));
 
 // ===== API ROUTES =====
 app.use('/api/v1/auth', require('./routes/auth'));

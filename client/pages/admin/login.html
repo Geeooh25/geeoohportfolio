@@ -7,34 +7,53 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../assets/css/main.css" />
   <link rel="stylesheet" href="../../assets/css/admin.css" />
+  <link rel="stylesheet" href="../../assets/css/theme.css" />
   <script>
-  // Prevent the white flash of unstyled content (FOUC)
-  (function() {
-    var theme = localStorage.getItem('portfolio_theme');
-    if (!theme) {
-      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    if (theme === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      document.documentElement.classList.add('dark-theme');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-      document.documentElement.classList.add('light-theme');
-    }
-  })();
-</script>
+    // Prevent flash of unstyled content (FOUC) and sync with portfolio_theme / portfolio_accent
+    (function() {
+      var theme = localStorage.getItem('portfolio_theme') || localStorage.getItem('geeooh_theme') || localStorage.getItem('admin_theme');
+      if (!theme) {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      var accent = localStorage.getItem('portfolio_accent') || localStorage.getItem('geeooh_accent') || localStorage.getItem('admin_accent') || 'orange';
+      if (accent === 'green') accent = 'emerald';
+
+      window.__INITIAL_LOGIN_THEME__ = theme;
+      window.__INITIAL_LOGIN_ACCENT__ = accent;
+
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.classList.remove('dark-theme', 'light-theme');
+      document.documentElement.classList.add(theme === 'dark' ? 'dark-theme' : 'light-theme');
+    })();
+  </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
+
+    html:has(body.login-page) {
+      height: auto !important;
+      max-height: none !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+    }
+
+    body.login-page {
       font-family: 'Inter', sans-serif;
-      background: #0B0F19;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh !important;
+      height: auto !important;
+      max-height: none !important;
+      width: 100% !important;
+      display: flex !important;
+      grid-template-columns: none !important;
+      grid-template-rows: none !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
       position: relative;
+      margin: 0 !important;
+      padding: 0 !important;
     }
 
     /* Animated background */
@@ -58,7 +77,7 @@
     .bg-sphere-1 {
       width: 600px;
       height: 600px;
-      background: #FF6B00;
+      background: var(--accent-primary);
       top: -200px;
       right: -200px;
       animation-delay: 0s;
@@ -67,7 +86,7 @@
     .bg-sphere-2 {
       width: 500px;
       height: 500px;
-      background: #7C3AED;
+      background: var(--accent-secondary);
       bottom: -200px;
       left: -200px;
       animation-delay: -7s;
@@ -76,7 +95,7 @@
     .bg-sphere-3 {
       width: 400px;
       height: 400px;
-      background: #06B6D4;
+      background: var(--accent-hover);
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -98,8 +117,8 @@
       width: 100%;
       height: 100%;
       background-image: 
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        linear-gradient(var(--border-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
       background-size: 60px 60px;
       pointer-events: none;
       mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 70%);
@@ -111,16 +130,18 @@
       z-index: 1;
       width: 100%;
       max-width: 440px;
+      margin: 0 auto;
       padding: 20px;
     }
 
     .login-card {
-      background: rgba(17, 24, 39, 0.8);
+      background: var(--bg-card);
       backdrop-filter: blur(30px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid var(--border-color);
       border-radius: 24px;
       padding: 48px 40px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      box-shadow: var(--shadow-2xl);
     }
 
     .login-logo {
@@ -132,7 +153,7 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 2.5rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #FF6B00, #FF8C42);
+      background: var(--gradient-primary);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -140,18 +161,19 @@
     }
 
     .login-logo p {
-      color: #9CA3AF;
+      color: var(--text-secondary);
       margin-top: 8px;
       font-size: 0.95rem;
     }
 
-    .form-group {
+    .login-card .form-group {
+      display: block;
       margin-bottom: 24px;
     }
 
     .form-group label {
       display: block;
-      color: #E5E7EB;
+      color: var(--text-primary);
       margin-bottom: 8px;
       font-weight: 500;
       font-size: 0.9rem;
@@ -166,32 +188,113 @@
       left: 16px;
       top: 50%;
       transform: translateY(-50%);
-      color: #6B7280;
+      color: var(--text-tertiary);
       width: 20px;
       height: 20px;
+      pointer-events: none;
+      transition: color 0.2s ease;
     }
 
-    .form-group input {
+    .input-wrapper:focus-within .input-icon {
+      color: var(--accent-primary);
+    }
+
+    .login-card .form-group input[type="email"],
+    .login-card .form-group input[type="password"],
+    .login-card .form-group input[type="text"] {
       width: 100%;
-      padding: 14px 16px 14px 48px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 14px 16px 14px 48px !important;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color-strong);
       border-radius: 12px;
-      color: #F9FAFB;
+      color: var(--text-primary);
       font-size: 1rem;
       font-family: 'Inter', sans-serif;
       transition: all 0.3s ease;
     }
 
-    .form-group input:focus {
+    .login-card .form-group .input-wrapper.has-toggle input[type="password"],
+    .login-card .form-group .input-wrapper.has-toggle input[type="text"] {
+      padding-right: 48px !important;
+    }
+
+    /* Keep browser autofill consistent with active Light/Dark theme */
+    .login-card .form-group input:-webkit-autofill,
+    .login-card .form-group input:-webkit-autofill:hover,
+    .login-card .form-group input:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--text-primary);
+      -webkit-box-shadow: 0 0 0 1000px var(--bg-tertiary) inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    /* Hide native browser password reveal icon so it never duplicates the toggle */
+    .input-wrapper.has-toggle input::-ms-reveal,
+    .input-wrapper.has-toggle input::-ms-clear {
+      display: none;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-tertiary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .password-toggle svg {
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+    }
+
+    .password-toggle:hover {
+      color: var(--accent-primary);
+      background: var(--accent-soft);
+    }
+
+    .password-toggle:focus-visible {
       outline: none;
-      border-color: #FF6B00;
-      background: rgba(255, 107, 0, 0.05);
-      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+      color: var(--accent-primary);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 2px var(--accent-border);
+    }
+
+    .password-toggle[aria-pressed="true"] {
+      color: var(--accent-primary);
+    }
+
+    .password-toggle .icon-eye-off {
+      display: none;
+    }
+
+    .password-toggle[aria-pressed="true"] .icon-eye {
+      display: none;
+    }
+
+    .password-toggle[aria-pressed="true"] .icon-eye-off {
+      display: block;
+    }
+
+    .login-card .form-group input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      background: color-mix(in srgb, var(--accent-primary) 5%, var(--bg-tertiary));
+      box-shadow: 0 0 0 3px var(--accent-soft);
     }
 
     .form-group input::placeholder {
-      color: #4B5563;
+      color: var(--text-tertiary);
     }
 
     .remember-forgot {
@@ -199,13 +302,15 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 24px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .remember-me {
       display: flex;
       align-items: center;
       gap: 8px;
-      color: #9CA3AF;
+      color: var(--text-secondary);
       font-size: 0.9rem;
       cursor: pointer;
     }
@@ -213,25 +318,25 @@
     .remember-me input[type="checkbox"] {
       width: 18px;
       height: 18px;
-      accent-color: #FF6B00;
+      accent-color: var(--accent-primary);
       cursor: pointer;
     }
 
     .forgot-password {
-      color: #FF6B00;
+      color: var(--accent-primary);
       text-decoration: none;
       font-size: 0.9rem;
       transition: color 0.3s;
     }
 
     .forgot-password:hover {
-      color: #FF8C42;
+      color: var(--accent-secondary);
     }
 
     .login-btn {
       width: 100%;
       padding: 14px;
-      background: linear-gradient(135deg, #FF6B00, #FF8C42);
+      background: var(--gradient-primary);
       color: white;
       border: none;
       border-radius: 12px;
@@ -245,7 +350,7 @@
 
     .login-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3);
+      box-shadow: 0 10px 30px color-mix(in srgb, var(--accent-primary) 30%, transparent);
     }
 
     .login-btn:active {
@@ -276,7 +381,7 @@
     .error-message {
       background: rgba(239, 68, 68, 0.1);
       border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #FCA5A5;
+      color: #DC2626;
       padding: 12px 16px;
       border-radius: 12px;
       margin-bottom: 24px;
@@ -284,6 +389,11 @@
       display: none;
       align-items: center;
       gap: 8px;
+    }
+
+    body.dark-theme .error-message,
+    html[data-theme="dark"] .error-message {
+      color: #FCA5A5;
     }
 
     .error-message.show {
@@ -297,7 +407,7 @@
     .back-link {
       display: block;
       text-align: center;
-      color: #6B7280;
+      color: var(--text-tertiary);
       text-decoration: none;
       margin-top: 24px;
       font-size: 0.9rem;
@@ -305,17 +415,21 @@
     }
 
     .back-link:hover {
-      color: #9CA3AF;
+      color: var(--accent-primary);
     }
 
     .login-footer {
       text-align: center;
       margin-top: 32px;
-      color: #4B5563;
+      color: var(--text-tertiary);
       font-size: 0.85rem;
     }
 
     @media (max-width: 480px) {
+      .login-container {
+        padding: 16px;
+      }
+
       .login-card {
         padding: 32px 24px;
       }
@@ -324,9 +438,70 @@
         font-size: 2rem;
       }
     }
+
+    @media (max-width: 360px) {
+      .login-card {
+        padding: 28px 18px;
+      }
+
+      .login-card .form-group input[type="email"],
+      .login-card .form-group input[type="password"],
+      .login-card .form-group input[type="text"] {
+        padding: 13px 14px 13px 44px !important;
+        font-size: 0.95rem;
+      }
+
+      .login-card .form-group .input-wrapper.has-toggle input[type="password"],
+      .login-card .form-group .input-wrapper.has-toggle input[type="text"] {
+        padding-right: 46px !important;
+      }
+
+      .input-icon {
+        left: 14px;
+        width: 18px;
+        height: 18px;
+      }
+
+      .password-toggle {
+        right: 8px;
+        width: 32px;
+        height: 32px;
+      }
+    }
   </style>
 </head>
-<body>
+<body class="login-page">
+  <script>
+    // Apply theme & accent onto body immediately before login UI renders (compatible with theme.js body classes)
+    (function() {
+      var t = window.__INITIAL_LOGIN_THEME__ || 'dark';
+      var a = window.__INITIAL_LOGIN_ACCENT__ || 'orange';
+      document.body.classList.remove('dark-theme', 'light-theme', 'accent-orange', 'accent-blue', 'accent-emerald', 'accent-green', 'accent-purple', 'accent-rose', 'accent-cyan');
+      document.body.classList.add(t === 'dark' ? 'dark-theme' : 'light-theme');
+      if (a && a !== 'orange') {
+        document.body.classList.add('accent-' + a);
+      }
+
+      window.addEventListener('storage', function(e) {
+        if (!e || !e.key || !e.newValue) return;
+        if (e.key === 'portfolio_theme' || e.key === 'geeooh_theme' || e.key === 'admin_theme') {
+          var nextTheme = e.newValue === 'light' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', nextTheme);
+          document.documentElement.classList.remove('dark-theme', 'light-theme');
+          document.documentElement.classList.add(nextTheme + '-theme');
+          document.body.classList.remove('dark-theme', 'light-theme');
+          document.body.classList.add(nextTheme + '-theme');
+        } else if (e.key === 'portfolio_accent' || e.key === 'geeooh_accent' || e.key === 'admin_accent') {
+          var nextAccent = e.newValue === 'green' ? 'emerald' : e.newValue;
+          document.documentElement.removeAttribute('data-accent');
+          document.body.classList.remove('accent-orange', 'accent-blue', 'accent-emerald', 'accent-green', 'accent-purple', 'accent-rose', 'accent-cyan');
+          if (nextAccent && nextAccent !== 'orange') {
+            document.body.classList.add('accent-' + nextAccent);
+          }
+        }
+      });
+    })();
+  </script>
   <div class="login-bg">
     <div class="bg-sphere bg-sphere-1"></div>
     <div class="bg-sphere bg-sphere-2"></div>
@@ -357,9 +532,26 @@
 
         <div class="form-group">
           <label for="password">Password</label>
-          <div class="input-wrapper">
+          <div class="input-wrapper has-toggle">
             <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>
             <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password" />
+            <button
+              type="button"
+              class="password-toggle"
+              id="togglePassword"
+              aria-label="Show password"
+              aria-pressed="false"
+              title="Show password"
+            >
+              <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -390,6 +582,20 @@
     // Redirect if already logged in
     if (api.isAuthenticated()) {
       window.location.href = 'dashboard.html';
+    }
+
+    // Show/Hide Password toggle
+    const passwordInput = document.getElementById('password');
+    const togglePasswordBtn = document.getElementById('togglePassword');
+
+    if (passwordInput && togglePasswordBtn) {
+      togglePasswordBtn.addEventListener('click', () => {
+        const isVisible = passwordInput.type === 'text';
+        passwordInput.type = isVisible ? 'password' : 'text';
+        togglePasswordBtn.setAttribute('aria-pressed', String(!isVisible));
+        togglePasswordBtn.setAttribute('aria-label', isVisible ? 'Show password' : 'Hide password');
+        togglePasswordBtn.setAttribute('title', isVisible ? 'Show password' : 'Hide password');
+      });
     }
 
     const form = document.getElementById('loginForm');
