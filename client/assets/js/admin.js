@@ -166,9 +166,9 @@
   function initSocket() {
     if (typeof io === 'undefined') return;
 
-   const SOCKET_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  const SOCKET_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:5000'
-  : window.location.origin; // Uses Netlify's proxy
+  : 'https://geeoohportfolio-j34k.onrender.com'; // proxy
 
 const socket = io(SOCKET_URL);
 
